@@ -1,0 +1,38 @@
+# === Зависимости ===
+/vendor
+/node_modules
+
+# === Кэш и логи Laravel ===
+/storage/logs/*
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+/bootstrap/cache/*
+
+# === Environment ===
+.env
+.env.backup
+.env.production
+
+# === IDE ===
+.idea
+.vscode
+.claude
+.osp
+*.swp
+*.swo
+.DS_Store
+
+# === Тесты ===
+.phpunit.result.cache
+/coverage
+
+# === Build артефакты ===
+/public/build
+/public/hot
+/public/storage
+npm-debug.log
+yarn-error.log
+
+# === Docker volumes данные ===
+/docker/postgres/data
