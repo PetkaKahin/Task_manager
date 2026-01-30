@@ -1,16 +1,18 @@
 <script setup lang="ts">
 import BaseLayout from "@/Layouts/BaseLayout.vue";
 
-interface defineProps {
+interface Props {
     message: string,
 }
 
-defineProps<defineProps>()
+defineProps<Props>()
 </script>
 
 <template>
     <BaseLayout>
-        <h1 class="message">{{ message }}</h1>
+        <div class="home-page">
+            <h1 class="message">{{ message }}</h1>
+        </div>
     </BaseLayout>
 </template>
 

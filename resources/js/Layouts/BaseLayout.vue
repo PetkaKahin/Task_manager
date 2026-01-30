@@ -1,11 +1,15 @@
 <script setup lang="ts">
 
+import Header from "@/Blocks/Header.vue";
 </script>
 
 <template>
-    <slot/>
+    <div class="base-layout">
+        <Header/>
+        <slot/>
+    </div>
 </template>
 
-<style>
+<style lang="scss">
 @use "@scss/base";
 </style>
