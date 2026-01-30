@@ -1,0 +1,137 @@
+// ============================================================
+// ПАЛИТРА
+// ============================================================
+
+// Серые (база)
+$gray-950: #0d0d0f;    // самый тёмный (фон редактора)
+$gray-900: #121216;    // фон основной
+$gray-850: #16161a;    // фон карточек
+$gray-800: #1c1c21;    // фон приподнятый (sidebar, header)
+$gray-700: #24242b;    // фон hover
+$gray-600: #2e2e38;    // границы активные
+$gray-500: #3d3d4a;    // границы
+$gray-400: #52525e;    // disabled элементы
+$gray-300: #71717a;    // placeholder, иконки неактивные
+$gray-200: #a1a1aa;    // текст вторичный
+$gray-100: #d4d4d8;    // текст основной
+$gray-50: #fafafa;     // текст яркий (заголовки)
+
+// Фиолетовые (акцент)
+$purple-300: #c4b5fd;  // светлый (текст на тёмном)
+$purple-400: #a78bfa;  // hover
+$purple-500: #8b5cf6;  // основной
+$purple-600: #7c3aed;  // active/pressed
+$purple-700: #6d28d9;  // тёмный
+
+// Состояния
+$red-400: #f87171;
+$red-500: #ef4444;
+$red-600: #dc2626;
+
+$green-400: #4ade80;
+$green-500: #22c55e;
+$green-600: #16a34a;
+
+$yellow-400: #facc15;
+$yellow-500: #eab308;
+
+$blue-400: #60a5fa;
+$blue-500: #3b82f6;
+
+
+// ============================================================
+// СЕМАНТИКА
+// ============================================================
+
+// Фоны
+$bg-base: $gray-900;              // основной фон приложения
+$bg-surface: $gray-850;           // карточки, модалки
+$bg-elevated: $gray-800;          // sidebar, header, dropdown
+$bg-hover: $gray-700;             // hover состояние
+$bg-active: $gray-600;            // active/selected состояние
+$bg-overlay: rgba(0, 0, 0, 0.6);  // затемнение под модалкой
+
+// Текст
+$text-primary: $gray-100;         // основной текст
+$text-secondary: $gray-200;       // вторичный текст
+$text-muted: $gray-300;           // подсказки, placeholder
+$text-disabled: $gray-400;        // disabled
+$text-inverse: $gray-900;         // текст на светлом фоне
+$text-focus: $purple-500;
+
+// Иконки
+$ico-primary: $gray-100;
+$ico-secondary: $gray-200;
+$ico-muted: $gray-300;
+$ico-disabled: $gray-400;
+$ico-inverse: $gray-900;
+$ico-focus: $purple-500;
+
+// Границы
+$border-primary: $gray-100;
+$border-default: $gray-500;       // обычные границы
+$border-muted: $gray-600;         // subtle границы
+$border-hover: $gray-400;         // hover
+$border-focus: $purple-500;       // focus кольцо
+
+// Акцент (primary)
+$accent-primary: $purple-500;
+$accent-primary-hover: $purple-400;
+$accent-primary-active: $purple-600;
+$accent-primary-muted: $purple-700;
+$accent-primary-text: $purple-300; // для текста/ссылок
+
+// Состояния
+$color-error: $red-500;
+$color-error-hover: $red-400;
+$color-error-bg: rgba($red-500, 0.15);
+
+$color-success: $green-500;
+$color-success-hover: $green-400;
+$color-success-bg: rgba($green-500, 0.15);
+
+$color-warning: $yellow-500;
+$color-warning-hover: $yellow-400;
+$color-warning-bg: rgba($yellow-500, 0.15);
+
+$color-info: $blue-500;
+$color-info-hover: $blue-400;
+$color-info-bg: rgba($blue-500, 0.15);
+
+
+// ============================================================
+// КОМПОНЕНТЫ
+// ============================================================
+
+// Кнопки
+$btn-primary-bg: $accent-primary;
+$btn-primary-bg-hover: $accent-primary-hover;
+$btn-primary-text: white;
+
+$btn-secondary-bg: $gray-700;
+$btn-secondary-bg-hover: $gray-600;
+$btn-secondary-text: $text-primary;
+
+$btn-ghost-bg: transparent;
+$btn-ghost-bg-hover: $bg-hover;
+$btn-ghost-text: $text-secondary;
+
+// Инпуты
+$input-bg: $gray-800;
+$input-bg-hover: $gray-700;
+$input-bg-focus: $gray-800;
+$input-border: $border-default;
+$input-border-hover: $border-hover;
+$input-border-focus: $accent-primary;
+$input-text: $text-primary;
+$input-placeholder: $text-muted;
+
+// Код
+$code-bg: $gray-950;
+$code-border: $gray-700;
+$code-text: $gray-100;
+$code-comment: $gray-400;
+$code-keyword: $purple-400;
+$code-string: $green-400;
+$code-number: $yellow-400;
+$code-function: $blue-400;

@@ -1,3 +1,16 @@
+@use "normalize.css";
+
+@use "@scss/variables/colors";
+@use "@scss/fonts/montserrat";
+
 body {
-    background-color: #1e1f22;
+    background-color: colors.$bg-base;
+}
+
+span, p, h1, h2, h3, h4, h5, h6, input, select, textarea {
+    color: colors.$text-primary;
+}
+
+a, span, p, h1, h2, h3, h4, h5, h6, input, select, textarea {
+    font-family: "Montserrat", sans-serif;
 }
