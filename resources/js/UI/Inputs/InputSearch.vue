@@ -62,6 +62,7 @@ function search() {
         background-color: colors.$bg-elevated;
         border: none;
         height: 100%;
+        width: 100%;
         border-radius: 0.5rem;
         padding: 0.2rem 0.5rem;
         box-sizing: border-box;

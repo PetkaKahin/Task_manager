@@ -5,10 +5,11 @@ import DropdownMenuItemBase from "@/Dropdowns/Items/DropdownMenuItemBase.vue";
 
 <template>
     <!--  TODO сделать рабочую ссылку  -->
-    <!--  TODO Не плодить 100500 итемов меню (Плодить только уникальные) -->
-    <DropdownMenuItemBase :ico="LogoutIco" text="Выйти" url="#"/>
+    <DropdownMenuItemBase class="logout" :ico="LogoutIco" text="Выйти" url="#"/>
 </template>
 
 <style scoped lang="scss">
-
+.logout {
+    margin-top: 30px;
+}
 </style>

@@ -18,6 +18,7 @@ defineProps<Props>()
 
 <style scoped lang="scss">
 .message {
+    margin-top: 5000px;
     color: #e4ecef;
 }
 </style>

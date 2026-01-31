@@ -7,8 +7,8 @@ import DropdownMenuItemProfile from "@/Dropdowns/Items/DropdownMenuItemProfile.v
 import DropdownMenuItemLogout from "@/Dropdowns/Items/DropdownMenuItemLogout.vue";
 
 const menuItems = [
-    DropdownMenuItemSettings,
     DropdownMenuItemProfile,
+    DropdownMenuItemSettings,
     DropdownMenuItemLogout,
 ]
 </script>
