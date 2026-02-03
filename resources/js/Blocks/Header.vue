@@ -3,12 +3,13 @@
 import InputSearch from "@/UI/Inputs/InputSearch.vue";
 import UserDropdown from "@/Blocks/UserDropdown.vue";
 import BigLogo from "@/Blocks/BigLogo.vue";
+import {useSidebar} from "@/composables/ui/useSidebar.ts";
 
 function onSearch(fieldSearch: string) {
     console.log(fieldSearch)
 }
 function toggleSidebar() {
-    console.log('toggle sidebar');
+    useSidebar().toggle()
 }
 </script>
 
@@ -51,9 +52,7 @@ function toggleSidebar() {
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid colors.$border-default;
-    padding: 0 50px;
-    position: sticky;
-    top: 0;
+    padding: 0 50px 0 20px;
     background-color: colors.$bg-base;
 
     &__dropdown-profile {
@@ -92,7 +91,7 @@ function toggleSidebar() {
     background-color: colors.$bg-base;
     outline: none;
     border: none;
-    width: 32px;
+    width: 22px;
 
     &__line {
         display: block;
@@ -102,8 +101,10 @@ function toggleSidebar() {
     }
 }
 
-@media (max-width: 768px)  {
+@media (max-width: 1024px)  {
     .page-header {
+        padding: 0 20px;
+
         &__toggle-sidebar {
             display: flex;
         }

@@ -10,9 +10,9 @@ defineProps<Props>()
 
 <template>
     <BaseLayout>
-        <div class="home-page">
+        <main class="home-page">
             <h1 class="message">{{ message }}</h1>
-        </div>
+        </main>
     </BaseLayout>
 </template>
 

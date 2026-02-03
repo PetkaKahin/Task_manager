@@ -3,25 +3,25 @@
 // ============================================================
 
 // Серые (база)
-$gray-950: #0d0d0f;    // самый тёмный (фон редактора)
-$gray-900: #121216;    // фон основной
-$gray-850: #16161a;    // фон карточек
-$gray-800: #1c1c21;    // фон приподнятый (sidebar, header)
-$gray-700: #24242b;    // фон hover
-$gray-600: #2e2e38;    // границы активные
-$gray-500: #3d3d4a;    // границы
-$gray-400: #52525e;    // disabled элементы
-$gray-300: #71717a;    // placeholder, иконки неактивные
-$gray-200: #a1a1aa;    // текст вторичный
-$gray-100: #d4d4d8;    // текст основной
-$gray-50: #fafafa;     // текст яркий (заголовки)
+$gray-950: #0d0d0f;
+$gray-900: #121216;
+$gray-850: #16161a;
+$gray-800: #1c1c21;
+$gray-700: #24242b;
+$gray-600: #2e2e38;
+$gray-500: #3d3d4a;
+$gray-400: #52525e;
+$gray-300: #71717a;
+$gray-200: #a1a1aa;
+$gray-100: #d4d4d8;
+$gray-50: #fafafa;
 
 // Фиолетовые (акцент)
-$purple-300: #c4b5fd;  // светлый (текст на тёмном)
-$purple-400: #a78bfa;  // hover
-$purple-500: #8b5cf6;  // основной
-$purple-600: #7c3aed;  // active/pressed
-$purple-700: #6d28d9;  // тёмный
+$purple-300: #c4b5fd;
+$purple-400: #a78bfa;
+$purple-500: #8b5cf6;
+$purple-600: #7c3aed;
+$purple-700: #6d28d9;
 
 // Состояния
 $red-400: #f87171;
@@ -50,6 +50,10 @@ $bg-elevated: $gray-800;          // sidebar, header, dropdown
 $bg-hover: $gray-700;             // hover состояние
 $bg-active: $gray-600;            // active/selected состояние
 $bg-overlay: rgba(0, 0, 0, 0.6);  // затемнение под модалкой
+
+$scroll-thumb: $gray-500;
+$scroll-thumb-active: $gray-300;
+$scroll-track: $gray-900;
 
 // Текст
 $text-primary: $gray-100;         // основной текст
@@ -104,17 +108,17 @@ $color-info-bg: rgba($blue-500, 0.15);
 // ============================================================
 
 // Кнопки
-$btn-primary-bg: $accent-primary;
-$btn-primary-bg-hover: $accent-primary-hover;
-$btn-primary-text: white;
+$button-primary-bg: $accent-primary;
+$button-primary-bg-hover: $accent-primary-hover;
+$button-primary-text: white;
 
-$btn-secondary-bg: $gray-700;
-$btn-secondary-bg-hover: $gray-600;
-$btn-secondary-text: $text-primary;
+$button-secondary-bg: $gray-700;
+$button-secondary-bg-hover: $gray-600;
+$button-secondary-text: $text-primary;
 
-$btn-ghost-bg: transparent;
-$btn-ghost-bg-hover: $bg-hover;
-$btn-ghost-text: $text-secondary;
+$button-ghost-bg: transparent;
+$button-ghost-bg-hover: $bg-hover;
+$button-ghost-text: $text-secondary;
 
 // Инпуты
 $input-bg: $gray-800;
