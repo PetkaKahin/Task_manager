@@ -1,33 +1,22 @@
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed } from 'vue'
 
 const width = ref(typeof window !== 'undefined' ? window.innerWidth : 0)
-let subscriberCount = 0
 
 const BREAKPOINTS = {
     mobile: 425,
-    tablet: 1024,
-    laptop: 1280,
+    tablet: 768,
+    laptop: 1024,
 } as const
 
 const updateWidth = () => {
     width.value = window.innerWidth
 }
 
+if (typeof window !== 'undefined') {
+    window.addEventListener('resize', updateWidth)
+}
+
 export function useBreakpoints() {
-    onMounted(() => {
-        if (subscriberCount === 0) {
-            window.addEventListener('resize', updateWidth)
-        }
-        subscriberCount++
-    })
-
-    onUnmounted(() => {
-        subscriberCount--
-        if (subscriberCount === 0) {
-            window.removeEventListener('resize', updateWidth)
-        }
-    })
-
     return {
         width,
         isMobile: computed(() => width.value < BREAKPOINTS.mobile),
