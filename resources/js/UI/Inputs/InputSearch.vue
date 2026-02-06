@@ -64,8 +64,7 @@ function search() {
         height: 100%;
         width: 100%;
         border-radius: 0.5rem;
-        padding: 0.2rem 0.5rem;
-        box-sizing: border-box;
+        padding: 0.2rem 0 0.2rem 0.5rem;
 
         &::placeholder {
             color: colors.$text-muted;
@@ -74,11 +73,12 @@ function search() {
 
     &__vertical-line {
         width: 1px;
-        color: colors.$border-default;
+        height: 20px;
+        background-color: colors.$border-default;
     }
 
     &__ico {
-        padding: 0.2rem 0.5rem;
+        padding: 0 10px;
         height: 16px;
         width: 16px;
         color: colors.$ico-muted;

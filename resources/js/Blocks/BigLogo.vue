@@ -29,6 +29,7 @@ const props = withDefaults(defineProps<Props>(), {
 
     &__text {
         margin: 0;
+        font-weight: 400;
     }
 }
 </style>

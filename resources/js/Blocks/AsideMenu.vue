@@ -25,9 +25,9 @@ function toggleSidebar() {
             v-if="isDesktop === false"
         />
 
-        <div class="sidebar-menu__content">
-            <BaseButton class="sidebar-menu__button" text="+ Новая задача"/>
+        <BaseButton text="+ Добавить проект" class="sidebar-menu__add-project"/>
 
+        <div class="sidebar-menu__content">
             <h5 class="sidebar-menu__header-text">Проекты:</h5>
             <ul class="sidebar-menu__list projects-list">
                 <li class="projects-list__item">
@@ -39,10 +39,9 @@ function toggleSidebar() {
                 <li class="projects-list__item">
                     <span>Проект 3</span>
                 </li>
-                <li class="projects-list__item projects-list__item--no-dot">
-                    <span>+ Добавить</span>
-                </li>
             </ul>
+
+
         </div>
     </aside>
 </template>
@@ -55,7 +54,7 @@ function toggleSidebar() {
     background-color: colors.$bg-base;
     height: 100%;
     min-width: 150px;
-    max-width: 300px;
+    max-width: 350px;
     box-sizing: border-box;
     padding: 5px;
 
@@ -77,6 +76,11 @@ function toggleSidebar() {
         margin: 15px 15px 0 15px;
         padding-top: 2px;
     }
+
+    &__add-project {
+        padding: 10px 5px;
+        margin: 5px;
+    }
 }
 
 .projects-list {
@@ -87,11 +91,6 @@ function toggleSidebar() {
     &__item {
         padding: 5px 0 5px 30px;
         list-style-position: inside;
-
-        &--no-dot {
-            list-style-type: none;
-            padding-left: -30px;
-        }
     }
 }
 

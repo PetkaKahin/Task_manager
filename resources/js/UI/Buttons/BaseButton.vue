@@ -3,6 +3,7 @@ interface Props {
     text?: string,
     class?: string,
     action?: () => void,
+    type?: string,
 }
 
 const props = withDefaults(defineProps<Props>(), {
