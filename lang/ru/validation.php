@@ -156,13 +156,10 @@ return [
     'uppercase'              => 'Значение поля :attribute должно быть в верхнем регистре.',
     'url'                    => 'Значение поля :attribute не является ссылкой или имеет некорректный формат.',
     'uuid'                   => 'Значение поля :attribute должно быть корректным UUID.',
-
-
-
-    'attributes' => [
+    'attributes'             => [
+        'email'    => 'Email',
+        'login'    => 'Логин',
+        'name'     => 'Имя',
         'password' => 'Пароль',
-        'email' => 'Email',
-        'login' => 'Логин',
-        'name' => 'Имя',
     ],
 ];
