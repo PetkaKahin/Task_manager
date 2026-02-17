@@ -30,7 +30,7 @@ class ProjectController extends Controller
         $user = auth()->user();
         $newProject = Project::factory()->default($user, $request->title)->create();
 
-        return redirect(route('dashboard.index', $newProject->id));
+        return redirect()->intended(route('dashboard.index', $newProject->id));
     }
 
     public function show(string $id)

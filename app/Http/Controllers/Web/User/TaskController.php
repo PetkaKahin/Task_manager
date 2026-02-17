@@ -32,7 +32,7 @@ class TaskController extends Controller
         $category = Category::query()->findOrFail($request->category_id);
         $project = $category->project()->findOrFail($category->project_id);
 
-        return redirect()->route('dashboard.index',$project->id);
+        return redirect()->intended(route('dashboard.index',$project->id));
     }
 
     public function show(string $id)
@@ -59,7 +59,7 @@ class TaskController extends Controller
         $category = Category::query()->findOrFail($task->category_id);
         $project = $category->project()->findOrFail($category->project_id);
 
-        return redirect()->route('dashboard.index',$project->id);
+        return redirect()->intended(route('dashboard.index',$project->id));
     }
 
     public function destroy(string $id)
