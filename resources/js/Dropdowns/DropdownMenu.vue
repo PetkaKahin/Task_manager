@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type {Component} from "vue";
 
-interface Props {
+interface IProps {
     menuItems?: Component[]
 }
 
-const props = defineProps<Props>()
+const props = defineProps<IProps>()
 </script>
 
 <template>

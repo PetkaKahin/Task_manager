@@ -1,11 +1,11 @@
 <script setup lang="ts">
-interface Props {
+interface IProps {
     size?: number,
     color?: string,
     class?: string,
 }
 
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<IProps>(), {
     size: 24,
     color: 'currentColor',
 })

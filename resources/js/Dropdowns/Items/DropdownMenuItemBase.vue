@@ -1,26 +1,21 @@
 <script setup lang="ts">
 import type {Component} from "vue";
 
-interface Props {
+interface IProps {
     ico: Component,
     text: string,
-    url?: string,
 }
 
-const props = withDefaults(defineProps<Props>(), {
-    url: '#',
-})
+const props = defineProps<IProps>()
 </script>
 
 <template>
-
-    <a
+    <div
         class="dropdown-menu-item"
-        :href="url"
     >
         <component :is="props.ico" class="dropdown-menu-item__ico"/>
         <p class="dropdown-menu-item__text">{{ props.text}}</p>
-    </a>
+    </div>
 </template>
 
 <style scoped lang="scss">

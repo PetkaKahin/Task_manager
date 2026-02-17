@@ -1,9 +1,9 @@
 <script setup lang="ts">
-interface Props {
+interface IProps {
     url: string,
 }
 
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<IProps>(), {
     url: "#",
 })
 </script>

@@ -7,10 +7,11 @@ import DropdownMenuItemProfile from "@/Dropdowns/Items/DropdownMenuItemProfile.v
 import DropdownMenuItemLogout from "@/Dropdowns/Items/DropdownMenuItemLogout.vue";
 
 const menuItems = [
-    DropdownMenuItemProfile,
-    DropdownMenuItemSettings,
+    // DropdownMenuItemProfile,
+    // DropdownMenuItemSettings,
     DropdownMenuItemLogout,
 ]
+
 </script>
 
 <template>
@@ -43,7 +44,7 @@ $min-width-dropdown-menu: 100px;
     &:hover &__menu,
     &:hover::after
     {
-        display: block;
+      display: block;
     }
 
     &::after {

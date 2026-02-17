@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import BaseInput from './BaseInput.vue'
 import EyeIco from '@/UI/Icons/EyeIco.vue'
 
-interface Props {
+interface IProps {
     id: string,
     name: string,
     error?: string,
@@ -12,7 +12,7 @@ interface Props {
     className?: string,
 }
 
-defineProps<Props>()
+defineProps<IProps>()
 const model = defineModel<string>()
 const isVisible = ref(false)
 </script>

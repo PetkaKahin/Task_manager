@@ -1,12 +1,12 @@
 <script setup lang="ts">
-interface Props {
+interface IProps {
     text?: string,
-    class?: string,
+    className?: string,
     action?: () => void,
     type?: string,
 }
 
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<IProps>(), {
     text: "Текст",
 })
 
@@ -19,10 +19,10 @@ function action() {
 <template>
     <button
         class="base-button"
-        :class="props.class"
+        :class="props.className"
         @click="action"
     >
-        <span class="base-button__text">{{ props.text}}</span>
+        <span class="base-button__text text">{{ props.text}}</span>
     </button>
 </template>
 

@@ -38,7 +38,7 @@ const slots = useSlots()
             >
             <label
                 v-if="props.label"
-                class="base-input__label"
+                class="base-input__label label"
                 :for="props.id"
             >
                 {{ props.label }}

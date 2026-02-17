@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import BaseInput from "@/UI/Inputs/BaseInput.vue";
 
-interface Props {
+interface IProps {
     id: string,
     name: string,
     error?: string,
@@ -10,7 +10,7 @@ interface Props {
     className?: string,
 }
 
-defineProps<Props>()
+defineProps<IProps>()
 const model = defineModel<string>()
 </script>
 

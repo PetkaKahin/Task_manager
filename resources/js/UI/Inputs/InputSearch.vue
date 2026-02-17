@@ -2,7 +2,7 @@
 import SearchIco from "@/UI/Icons/SearchIco.vue";
 import {ref} from "vue";
 
-interface Props {
+interface IProps {
     class?: string,
     placeholder?: string,
 }
@@ -12,7 +12,7 @@ interface Emits {
 }
 
 const searchField = ref<string>("");
-const props = defineProps<Props>()
+const props = defineProps<IProps>()
 const emit = defineEmits<Emits>()
 
 function search() {
