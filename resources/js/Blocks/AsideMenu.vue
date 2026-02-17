@@ -3,8 +3,9 @@
 import BaseButton from "@/UI/Buttons/BaseButton.vue";
 import BaseDivider from "@/UI/Dividers/BaseDivider.vue";
 import {useSidebar} from "@/composables/ui/useSidebar.ts";
+import {Link} from "@inertiajs/vue3";
 
-const {isDesktop} = useSidebar()
+const {isDesktop, projectsList} = useSidebar()
 
 function toggleSidebar() {
     useSidebar().toggle()
@@ -13,35 +14,34 @@ function toggleSidebar() {
 
 <template>
     <aside class="sidebar-menu">
-        <div
+        <header
             class="sidebar-menu__header"
             v-if="isDesktop === false"
         >
-            <BaseButton class="sidebar-menu__toggle" text="X" @click="toggleSidebar" />
-        </div>
+            <BaseButton className="sidebar-menu__toggle" text="X" @click="toggleSidebar"/>
+        </header>
 
         <BaseDivider
             class="divider"
             v-if="isDesktop === false"
         />
 
-        <BaseButton text="+ Добавить проект" class="sidebar-menu__add-project"/>
+        <Link :href="route('project.create')">
+            <BaseButton text="+ Добавить проект" className="sidebar-menu__add-project"/>
+        </Link>
 
         <div class="sidebar-menu__content">
             <h5 class="sidebar-menu__header-text">Проекты:</h5>
             <ul class="sidebar-menu__list projects-list">
-                <li class="projects-list__item">
-                    <span>Проект 1</span>
-                </li>
-                <li class="projects-list__item">
-                    <span>Проект 2</span>
-                </li>
-                <li class="projects-list__item">
-                    <span>Проект 3</span>
+                <li
+                    v-for="project in projectsList"
+                    class="projects-list__item"
+                >
+                    <Link :href="route('dashboard.index', project.id)">
+                        <span>{{ project.title }}</span>
+                    </Link>
                 </li>
             </ul>
-
-
         </div>
     </aside>
 </template>
@@ -56,7 +56,7 @@ function toggleSidebar() {
     min-width: 150px;
     max-width: 350px;
     box-sizing: border-box;
-    padding: 5px;
+    padding: 10px;
 
     &__button {
         margin: 15px;
@@ -79,7 +79,10 @@ function toggleSidebar() {
 
     &__add-project {
         padding: 10px 5px;
-        margin: 5px;
+    }
+
+    &__content {
+        margin-top: 30px;
     }
 }
 
@@ -89,8 +92,7 @@ function toggleSidebar() {
     color: colors.$text-primary;
 
     &__item {
-        padding: 5px 0 5px 30px;
-        list-style-position: inside;
+        padding: 5px 0;
     }
 }
 

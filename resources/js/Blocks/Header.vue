@@ -30,11 +30,11 @@ function toggleSidebar() {
         <nav class="page-header__nav header-navbar page-header__right-block">
             <ul class="header-navbar__list">
                 <li class="header-navbar__item">
-                    <InputSearch
-                        class="page-header__search"
-                        placeholder="Поиск..."
-                        @search="onSearch"
-                    />
+<!--                    <InputSearch-->
+<!--                        class="page-header__search"-->
+<!--                        placeholder="Поиск..."-->
+<!--                        @search="onSearch"-->
+<!--                    />-->
                 </li>
                 <li class="header-navbar__item">
                     <UserDropdown class="page-header__dropdown-profile"/>

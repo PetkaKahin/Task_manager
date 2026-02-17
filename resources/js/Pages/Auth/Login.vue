@@ -2,7 +2,7 @@
 import TextInput from "@/UI/Inputs/TextInput.vue";
 import PasswordInput from "@/UI/Inputs/PasswordInput.vue";
 import BaseButton from "@/UI/Buttons/BaseButton.vue";
-import {useForm} from "@inertiajs/vue3";
+import {Link, useForm} from "@inertiajs/vue3";
 import AuthLayout from "@/Layouts/AuthLayout.vue";
 
 const form = useForm({
@@ -53,16 +53,16 @@ const submit = () => {
                 {{form.errors.error}}
             </span>
 
-        <BaseButton :disabled="form.processing" class="form__sumbit" text="Войти"/>
+        <BaseButton :disabled="form.processing" className="form__sumbit" text="Войти"/>
       </form>
 
       <div class="links">
-        <a
+        <Link
           href="/register"
           class="links__link"
         >
           Зарегистрироваться
-        </a>
+        </Link>
       </div>
     </main>
   </AuthLayout>
