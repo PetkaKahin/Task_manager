@@ -20,11 +20,13 @@ class RegisterController extends Controller
 
     public function store(RegisterRequest $request): RedirectResponse
     {
-        $user = User::create($request->validated());
+        $user = User::factory()->withFirstProject()->create($request->validated());
 
         Auth::login($user);
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard'));
+        $project = $user->projects()->orderBy('updated_at')->first();
+
+        return redirect()->intended(route('dashboard.index', $project?->id));
     }
 }
