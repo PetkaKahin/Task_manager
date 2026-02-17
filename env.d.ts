@@ -1,10 +1,5 @@
 // <reference types="vite/client" />
-
-declare module '*.vue' {
-    import type { DefineComponent } from 'vue';
-    const component: DefineComponent<{}, {}, any>;
-    export default component;
-}
+import { route as routeFn } from 'ziggy-js';
 
 interface ImportMetaEnv {
     readonly VITE_APP_NAME: string;
@@ -13,4 +8,11 @@ interface ImportMetaEnv {
 
 interface ImportMeta {
     readonly env: ImportMetaEnv;
+}
+
+
+declare module '*.vue' {
+    import type { DefineComponent } from 'vue';
+    const component: DefineComponent<{}, {}, any>;
+    export default component;
 }

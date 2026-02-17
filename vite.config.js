@@ -2,6 +2,7 @@ import {defineConfig} from 'vite';
 import laravel from 'laravel-vite-plugin';
 import vue from '@vitejs/plugin-vue';
 import {resolve} from 'path';
+import path from 'path';
 
 export default defineConfig({
     plugins: [
@@ -15,8 +16,8 @@ export default defineConfig({
         watch: {
             ignored: ['**/storage/framework/views/**'],
         },
-        host: '0.0.0.0',
-        port: 5173,
+        host: 'localhost',
+        cors: true,
         hmr: {
             host: 'localhost',
         },
@@ -26,6 +27,7 @@ export default defineConfig({
             '@': resolve(__dirname, 'resources/js'),
             '@scss': resolve(__dirname, 'resources/scss'),
             '@variables': resolve(__dirname, 'resources/scss/variables'),
+            'ziggy-js': path.resolve('vendor/tightenco/ziggy'),
         },
     },
     css: {
