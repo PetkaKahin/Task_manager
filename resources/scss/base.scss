@@ -7,11 +7,11 @@ body {
     background-color: colors.$bg-base;
 }
 
-a, span, p, h1, h2, h3, h4, h5, h6, input, select, textarea, label {
+a, span, p, h1, h2, h3, h4, h5, h6, input, select, textarea, label, li {
     color: colors.$text-primary;
 }
 
-a, span, p, h1, h2, h3, h4, h5, h6, input, select, textarea, label {
+a, span, p, h1, h2, h3, h4, h5, h6, input, select, textarea, label, li {
     font-family: "Montserrat", sans-serif;
 }
 
@@ -19,8 +19,16 @@ a, span, p {
     font-size: 14px;
 }
 
+
+
 a:hover {
     color: colors.$text-focus;
+}
+
+.link {
+    &--no-decor {
+        text-decoration: none;
+    }
 }
 
 button {
@@ -33,6 +41,10 @@ input {
     border: 1px solid colors.$border-default;
     border-radius: 5px;
     outline: none;
+}
+
+#nprogress .bar {
+  background: colors.$accent-primary !important;
 }
 
 * {
