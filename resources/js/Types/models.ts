@@ -7,7 +7,7 @@ export interface ITask {
     id: number
     category_id: number
     title: string
-    content: JSON
+    content: string
 }
 
 export interface ICategory {

@@ -20,7 +20,7 @@ class RegisterController extends Controller
 
     public function store(RegisterRequest $request): RedirectResponse
     {
-        $user = User::factory()->withFirstProject()->create($request->validated());
+        $user = User::factory()->unverified()->withFirstProject()->create($request->validated());
 
         Auth::login($user);
         $request->session()->regenerate();

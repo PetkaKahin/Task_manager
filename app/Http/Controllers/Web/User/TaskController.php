@@ -7,7 +7,6 @@ use App\Http\Requests\Web\Task\StoreTaskRequest;
 use App\Http\Requests\Web\Task\UpdateTaskRequest;
 use App\Models\Category;
 use App\Models\Task;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class TaskController extends Controller
