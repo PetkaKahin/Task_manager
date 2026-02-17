@@ -154,4 +154,12 @@ function taskDelete() {
         color: colors.$text-focus;
     }
 }
+
+@media (max-width: 768px) {
+    .kanban-card {
+        width: 100%;
+        max-width: none;
+        box-sizing: border-box;
+    }
+}
 </style>

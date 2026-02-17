@@ -8,7 +8,7 @@ import {nextTick, onMounted, ref} from "vue";
 
 const kanban = useKanban()
 const store = useKanbanStore()
-const {columns} = storeToRefs(store)
+const {categories} = storeToRefs(store)
 const {elementRef} = useDroppable({
     groups: ['kanban-columns'],
     events: {
@@ -31,10 +31,10 @@ onMounted(() => {
     <div ref="elementRef" class="kanban-board-wrapper">
         <TransitionGroup :name="isReady ? 'columns' : ''" tag="div" class="kanban-board">
             <KanbanColumn
-                v-for="(column, index) in columns"
-                :key="column.id"
-                :column="column"
-                :columns="columns"
+                v-for="(category, index) in categories"
+                :key="category.id"
+                :column="category"
+                :categories="categories"
                 :column-index="index"
             />
         </TransitionGroup>

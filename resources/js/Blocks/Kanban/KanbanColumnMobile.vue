@@ -8,26 +8,26 @@ import {useKanban} from "@/composables/useKanban.ts";
 import {Link} from "@inertiajs/vue3";
 
 interface IProps {
-    column: ICategory;
+    category: ICategory;
     categories: ICategory[]
-    columnIndex: number
+    categoryIndex: number
 }
 
 const props = defineProps<IProps>()
 const kanban = useKanban()
 
-const {elementRef: columnRef, handleDragStart: handleColumnDrag, isDragging, isOvered: columnIsOvered} = useDraggable({
+const {elementRef: columnRef, isDragging, isOvered: columnIsOvered} = useDraggable({
     groups: ['kanban-columns'],
     data: computed(() => ({
         source: props.categories,
-        index: props.columnIndex,
+        index: props.categoryIndex,
     })),
 })
 
 const {elementRef: bodyRef, isOvered: bodyIsOvered} = useDroppable({
     groups: ['kanban-cards'],
     data: computed(() => ({
-        source: props.column.tasks,
+        source: props.category.tasks,
     })),
     events: {
         onDrop: (store, payload) => {
@@ -47,19 +47,6 @@ const {elementRef: bodyRef, isOvered: bodyIsOvered} = useDroppable({
             'kanban-column--is-overed': columnIsOvered,
           }"
     >
-        <header class="kanban-column__header header">
-            <div class="header__left-block">
-                <DragHangle
-                    class-name="kanban-column__drug"
-                    @pointerdown="handleColumnDrag"
-                />
-                <h3 class="header__title">{{ column.title }}</h3>
-            </div>
-            <div class="header__right-block">
-                <span class="header__task-count">{{ column.tasks.length }}</span>
-            </div>
-        </header>
-
         <div
             ref="bodyRef"
             class="kanban-column__body"
@@ -67,17 +54,17 @@ const {elementRef: bodyRef, isOvered: bodyIsOvered} = useDroppable({
         >
             <TransitionGroup name="cards" tag="div" class="kanban-column__cards">
                 <KanbanCard
-                    v-for="(task, index) in column.tasks"
+                    v-for="(task, index) in category.tasks"
                     :key="task.id"
                     :task="task"
-                    :source="column.tasks"
+                    :source="category.tasks"
                     :index="index"
                 />
             </TransitionGroup>
         </div>
 
         <Link :href="route('task.create', {
-            category_id: column.id,
+            category_id: category.id,
         })"
               class="link--no-decor"
         >
@@ -92,8 +79,6 @@ const {elementRef: bodyRef, isOvered: bodyIsOvered} = useDroppable({
 @use '@scss/variables/colors';
 
 .kanban-column {
-    border: 1px solid colors.$border-default;
-    border-radius: 5px;
     padding: 15px;
     background-color: colors.$bg-elevated;
     min-width: 200px;
@@ -124,31 +109,6 @@ const {elementRef: bodyRef, isOvered: bodyIsOvered} = useDroppable({
         }
     }
 }
-
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid colors.$border-default;
-    margin-bottom: 15px;
-    padding-bottom: 15px;
-
-    &__left-block {
-        display: flex;
-        gap: 10px;
-        align-items: center;
-    }
-
-    &__task-count {
-        color: colors.$text-muted;
-        font-weight: 600;
-    }
-
-    &__title {
-        margin: 0;
-    }
-}
-
 
 .add-card {
     display: flex;

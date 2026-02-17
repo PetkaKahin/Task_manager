@@ -26,7 +26,7 @@ export function useKanban() {
 
         // Сохраняем старую позицию ДО обновления, порядок важен!
         const oldPosition: number = oldCategoryIndex
-        const source: ICategory[] = kanbanStore.columns
+        const source: ICategory[] = kanbanStore.categories
         const category: ICategory = source[oldPosition] as ICategory
 
         await nextTick()
@@ -40,7 +40,7 @@ export function useKanban() {
         let moveAfter: number | null = null
 
         if (newPosition > 0) {
-            const prevCategory = kanbanStore.columns[newPosition - 1]
+            const prevCategory = kanbanStore.categories[newPosition - 1]
             moveAfter = prevCategory?.id ?? null
         }
 
@@ -72,17 +72,17 @@ export function useKanban() {
         if (oldTaskIndex === newTaskPosition) {
             if (oldCategoryIndex === newCategoryIndex) return
         } else {
-            const prevTask = kanbanStore.columns[newCategoryIndex]!.tasks[newTaskPosition - 1]
+            const prevTask = kanbanStore.categories[newCategoryIndex]!.tasks[newTaskPosition - 1]
             moveAfter = prevTask?.id ?? null
         }
 
         if (oldCategoryIndex !== newCategoryIndex) {
-            newCategoryId = kanbanStore.columns[newCategoryIndex]!.id
+            newCategoryId = kanbanStore.categories[newCategoryIndex]!.id
         }
 
         taskService.updatePosition(
             projectStore.project!.id,
-            kanbanStore.columns[oldCategoryIndex]!.id,
+            kanbanStore.categories[oldCategoryIndex]!.id,
             task.id,
             moveAfter,
             newCategoryId

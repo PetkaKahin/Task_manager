@@ -6,8 +6,9 @@ import KanbanBoard from "@/Blocks/Kanban/KanbanBoard.vue";
 import {onMounted} from "vue";
 import {useKanbanStore} from "@/stores/kanban.store.ts";
 import {useProjectStore} from "@/stores/project.store.ts";
-import BaseModal from "@/Blocks/Modal/BaseModal.vue";
 import DeleteModal from "@/Blocks/Modal/DeleteModal.vue";
+import {useBreakpoints} from "@/composables/useBreakpoints.ts";
+import KanbanBoardMobile from "@/Blocks/Kanban/KanbanBoardMobile.vue";
 
 interface IProps {
     project: IProject,
@@ -18,6 +19,7 @@ interface IProps {
 const props = defineProps<IProps>()
 const kanbanStore = useKanbanStore()
 const projectStore = useProjectStore()
+const breakpoints = useBreakpoints()
 
 onMounted(() => {
     useSidebar().setProjectsList(props.projects)
@@ -34,7 +36,8 @@ onMounted(() => {
                 {{ props.project.title }}
             </h2>
 
-            <KanbanBoard/>
+            <KanbanBoard v-if="breakpoints.isLaptop.value"/>
+            <KanbanBoardMobile v-else/>
         </main>
     </BaseLayout>
 </template>
@@ -60,6 +63,16 @@ onMounted(() => {
     &__header-text {
         font-weight: 300;
         margin-top: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .home-page {
+        padding: 0;
+
+        &__header-text {
+            display: none;
+        }
     }
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
-    <article class="tiptap-task">
-        <div :class="props.className" class="tiptap-wrapper">
+    <article class="tiptap-task" :class="props.className">
+        <div class="tiptap-wrapper">
             <EditorContent :editor="editor"/>
         </div>
         <span class="text">Markdown</span>

@@ -47,7 +47,7 @@ onMounted(() => {
                     v-model="form.title"
                 />
                 <Tiptap
-                    className="form-tiptap"
+                    className="form__tiptap"
                     :error="form.errors.content"
                     v-model="form.content"
                 />
@@ -84,14 +84,10 @@ onMounted(() => {
         padding: 5px;
     }
 
+    &__input,
     &__tiptap {
-        border: 1px solid colors.$border-default;
-        background-color: colors.$bg-base;
-        border-radius: 5px;
-    }
-
-    &__input, &__tiptap {
         width: sizes.$card-max-width;
+        max-width: sizes.$card-max-width;
     }
 }
 </style>

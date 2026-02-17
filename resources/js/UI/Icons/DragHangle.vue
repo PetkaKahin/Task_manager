@@ -31,10 +31,10 @@ const props = defineProps<{
     cursor: grab;
 
     &__point {
-        height: 3px;
-        width: 3px;
+        height: 4px;
+        width: 4px;
         background-color: colors.$border-default;
-        border-radius: 3px;
+        border-radius: 4px;
     }
 }
 </style>

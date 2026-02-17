@@ -21,7 +21,7 @@ export function useBreakpoints() {
         width,
         isMobile: computed(() => width.value < BREAKPOINTS.mobile),
         isTablet: computed(() => width.value >= BREAKPOINTS.mobile),
-        isLaptop: computed(() => width.value >= BREAKPOINTS.tablet),
+        isLaptop: computed(() => width.value > BREAKPOINTS.tablet),
         isDesktop: computed(() => width.value >= BREAKPOINTS.laptop),
 
         breakpoint: computed(() => {
