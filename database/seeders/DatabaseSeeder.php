@@ -3,18 +3,19 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-    use WithoutModelEvents;
 
     public function run(): void
     {
-        User::factory()->create([
-            'name' => 'admin',
-            'email' => 'admin@example.com',
+        // TODO минимум сделать фабрику под стартовые категории проекта (В планах, В работе, Завершено)
+        // TODO фабрика под стартовые задачи: содержит описание как можно взаимодействовать с проектом
+
+        User::factory()->withFirstProject()->create([
+            'name'     => 'admin',
+            'email'    => 'admin@example.com',
             'password' => '12345',
         ]);
     }
