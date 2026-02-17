@@ -22,7 +22,7 @@ class TaskController extends Controller
         $user = auth()->user();
         $projects = $user->projects()->get();
 
-        return Inertia::render('User/newTask', [
+        return Inertia::render('User/NewTask', [
             'projects' => $projects,
         ]);
     }
@@ -47,7 +47,7 @@ class TaskController extends Controller
         $projects = $user->projects()->get();
         $task = Task::query()->findOrFail($id);
 
-        return Inertia::render('User/editTask', [
+        return Inertia::render('User/EditTask', [
             'projects' => $projects,
             'task' => $task,
         ]);

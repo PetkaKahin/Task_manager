@@ -10,7 +10,10 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    return Inertia::render('Home');
+    if (!Auth::check()) return redirect()->route('login');
+
+    $project = auth()->user()->projects()->first();
+    return redirect()->route('dashboard.index', $project->id);
 })->name('home');
 
 Route::get('/ping', fn() => 'pong');
