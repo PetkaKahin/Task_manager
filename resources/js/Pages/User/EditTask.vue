@@ -8,6 +8,7 @@ import {useForm} from "@inertiajs/vue3";
 import {onMounted} from "vue";
 import {useSidebar} from "@/composables/ui/useSidebar.ts";
 import type {IProject, ITask} from "@/Types/models.ts";
+import {useKanbanStore} from "@/stores/kanban.store.ts";
 
 interface IProps {
     projects: IProject[],
@@ -20,14 +21,23 @@ const form = useForm({
     content: props.task.content,
     category_id: route().params.category_id,
 })
+const kanbanStore = useKanbanStore()
 
 function submit() {
+    const indexColumn = kanbanStore.getColumnIndexByTaskId(props.task.id)
+    const indexTask = kanbanStore.getTaskPosition(props.task.id, indexColumn)
+
+    if (indexColumn === -1 || indexTask === -1) return
+
+    kanbanStore.categories[indexColumn]!.tasks[indexTask]!.content = form.content
     form.patch(route('task.update', props.task.id))
 }
 
 onMounted(() => {
     useSidebar().setProjectsList(props.projects)
 })
+
+// TODO сделать общего родителя для EditTask и NewTask
 </script>
 
 <template>
