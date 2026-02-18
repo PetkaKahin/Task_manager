@@ -6,10 +6,15 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Category\ReorderCategoryRequest;
 use App\Http\Requests\Api\Category\UpdateCategoryRequest;
 use App\Http\Resources\CategoryResource;
+use App\Services\CategoryService;
 use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
+    public function __construct(private CategoryService $categoryService)
+    {
+    }
+
     public function index()
     {
 
@@ -51,27 +56,10 @@ class CategoryController extends Controller
     // TODO добавить переодическую оптимизацию позиции
     public function reorder(ReorderCategoryRequest $request, string $projectId, string $categoryId)
     {
-        //TODO вынести в сервис
-
-        $project = auth()->user()
-            ->projects()->findOrFail($projectId);
-
+        $project = auth()->user()->projects()->findOrFail($projectId);
         $category = $project->categories()->findOrFail($categoryId);
 
-        if ($request->move_after === null) {
-            $first = $project->categories()
-                ->sorted()
-                ->where('id', '!=', $category->id)
-                ->first();
-
-            if ($first) {
-                $category->moveBefore($first);
-            }
-        } else {
-            $category->moveAfter(
-                $project->categories()->findOrFail($request->move_after)
-            );
-        }
+        $this->categoryService->reorder($request, $project, $category);
 
         return new CategoryResource($category);
     }
