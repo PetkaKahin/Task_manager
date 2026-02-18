@@ -13,6 +13,8 @@ onMounted(async () => {
     await nextTick()
     activeCategory.value = categories.value[0]
 })
+
+// TODO сделать общего родителя для KanbanBoard и KanbanCardBoard
 </script>
 
 <template>

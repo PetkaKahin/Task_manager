@@ -4,7 +4,7 @@ import {createInertiaApp} from '@inertiajs/vue3'
 import {createPinia} from 'pinia'
 import VueDnDKitPlugin from '@vue-dnd-kit/core';
 import {ZiggyVue} from 'ziggy-js';
-import {Ziggy} from "@/ziggy.js";
+import {Ziggy} from "./ziggy.js";
 
 createInertiaApp({
     resolve: name => {

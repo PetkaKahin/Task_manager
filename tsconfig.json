@@ -13,7 +13,8 @@
         "composite": true,
         "baseUrl": ".",
         "paths": {
-            "@/*": ["./resources/js/*"]
+            "@/*": ["./resources/js/*"],
+            "@scss/*": ["resources/scss/*"],
         },
         "target": "ES2020",
         "module": "ESNext",

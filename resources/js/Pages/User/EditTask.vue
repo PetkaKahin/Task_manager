@@ -33,7 +33,6 @@ onMounted(() => {
 <template>
     <BaseLayout>
         <section class="new-task">
-            <h2>Новая задача</h2>
             <form
                 class="form"
                 @submit.prevent="submit"
@@ -88,6 +87,28 @@ onMounted(() => {
     &__tiptap {
         width: sizes.$card-max-width;
         max-width: sizes.$card-max-width;
+    }
+}
+
+@media (max-width: 425px) {
+    .new-task {
+        margin: 0;
+        height: 100%;
+    }
+
+    .form {
+        border: none;
+        border-radius: 0;
+        width: 100%;
+        height: 100%;
+        padding: 20px 5px;
+        box-sizing: border-box;
+
+        &__input,
+        &__tiptap {
+            width: 100%;
+            max-width: none;
+        }
     }
 }
 </style>

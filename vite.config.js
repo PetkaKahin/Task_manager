@@ -16,11 +16,12 @@ export default defineConfig({
         watch: {
             ignored: ['**/storage/framework/views/**'],
         },
-        host: 'localhost',
+        host: '0.0.0.0',
         cors: true,
         hmr: {
             host: 'localhost',
         },
+        origin: 'http://localhost:5173',
     },
     resolve: {
         alias: {

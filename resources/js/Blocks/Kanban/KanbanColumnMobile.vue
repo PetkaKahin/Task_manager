@@ -6,6 +6,7 @@ import DragHangle from "@/UI/Icons/DragHangle.vue";
 import type {ICategory} from "@/Types/models.ts";
 import {useKanban} from "@/composables/useKanban.ts";
 import {Link} from "@inertiajs/vue3";
+import KanbanCardMobile from "@/Blocks/Kanban/KanbanCardMobile.vue";
 
 interface IProps {
     category: ICategory;
@@ -36,6 +37,8 @@ const {elementRef: bodyRef, isOvered: bodyIsOvered} = useDroppable({
         },
     },
 })
+
+// TODO сделать общего родителя для KanbanColumn и KanbanColumnMobile
 </script>
 
 <template>
@@ -53,7 +56,7 @@ const {elementRef: bodyRef, isOvered: bodyIsOvered} = useDroppable({
             :class="{ 'kanban-column__body--is-over': bodyIsOvered }"
         >
             <TransitionGroup name="cards" tag="div" class="kanban-column__cards">
-                <KanbanCard
+                <KanbanCardMobile
                     v-for="(task, index) in category.tasks"
                     :key="task.id"
                     :task="task"

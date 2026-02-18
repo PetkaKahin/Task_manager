@@ -30,8 +30,8 @@ onMounted(() => {
 <template>
     <BaseLayout>
         <div class="new-project">
-            <h2>Создание проекта</h2>
             <form class="form" @submit.prevent="submit">
+                <h2 class="form__header-text">Создание проекта</h2>
                 <TextInput
                     id="title"
                     name="title"
@@ -49,7 +49,10 @@ onMounted(() => {
 @use "@scss/variables/colors";
 
 .new-project {
-    margin: 50px;
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .form {
@@ -63,8 +66,29 @@ onMounted(() => {
     border: 1px solid colors.$border-default;
     border-radius: 5px;
 
+    &__header-text {
+        margin: 0 10px 10px 10px;
+        text-align: center;
+    }
+
     &__submit-button {
         padding: 5px;
+    }
+}
+
+@media (max-width: 425px) {
+    .new-project {
+        margin: 0;
+        height: 100%;
+    }
+
+    .form {
+        border: none;
+        border-radius: 0;
+        width: 100%;
+        height: 100%;
+        padding: 20px 20px;
+        box-sizing: border-box;
     }
 }
 </style>

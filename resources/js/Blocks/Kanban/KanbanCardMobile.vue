@@ -49,6 +49,8 @@ function taskDelete() {
     )
     modal.open()
 }
+
+// TODO сделать общего родителя для KanbanCard и KanbanCardMobile
 </script>
 
 <template>
@@ -100,7 +102,8 @@ function taskDelete() {
     border-radius: 5px;
     background-color: colors.$bg-base;
     padding: 10px;
-    max-width: sizes.$card-max-width;
+    width: 100%;
+    box-sizing: border-box;
 
     display: flex;
     justify-content: space-between;
@@ -121,7 +124,7 @@ function taskDelete() {
 
     &__right-block {
         align-items: flex-end;
-        gap: 10px;
+        gap: 15px;
     }
 }
 
@@ -148,14 +151,6 @@ function taskDelete() {
 
     &:hover {
         color: colors.$text-focus;
-    }
-}
-
-@media (max-width: 768px) {
-    .kanban-card {
-        width: 100%;
-        max-width: none;
-        box-sizing: border-box;
     }
 }
 </style>
