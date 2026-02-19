@@ -16,12 +16,7 @@ class CategoryController extends Controller
 
     public function create()
     {
-        $user = auth()->user();
-        $projects = $user->projects()->get();
 
-        return Inertia::render('User/newTask', [
-            'projects' => $projects,
-        ]);
     }
 
     public function store(Request $request)

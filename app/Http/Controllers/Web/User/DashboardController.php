@@ -16,11 +16,8 @@ class DashboardController extends Controller
             ->with(['tasks' => fn ($query) => $query->sorted()])
             ->get();
 
-        $projects = $user->projects()->select(['projects.id', 'projects.title'])->get();
-
         return Inertia::render('User/Dashboard', [
             'project'    => $project,
-            'projects'   => $projects,
             'categories' => $categories,
         ]);
     }

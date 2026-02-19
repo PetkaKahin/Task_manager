@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\ProjectController;
 use App\Http\Controllers\Api\TaskController;
 use Illuminate\Support\Facades\Route;
 
@@ -16,4 +17,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::patch('projects/{projectId}/categories/{categoryId}/tasks/{taskId}/reorder', [TaskController::class, 'reorder'])
         ->name('api.tasks.reorder');
+
+    Route::get('projects', [ProjectController::class, 'index'])
+        ->name('api.projects.index');
 });

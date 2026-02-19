@@ -17,12 +17,7 @@ class ProjectController extends Controller
 
     public function create()
     {
-        $user = auth()->user();
-        $projects = $user->projects()->get();
-
-        return Inertia::render('User/NewProject', [
-            'projects' => $projects,
-        ]);
+        return Inertia::render('User/Project/NewProject');
     }
 
     public function store(StoreProjectRequest $request)

@@ -18,12 +18,7 @@ class TaskController extends Controller
 
     public function create()
     {
-        $user = auth()->user();
-        $projects = $user->projects()->get();
-
-        return Inertia::render('User/NewTask', [
-            'projects' => $projects,
-        ]);
+        return Inertia::render('User/Task/NewTask');
     }
 
     public function store(StoreTaskRequest $request)
@@ -42,12 +37,9 @@ class TaskController extends Controller
 
     public function edit(string $id)
     {
-        $user = auth()->user();
-        $projects = $user->projects()->get();
         $task = Task::query()->findOrFail($id);
 
-        return Inertia::render('User/EditTask', [
-            'projects' => $projects,
+        return Inertia::render('User/Task/EditTask', [
             'task' => $task,
         ]);
     }
