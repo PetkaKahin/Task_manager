@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import BaseLayout from "@/Layouts/BaseLayout.vue";
 import type {ICategory, IProject} from "@/Types/models.ts";
-import {useSidebar} from "@/composables/ui/useSidebar.ts";
 import KanbanBoard from "@/Blocks/Kanban/KanbanBoard.vue";
 import {onMounted} from "vue";
 import {useKanbanStore} from "@/stores/kanban.store.ts";
@@ -12,7 +11,6 @@ import KanbanBoardMobile from "@/Blocks/Kanban/KanbanBoardMobile.vue";
 
 interface IProps {
     project: IProject,
-    projects: IProject[],
     categories: ICategory[],
 }
 
@@ -22,7 +20,6 @@ const projectStore = useProjectStore()
 const breakpoints = useBreakpoints()
 
 onMounted(() => {
-    useSidebar().setProjectsList(props.projects)
     kanbanStore.setColumns(props.categories)
     projectStore.setProject(props.project)
 })

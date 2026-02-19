@@ -79,7 +79,7 @@ const submit = () => {
             {{ form.errors.error }}
         </span>
 
-                <BaseButton :disabled="form.processing" className="form__sumbit" text="Зарегистрироваться"/>
+                <BaseButton :disabled="form.processing" className="form__submit" type="submit" text="Зарегистрироваться"/>
             </form>
 
             <div class="links">
@@ -112,7 +112,7 @@ const submit = () => {
         text-align: center;
     }
 
-    &__sumbit {
+    &__submit {
         margin: 20px auto 0 auto;
         padding: 3px 8px;
     }

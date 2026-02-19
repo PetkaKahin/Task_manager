@@ -4,8 +4,25 @@ import Header from "@/Blocks/Header.vue";
 import AsideMenu from "@/Blocks/AsideMenu.vue";
 import {useSidebar} from "@/composables/ui/useSidebar.ts";
 import BaseBackdrop from "@/UI/Backdrops/BaseBackdrop.vue";
+import {onMounted} from "vue";
+import {apiRequest} from "@/shared/api/apiRequest.ts";
+import {route} from "ziggy-js";
+import type {IProject} from "@/Types/models.ts";
+import {useProjectStore} from "@/stores/project.store.ts";
+import {sidebarService} from "@/services/sidebarService.ts";
 
 const {isOpen} = useSidebar()
+const projectStore = useProjectStore()
+
+sidebarService().innit()
+
+onMounted(async () => {
+    apiRequest.get(route('api.projects.index')).then((response) => {
+        projectStore.setProjects(response.data as IProject[])
+    }).catch((error: Error) => {
+        console.log(error)
+    })
+})
 </script>
 
 <template>

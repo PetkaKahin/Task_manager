@@ -35,7 +35,7 @@ export function useKanban() {
 
         if (newPosition == oldPosition) return
 
-        if (projectStore.project === undefined) return
+        if (projectStore.currentProject === undefined) return
 
         let moveAfter: number | null = null
 
@@ -44,7 +44,7 @@ export function useKanban() {
             moveAfter = prevCategory?.id ?? null
         }
 
-        categoryService.updatePosition(projectStore.project.id, category.id, moveAfter)
+        categoryService.updatePosition(projectStore.currentProject.id, category.id, moveAfter)
     }
 
     /**
@@ -81,7 +81,7 @@ export function useKanban() {
         }
 
         taskService.updatePosition(
-            projectStore.project!.id,
+            projectStore.currentProject!.id,
             kanbanStore.categories[oldCategoryIndex]!.id,
             task.id,
             moveAfter,

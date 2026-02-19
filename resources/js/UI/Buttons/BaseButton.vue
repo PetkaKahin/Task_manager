@@ -3,7 +3,7 @@ interface IProps {
     text?: string,
     className?: string,
     action?: () => void,
-    type?: string,
+    type?: "button" | "submit" | "reset" | undefined,
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -11,8 +11,7 @@ const props = withDefaults(defineProps<IProps>(), {
 })
 
 function action() {
-    if (props.action)
-        props.action()
+    if (props.action) props.action()
 }
 </script>
 
@@ -20,9 +19,10 @@ function action() {
     <button
         class="base-button"
         :class="props.className"
+        :type="props.type ?? 'button'"
         @click="action"
     >
-        <span class="base-button__text text">{{ props.text}}</span>
+        <span class="base-button__text text">{{ props.text }}</span>
     </button>
 </template>
 

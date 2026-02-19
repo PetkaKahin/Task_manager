@@ -1,16 +1,23 @@
 import {defineStore} from 'pinia';
-import {readonly, type Ref, ref} from 'vue';
+import {type Ref, ref} from 'vue';
 import type {IProject} from "@/Types/models.ts";
 
 export const useProjectStore = defineStore('project', () => {
-    const project: Ref<IProject | undefined> = ref<IProject>()
+    const currentProject: Ref<IProject | undefined> = ref<IProject>()
+    const projects: Ref<IProject[] | undefined> = ref<IProject[]>()
 
     function setProject(newProject: IProject) {
-        project.value = newProject
+        currentProject.value = newProject
+    }
+
+    function setProjects(newProjects: IProject[]) {
+        projects.value = newProjects
     }
 
     return {
-        project,
-        setProject
+        currentProject,
+        projects,
+        setProjects,
+        setProject,
     };
 });
