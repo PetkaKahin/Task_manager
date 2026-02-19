@@ -24,6 +24,7 @@ class UpdateTaskRequest extends FormRequest
             'content' => [
                 'string',
                 'nullable',
+                'max:65535',
             ],
         ];
     }
