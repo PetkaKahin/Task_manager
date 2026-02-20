@@ -3,12 +3,11 @@ import {DnDOperations, useDroppable} from '@vue-dnd-kit/core';
 import {useKanbanStore} from "@/stores/kanban.store.ts";
 import {storeToRefs} from "pinia";
 import {useKanban} from "@/composables/ui/useKanban.ts";
-import {nextTick, onMounted, ref} from "vue";
 import KanbanCategory from "@/Blocks/Kanban/KanbanCategory.vue";
 
 const kanban = useKanban()
 const store = useKanbanStore()
-const {categories} = storeToRefs(store)
+const {categories, animationsEnabled} = storeToRefs(store)
 const {elementRef} = useDroppable({
     groups: ['kanban-columns'],
     events: {
@@ -18,18 +17,11 @@ const {elementRef} = useDroppable({
         },
     },
 })
-const isReady = ref(false)
-
-onMounted(() => {
-    nextTick(() => {
-        isReady.value = true
-    })
-})
 </script>
 
 <template>
     <div ref="elementRef" class="kanban-board-wrapper">
-        <TransitionGroup :name="isReady ? 'categories' : ''" tag="div" class="kanban-board">
+        <TransitionGroup :name="animationsEnabled ? 'categories' : ''" tag="div" class="kanban-board">
             <KanbanCategory
                 v-for="(category, index) in categories"
                 :key="category.id"

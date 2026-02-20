@@ -31,6 +31,7 @@ onMounted(async () => {
 
         <KanbanCategoryMobile
             v-if="activeCategory"
+            :key="activeCategory.id"
             :category="activeCategory"
             :categories="categories"
             :category-index="store.getColumnPosition(activeCategory.id)"

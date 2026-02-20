@@ -5,6 +5,8 @@ import {useKanbanCategory} from "@/composables/ui/useKanbanCategory.ts";
 import KanbanCard from "@/Blocks/Kanban/KanbanCard.vue";
 import {computed} from "vue";
 import {useProjectStore} from "@/stores/project.store.ts";
+import {useKanbanStore} from "@/stores/kanban.store.ts";
+import {storeToRefs} from "pinia";
 
 interface IProps {
     category: ICategory
@@ -14,6 +16,7 @@ interface IProps {
 }
 
 const props = defineProps<IProps>()
+const {animationsEnabled} = storeToRefs(useKanbanStore())
 const {getDraggableData, getDroppableData} = useKanbanCategory()
 const {elementRef: bodyRef, isOvered: bodyIsOvered} = getDroppableData(props.category.tasks)
 const {
@@ -43,7 +46,7 @@ const {
             class="kanban-category__body"
             :class="{ 'kanban-category__body--is-over': bodyIsOvered }"
         >
-            <TransitionGroup name="cards" tag="div" class="kanban-category__cards">
+            <TransitionGroup :name="animationsEnabled ? 'cards' : ''" tag="div" class="kanban-category__cards">
                 <KanbanCard
                     v-for="(task, index) in category.tasks"
                     :key="task.id"

@@ -1,5 +1,5 @@
 import {defineStore} from 'pinia';
-import {ref} from 'vue';
+import {nextTick, ref} from 'vue';
 import type {ICategory, ITask} from "@/Types/models.ts";
 
 export interface IData {
@@ -9,6 +9,7 @@ export interface IData {
 
 export const useKanbanStore = defineStore('kanban', () => {
     const categories = ref<ICategory[]>([])
+    const animationsEnabled = ref(false)
 
     function addTask(columnId: number, task: ITask) {
         const column = categories.value.find(column => column.id === columnId)
@@ -27,7 +28,9 @@ export const useKanbanStore = defineStore('kanban', () => {
     }
 
     function setColumns(newColumns: ICategory[]) {
+        animationsEnabled.value = false
         categories.value = newColumns
+        nextTick(() => { animationsEnabled.value = true })
     }
 
     function getColumnIndexByTaskId(taskId: number): number {
@@ -47,6 +50,7 @@ export const useKanbanStore = defineStore('kanban', () => {
 
     return {
         categories,
+        animationsEnabled,
         addTask,
         addColumn,
         deleteTask,
