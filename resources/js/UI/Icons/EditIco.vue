@@ -19,7 +19,6 @@ const props = withDefaults(defineProps<Props>(), {
         fill="none"
         class="edit-ico"
     >
-        <rect :width="props.size" :height="props.size" x="0.000000" y="0.000000" />
         <path d="M1 19L19 19" :stroke="props.color" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.500000" />
         <path d="M3 15L6.6586 15L17 4.65405L13.3476 1L3 11.36L3 15Z" fill-rule="nonzero" :stroke="props.color" stroke-linejoin="round" stroke-width="1.500000" />
     </svg>

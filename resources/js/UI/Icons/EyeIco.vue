@@ -1,8 +1,8 @@
 <script setup lang="ts">
 interface IProps {
-    size?: number,
-    color?: string,
-    class?: string,
+    className?: string
+    size?: number
+    color?: string
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -12,9 +12,8 @@ const props = withDefaults(defineProps<IProps>(), {
 </script>
 
 <template>
-    <svg class="eye-ico" :class="props.class" viewBox="0 0 20 19" xmlns="http://www.w3.org/2000/svg"
+    <svg class="eye-ico" :class="props.className" viewBox="0 0 20 19" xmlns="http://www.w3.org/2000/svg"
          :width="props.size" :height="props.size" fill="none">
-        <rect :width="props.size" :height="props.size" x="0.000000" y="0.000000"/>
         <path
             d="M19 10.8672C19 8.02819 14.9706 3.86719 10 3.86719C5.02945 3.86719 1 8.03109 1 10.8672C1 13.7033 5.02945 17.8672 10 17.8672C14.9706 17.8672 19 13.7062 19 10.8672Z"
             fill-rule="evenodd" :stroke="props.color" stroke-linejoin="round" stroke-width="1.500000"/>
