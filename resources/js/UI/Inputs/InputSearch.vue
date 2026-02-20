@@ -7,13 +7,13 @@ interface IProps {
     placeholder?: string,
 }
 
-interface Emits {
+interface IEmits {
     search: [value: string],
 }
 
 const searchField = ref<string>("");
 const props = defineProps<IProps>()
-const emit = defineEmits<Emits>()
+const emit = defineEmits<IEmits>()
 
 function search() {
     emit('search', searchField.value)

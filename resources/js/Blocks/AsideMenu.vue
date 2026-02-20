@@ -5,8 +5,10 @@ import BaseDivider from "@/UI/Dividers/BaseDivider.vue";
 import {useSidebar} from "@/composables/ui/useSidebar.ts";
 import {Link} from "@inertiajs/vue3";
 import {useProjectStore} from "@/stores/project.store.ts";
+import EditIco from "@/UI/Icons/EditIco.vue";
 
 const {isDesktop, projectsList} = useSidebar()
+const {currentProject} = useProjectStore()
 
 function toggleSidebar() {
     useSidebar().toggle()
@@ -28,7 +30,7 @@ function toggleSidebar() {
         />
 
         <Link :href="route('project.create', {
-            from_project_id: useProjectStore()!.currentProject!.id
+            from_project_id: useProjectStore()?.currentProject?.id
         })">
             <BaseButton text="+ Добавить проект" className="sidebar-menu__add-project"/>
         </Link>
@@ -38,10 +40,18 @@ function toggleSidebar() {
             <ul class="sidebar-menu__list projects-list">
                 <li
                     v-for="project in projectsList"
-                    class="projects-list__item"
+                    class="projects-list__item item"
                 >
-                    <Link :href="route('dashboard.index', project.id)">
-                        <span>{{ project.title }}</span>
+                    <Link :href="route('dashboard.index', project.id)" class="item__link">
+                        <div class="item__wrapper">
+                            <span class="item__title">{{ project.title }}</span>
+                            <Link :href="route('project.edit', {
+                                id: project.id,
+                                from_project_id: currentProject?.id
+                            })">
+                                <EditIco class="item__ico" :size="16"/>
+                            </Link>
+                        </div>
                     </Link>
                 </li>
             </ul>
@@ -94,8 +104,49 @@ function toggleSidebar() {
     padding: 0;
     color: colors.$text-primary;
 
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+
     &__item {
         padding: 5px 0;
+        list-style-type: none;
+    }
+}
+
+.item {
+    border: 1px solid colors.$border-default;
+    border-radius: 5px;
+    background-color: colors.$bg-elevated;
+    padding: 5px 8px;
+
+    &:hover {
+        border-color: colors.$border-focus;
+    }
+
+    &__link {
+        text-decoration: none;
+
+        &:hover {
+            color: colors.$text-primary;
+        }
+    }
+
+    &__title {
+
+    }
+
+    &__wrapper {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    &__ico {
+        z-index: 1;
+
+        &:hover {
+            color: colors.$border-focus;
+        }
     }
 }
 

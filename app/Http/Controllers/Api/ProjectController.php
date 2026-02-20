@@ -11,7 +11,7 @@ class ProjectController extends Controller
     public function index()
     {
         $user = auth()->user();
-        $projects = $user->projects()->get();
+        $projects = $user->projects()->get()->sortByDesc('updated_at');
 
         return ProjectResource::collection($projects)->resolve();
     }

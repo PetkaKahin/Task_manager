@@ -7,7 +7,6 @@ use App\Http\Controllers\Web\User\DashboardController;
 use App\Http\Controllers\Web\User\ProjectController;
 use App\Http\Controllers\Web\User\TaskController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 Route::get('/', function () {
     if (!Auth::check()) return redirect()->route('login');
@@ -31,12 +30,15 @@ Route::middleware(['guest', 'throttle:60,1'])->group(function () {
 Route::middleware('auth:web')->group(function () {
     Route::get('projects/new/', [ProjectController::class, 'create'])->name('project.create');
     Route::post('projects/new/', [ProjectController::class, 'store'])->name('project.store');
+    Route::get('projects/{id}/edit/', [ProjectController::class, 'edit'])->name('project.edit');
+    Route::patch('projects/{id}/', [ProjectController::class, 'update'])->name('project.update');
+    Route::delete('projects/{id}/', [TaskController::class, 'destroy'])->name('task.destroy');
 
     Route::get('tasks/new/', [TaskController::class, 'create'])->name('task.create');
     Route::get('tasks/{id}/edit/', [TaskController::class, 'edit'])->name('task.edit');
     Route::post('tasks/new/', [TaskController::class, 'store'])->name('task.store');
-    Route::delete('tasks/{id}/', [TaskController::class, 'destroy'])->name('task.destroy');
     Route::patch('tasks/{id}/', [TaskController::class, 'update'])->name('task.update');
+    Route::delete('tasks/{id}/', [TaskController::class, 'destroy'])->name('task.destroy');
 
     Route::get('dashboard/{projectId}/', [DashboardController::class, 'index'])->name('dashboard.index');
 

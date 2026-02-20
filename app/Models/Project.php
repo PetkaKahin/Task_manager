@@ -13,11 +13,7 @@ class Project extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'id',
-        'name',
-        'description',
-        'created_at',
-        'updated_at',
+        'title',
     ];
 
     public function users(): BelongsToMany
