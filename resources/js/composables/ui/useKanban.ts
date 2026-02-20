@@ -11,6 +11,8 @@ interface IExtractedTaskData {
     oldTaskIndex: number
 }
 
+export const cardDragState = { hasMoved: false }
+
 export function useKanban() {
     const kanbanStore = useKanbanStore()
     const projectStore = useProjectStore()

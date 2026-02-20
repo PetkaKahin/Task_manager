@@ -3,7 +3,7 @@ import {useKanbanStore} from "@/stores/kanban.store.ts";
 import {storeToRefs} from "pinia";
 import {nextTick, onMounted, ref} from "vue";
 import type {ICategory} from "@/Types/models.ts";
-import KanbanColumnMobile from "@/Blocks/Kanban/KanbanColumnMobile.vue";
+import KanbanCategoryMobile from "@/Blocks/Kanban/KanbanCategoryMobile.vue";
 
 const store = useKanbanStore()
 const {categories} = storeToRefs(store)
@@ -13,8 +13,6 @@ onMounted(async () => {
     await nextTick()
     activeCategory.value = categories.value[0]
 })
-
-// TODO сделать общего родителя для KanbanBoard и KanbanCardBoard
 </script>
 
 <template>
@@ -31,7 +29,7 @@ onMounted(async () => {
             </h3>
         </header>
 
-        <KanbanColumnMobile
+        <KanbanCategoryMobile
             v-if="activeCategory"
             :category="activeCategory"
             :categories="categories"

@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import {DnDOperations, useDroppable} from '@vue-dnd-kit/core';
-import KanbanColumn from './KanbanColumn.vue';
 import {useKanbanStore} from "@/stores/kanban.store.ts";
 import {storeToRefs} from "pinia";
-import {useKanban} from "@/composables/useKanban.ts";
+import {useKanban} from "@/composables/ui/useKanban.ts";
 import {nextTick, onMounted, ref} from "vue";
+import KanbanCategory from "@/Blocks/Kanban/KanbanCategory.vue";
 
 const kanban = useKanban()
 const store = useKanbanStore()
@@ -29,13 +29,13 @@ onMounted(() => {
 
 <template>
     <div ref="elementRef" class="kanban-board-wrapper">
-        <TransitionGroup :name="isReady ? 'columns' : ''" tag="div" class="kanban-board">
-            <KanbanColumn
+        <TransitionGroup :name="isReady ? 'categories' : ''" tag="div" class="kanban-board">
+            <KanbanCategory
                 v-for="(category, index) in categories"
                 :key="category.id"
-                :column="category"
+                :category="category"
                 :categories="categories"
-                :column-index="index"
+                :category-index="index"
             />
         </TransitionGroup>
     </div>
@@ -56,17 +56,17 @@ onMounted(() => {
 </style>
 
 <style lang="scss">
-.columns-move {
+.categories-move {
     transition: transform 0.2s ease;
 }
 
-.columns-enter-active,
-.columns-leave-active {
+.categories-enter-active,
+.categories-leave-active {
     transition: all 0.2s ease;
 }
 
-.columns-enter-from,
-.columns-leave-to {
+.categories-enter-from,
+.categories-leave-to {
     opacity: 0;
 }
 </style>

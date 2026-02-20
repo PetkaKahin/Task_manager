@@ -1,35 +1,31 @@
 <script setup lang="ts">
-import {useDraggable} from '@vue-dnd-kit/core'
-import {computed} from 'vue'
-import DragHangle from "@/UI/Icons/DragHangle.vue";
+import DragHandleIco from "@/UI/Icons/DragHandleIco.vue";
 import type {ITask} from "@/Types/models.ts";
 import {EditorContent, useEditor} from "@tiptap/vue-3";
 import StarterKit from "@tiptap/starter-kit";
 import EditIco from "@/UI/Icons/EditIco.vue";
 import DeleteIco from "@/UI/Icons/DeleteIco.vue";
-import axios from "axios";
 import {route} from "ziggy-js";
-import {useKanbanStore} from "@/stores/kanban.store.ts";
-import {useModal} from "@/composables/ui/useModal.ts";
 import {Link} from "@inertiajs/vue3";
+import {useKanbanCard} from "@/composables/ui/useKanbanCard.ts";
+import {computed} from "vue";
+import {useProjectStore} from "@/stores/project.store.ts";
 
 interface IProps {
     task: ITask
     source: any[]
     index: number
+    iconsSize?: number
 }
 
-const kanbanStore = useKanbanStore()
-const modal = useModal()
 const props = defineProps<IProps>()
 
-const {elementRef, handleDragStart, isDragging, isOvered} = useDraggable({
-    data: computed(() => ({
-        source: props.source,
-        index: props.index,
-    })),
-    groups: ['kanban-cards'],
-})
+const {
+    elementRef,
+    handleDragStart,
+    isDragging,
+    isOvered
+} = useKanbanCard().getDraggableData(props.source, computed(() => props.index));
 
 const editor = useEditor({
     content: props.task.content,
@@ -39,16 +35,7 @@ const editor = useEditor({
     editable: false,
 })
 
-function taskDelete() {
-    modal.addActionClosing(
-        'delete.task',
-        () => {
-            kanbanStore.deleteTask(props.task)
-            axios.delete(route('task.destroy', props.task.id))
-        }
-    )
-    modal.open()
-}
+const taskDelete = () => useKanbanCard().taskDelete(props.task)
 </script>
 
 <template>
@@ -68,18 +55,24 @@ function taskDelete() {
                 <h4 class="header__title">{{ task.title }}</h4>
             </header>
             <div class="kanban-card__content">
-                <EditorContent :editor="editor" />
+                <EditorContent :editor="editor"/>
             </div>
         </div>
         <div class="kanban-card__right-block">
-            <DragHangle
-                class-name="kanban-card__drag"
+            <DragHandleIco
+                className="kanban-card__drag"
                 @pointerdown="handleDragStart"
+                :size="iconsSize ? iconsSize - 3 : 14"
             />
-            <Link :href="route('task.edit', props.task.id)">
-                <EditIco class="ico" :size="16"/>
+            <Link
+                :href="route('task.edit', {
+                    id:props.task.id, from_project_id:
+                    useProjectStore()!.currentProject!.id
+                })"
+            >
+                <EditIco class="ico" :size="iconsSize ?? 16"/>
             </Link>
-            <DeleteIco @click="taskDelete" class="ico" :size="16"/>
+            <DeleteIco @click="taskDelete" class="ico" :size="iconsSize ?? 16"/>
         </div>
     </article>
 </template>
@@ -95,7 +88,6 @@ function taskDelete() {
 }
 
 .kanban-card {
-    touch-action: none;
     border: 1px solid colors.$border-default;
     border-radius: 5px;
     background-color: colors.$bg-base;
@@ -122,6 +114,11 @@ function taskDelete() {
     &__right-block {
         align-items: flex-end;
         gap: 10px;
+    }
+
+    &__drag {
+        color: colors.$border-default;
+        touch-action: none; // обязательно для управления тачами
     }
 }
 
