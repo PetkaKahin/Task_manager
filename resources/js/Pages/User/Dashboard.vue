@@ -8,6 +8,8 @@ import {useProjectStore} from "@/stores/project.store.ts";
 import DeleteModal from "@/Blocks/Modal/DeleteModal.vue";
 import {useBreakpoints} from "@/composables/useBreakpoints.ts";
 import KanbanBoardMobile from "@/Blocks/Kanban/KanbanBoardMobile.vue";
+import EditIco from "@/UI/Icons/EditIco.vue";
+import {Link} from "@inertiajs/vue3";
 
 interface IProps {
     project: IProject,
@@ -33,9 +35,17 @@ watch(() => props.project, (project) => {
     <BaseLayout>
         <DeleteModal/>
         <main class="home-page">
-            <h2 class="home-page__header-text">
-                {{ props.project.title }}
-            </h2>
+            <header class="home-page__header header">
+                <h2 class="header__text">
+                    {{ props.project.title }}
+                </h2>
+                <Link :href="route('project.edit', {
+                    id: project.id,
+                    from_project_id: project,
+                })">
+                    <EditIco class="header__ico" :size="22"/>
+                </Link>
+            </header>
 
             <KanbanBoard v-if="breakpoints.isLaptop.value"/>
             <KanbanBoardMobile v-else/>
@@ -60,20 +70,35 @@ watch(() => props.project, (project) => {
         min-height: 0;
         overflow-x: auto;
     }
+}
 
-    &__header-text {
+.header {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    margin-bottom: 20px;
+
+    &__text {
         font-weight: 300;
-        margin-top: 0;
+        margin: 0;
+    }
+
+    &__ico {
+        color: colors.$text-disabled;
+
+        &:hover {
+            color: colors.$text-focus;
+        }
     }
 }
 
 @media (max-width: 768px) {
     .home-page {
         padding: 0;
+    }
 
-        &__header-text {
-            display: none;
-        }
+    .header {
+        display: none;
     }
 }
 </style>
