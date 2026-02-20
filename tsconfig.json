@@ -3,7 +3,8 @@
     "include": [
         "resources/js/**/*",
         "resources/**/*.d.ts",
-        "resources/js/**/*.vue"
+        "resources/js/shims-vue.d.ts",
+        "resources/js/**/*.vue",
     ],
     "exclude": [
         "src/**/__tests__/*",

@@ -1,1 +1,1 @@
-FROM node:25-alpine3.22
+FROM node:lts-alpine3.22
