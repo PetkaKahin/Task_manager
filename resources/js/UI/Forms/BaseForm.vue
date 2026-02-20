@@ -1,6 +1,8 @@
 <script setup lang="ts">
 
 import BaseButton from "@/UI/Buttons/BaseButton.vue";
+import {router} from "@inertiajs/vue3";
+import {route} from "ziggy-js";
 
 interface IProps {
     className?: string,
@@ -17,8 +19,7 @@ function submit() {
 
 const goBack = () => {
     if (props.goBackAction) return props.goBackAction()
-
-    window.history.back()
+    else router.visit(route("home"))
 }
 
 // TODO сделать гибкий шаблон для форм: NewProject, EditProject, NewCategory, EditCategory

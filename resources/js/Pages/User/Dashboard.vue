@@ -2,7 +2,7 @@
 import BaseLayout from "@/Layouts/BaseLayout.vue";
 import type {ICategory, IProject} from "@/Types/models.ts";
 import KanbanBoard from "@/Blocks/Kanban/KanbanBoard.vue";
-import {onMounted} from "vue";
+import {watch} from "vue";
 import {useKanbanStore} from "@/stores/kanban.store.ts";
 import {useProjectStore} from "@/stores/project.store.ts";
 import DeleteModal from "@/Blocks/Modal/DeleteModal.vue";
@@ -19,10 +19,14 @@ const kanbanStore = useKanbanStore()
 const projectStore = useProjectStore()
 const breakpoints = useBreakpoints()
 
-onMounted(() => {
-    kanbanStore.setColumns(props.categories)
-    projectStore.setProject(props.project)
-})
+// Для навигации Inertia назад
+watch(() => props.categories, (categories) => {
+    kanbanStore.setColumns(categories)
+}, { immediate: true })
+watch(() => props.project, (project) => {
+    projectStore.setProject(project)
+}, { immediate: true })
+
 </script>
 
 <template>

@@ -4,6 +4,7 @@ import BaseButton from "@/UI/Buttons/BaseButton.vue";
 import BaseDivider from "@/UI/Dividers/BaseDivider.vue";
 import {useSidebar} from "@/composables/ui/useSidebar.ts";
 import {Link} from "@inertiajs/vue3";
+import {useProjectStore} from "@/stores/project.store.ts";
 
 const {isDesktop, projectsList} = useSidebar()
 
@@ -26,7 +27,9 @@ function toggleSidebar() {
             v-if="isDesktop === false"
         />
 
-        <Link :href="route('project.create')">
+        <Link :href="route('project.create', {
+            from_project_id: useProjectStore()!.currentProject!.id
+        })">
             <BaseButton text="+ Добавить проект" className="sidebar-menu__add-project"/>
         </Link>
 

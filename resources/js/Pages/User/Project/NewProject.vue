@@ -4,6 +4,7 @@ import BaseLayout from "@/Layouts/BaseLayout.vue";
 import TextInput from "@/UI/Inputs/TextInput.vue";
 import {useForm, usePage} from "@inertiajs/vue3";
 import BaseForm from "@/UI/Forms/BaseForm.vue";
+import {useGoBack} from "@/composables/useGoBack.ts";
 
 const form = useForm({
     title: '',
@@ -18,7 +19,7 @@ function submit() {
 <template>
     <BaseLayout>
         <section class="new-project">
-            <BaseForm :submitAction="submit" className="form">
+            <BaseForm :submitAction="submit" :goBackAction="useGoBack().dashboard" className="form">
                 <template #header>
                     <h2 class="form__header-text">Новый проект</h2>
                 </template>

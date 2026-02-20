@@ -3,6 +3,8 @@
 import BaseLayout from "@/Layouts/BaseLayout.vue";
 import {useForm} from "@inertiajs/vue3";
 import TaskForm from "@/UI/Forms/TaskForm.vue";
+import {route} from "ziggy-js";
+import {useGoBack} from "@/composables/useGoBack.ts";
 
 const form = useForm({
     title: '',
@@ -18,7 +20,7 @@ function submit() {
 <template>
     <BaseLayout>
         <section class="new-task">
-            <TaskForm :form="form" :submitAction="submit"/>
+            <TaskForm :form="form" :submitAction="submit" :goBackAction="useGoBack().dashboard"/>
         </section>
     </BaseLayout>
 </template>

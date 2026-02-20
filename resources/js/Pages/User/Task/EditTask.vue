@@ -5,6 +5,7 @@ import {useForm} from "@inertiajs/vue3";
 import type {ITask} from "@/Types/models.ts";
 import {useKanbanStore} from "@/stores/kanban.store.ts";
 import TaskForm from "@/UI/Forms/TaskForm.vue";
+import {useGoBack} from "@/composables/useGoBack.ts";
 
 interface IProps {
     task: ITask,
@@ -32,7 +33,11 @@ function submit() {
 <template>
     <BaseLayout>
         <section class="edit-task">
-            <TaskForm :form="form" :submitAction="submit"/>
+            <TaskForm
+                :form="form"
+                :submitAction="submit"
+                :goBackAction="useGoBack().dashboard"
+            />
         </section>
     </BaseLayout>
 </template>
