@@ -2,14 +2,10 @@
 
 import UserIco from "@/UI/Icons/UserIco.vue";
 import DropdownMenu from "@/Dropdowns/DropdownMenu.vue";
-import DropdownMenuItemSettings from "@/Dropdowns/Items/DropdownMenuItemSettings.vue";
-import DropdownMenuItemProfile from "@/Dropdowns/Items/DropdownMenuItemProfile.vue";
-import DropdownMenuItemLogout from "@/Dropdowns/Items/DropdownMenuItemLogout.vue";
+import DropdownItemLogout from "@/Dropdowns/Items/DropdownItemLogout.vue";
 
 const menuItems = [
-    // DropdownMenuItemProfile,
-    // DropdownMenuItemSettings,
-    DropdownMenuItemLogout,
+    DropdownItemLogout,
 ]
 
 </script>
@@ -19,7 +15,7 @@ const menuItems = [
         <UserIco class="user-dropdown__ico"/>
         <DropdownMenu
             :menu-items="menuItems"
-            class="user-dropdown__menu"
+            className="user-dropdown__menu"
         />
     </div>
 </template>

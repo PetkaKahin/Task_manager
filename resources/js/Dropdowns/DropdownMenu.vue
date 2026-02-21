@@ -3,13 +3,14 @@ import type {Component} from "vue";
 
 interface IProps {
     menuItems?: Component[]
+    className?: string
 }
 
 const props = defineProps<IProps>()
 </script>
 
 <template>
-    <nav class="dropdown-menu">
+    <nav class="dropdown-menu" :class="props.className">
         <ul class="dropdown-menu__list">
             <li
                 class="dropdown-menu__item"
@@ -38,6 +39,7 @@ const props = defineProps<IProps>()
     border: 1px solid colors.$border-default;
     border-radius: 0.3rem;
     cursor: default;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
 
     &__item {
         list-style-type: none;
@@ -45,6 +47,7 @@ const props = defineProps<IProps>()
 
     &__list {
         padding: 0;
+        margin: 0;
     }
 }
 </style>
