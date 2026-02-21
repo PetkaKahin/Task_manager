@@ -84,7 +84,6 @@ const {
     flex-direction: column;
     box-sizing: border-box;
     position: relative;
-    overflow-y: auto;
 
     &--is-dragging {
         opacity: 0.6;
@@ -98,7 +97,8 @@ const {
     }
 
     &__body {
-        height: 100%;
+        flex: 1;
+        min-height: 0;
         overflow-y: auto;
         margin-bottom: 15px;
 

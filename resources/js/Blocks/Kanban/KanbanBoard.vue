@@ -44,6 +44,7 @@ const {elementRef} = useDroppable({
     gap: 20px;
     align-items: flex-start;
     height: 100%;
+    min-width: max-content;
 }
 </style>
 
