@@ -33,7 +33,7 @@ export function useKanban() {
 
         await nextTick()
 
-        const newPosition: number = kanbanStore.getColumnPosition(category.id)
+        const newPosition: number = kanbanStore.getCategoryIndex(category.id)
 
         if (newPosition == oldPosition) return
 
@@ -61,12 +61,12 @@ export function useKanban() {
 
         // Сохраняем старые позиции ДО обновления, порядок важен!
         const { task, oldTaskIndex } = extracted
-        const oldCategoryIndex: number = kanbanStore.getColumnIndexByTaskId(task.id)
+        const oldCategoryIndex: number = kanbanStore.getCategoryIndexByTaskId(task.id)
 
         await nextTick()
 
-        const newCategoryIndex = kanbanStore.getColumnIndexByTaskId(task.id)
-        const newTaskPosition: number = kanbanStore.getTaskPosition(task.id, newCategoryIndex)
+        const newCategoryIndex = kanbanStore.getCategoryIndexByTaskId(task.id)
+        const newTaskPosition: number = kanbanStore.getTaskIndex(task.id, newCategoryIndex)
 
         let moveAfter, newCategoryId
 

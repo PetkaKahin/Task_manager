@@ -9,7 +9,7 @@ import {cardDragState} from "@/composables/ui/useKanban.ts";
 
 export function useKanbanCard() {
     const kanbanStore = useKanbanStore()
-    const modal = useModal();
+    const modal = useModal()
 
     function getDraggableData(source: any, index: ComputedRef<number>) {
         const {elementRef, handleDragStart: startDrag, isDragging, isOvered} = useDraggable({

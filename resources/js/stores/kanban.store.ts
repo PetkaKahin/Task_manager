@@ -11,40 +11,47 @@ export const useKanbanStore = defineStore('kanban', () => {
     const categories = ref<ICategory[]>([])
     const animationsEnabled = ref(false)
 
-    function addTask(columnId: number, task: ITask) {
-        const column = categories.value.find(column => column.id === columnId)
-        column?.tasks.push(task)
+    function addTask(categoryId: number, task: ITask) {
+        const category = categories.value.find(category => category.id === categoryId)
+        category?.tasks.push(task)
     }
 
     function deleteTask(task: ITask) {
-        const columnIndex = getColumnPosition(task.category_id)
-        const taskIndex = getTaskPosition(task.id, columnIndex)
+        const categoryIndex = getCategoryIndex(task.category_id)
+        const taskIndex = getTaskIndex(task.id, categoryIndex)
 
-        categories.value[columnIndex]?.tasks.splice(taskIndex, 1)
+        categories.value[categoryIndex]?.tasks.splice(taskIndex, 1)
     }
 
-    function addColumn(index: number, kanbanColumn: ICategory) {
-        categories.value.splice(index, 0, kanbanColumn);
+    function addCategory(index: number, kanbanCategory: ICategory) {
+        categories.value.splice(index, 0, kanbanCategory);
     }
 
-    function setColumns(newColumns: ICategory[]) {
+    function deleteCategory(category: ICategory) {
+        const index = getCategoryIndex(category.id)
+        if (index === -1) return
+
+        categories.value.splice(index, 1)
+    }
+
+    function setCategory(newCategories: ICategory[]) {
         animationsEnabled.value = false
-        categories.value = newColumns
+        categories.value = newCategories
         nextTick(() => { animationsEnabled.value = true })
     }
 
-    function getColumnIndexByTaskId(taskId: number): number {
+    function getCategoryIndexByTaskId(taskId: number): number {
         return categories.value.findIndex(items =>
             items.tasks.some(task => task.id === taskId)
         )
     }
 
-    function getTaskPosition(taskId: number, columnIndex: number): number {
+    function getTaskIndex(taskId: number, columnIndex: number): number {
         return categories.value[columnIndex]?.tasks?.findIndex(task => task.id === taskId) ?? -1
     }
 
-    function getColumnPosition(columnId: number): number {
-        return categories.value.findIndex(column => column.id === columnId)
+    function getCategoryIndex(categoryId: number): number {
+        return categories.value.findIndex(category => category.id === categoryId)
     }
 
 
@@ -52,11 +59,12 @@ export const useKanbanStore = defineStore('kanban', () => {
         categories,
         animationsEnabled,
         addTask,
-        addColumn,
+        addCategory,
         deleteTask,
-        setColumns,
-        getColumnIndexByTaskId,
-        getTaskPosition,
-        getColumnPosition
+        setCategory,
+        deleteCategory,
+        getCategoryIndexByTaskId,
+        getTaskIndex,
+        getCategoryIndex
     };
 });
