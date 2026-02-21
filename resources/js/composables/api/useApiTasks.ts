@@ -6,7 +6,7 @@ export function useCategories() {
     function updateTask(projectId: number, categoryId: number, task: ITask) {
         return useApi<ITask>(
             () => apiRequest.patch(`projects/${projectId}/categories/${categoryId}/tasks/${task.id}`, task),
-            [] as ITask
+            [] as unknown as ITask
         )
     }
 

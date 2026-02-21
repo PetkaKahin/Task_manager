@@ -20,7 +20,13 @@ function submit() {
 <template>
     <BaseLayout>
         <section class="new-task">
-            <TaskForm :form="form" :submitAction="submit" :goBackAction="useGoBack().dashboard"/>
+            <TaskForm
+                :form="form"
+                :submitAction="submit"
+                :goBackAction="useGoBack().dashboard"
+                submitText="Создать"
+                titleText="Создать задачу"
+            />
         </section>
     </BaseLayout>
 </template>

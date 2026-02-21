@@ -3,10 +3,11 @@
 import Tiptap from "@/Blocks/Tiptap/TiptapTask.vue";
 import TextInput from "@/UI/Inputs/TextInput.vue";
 import BaseForm from "@/UI/Forms/BaseForm.vue";
-import {type InertiaForm, router} from "@inertiajs/vue3";
-import {route} from "ziggy-js";
+import {type InertiaForm} from "@inertiajs/vue3";
 
 interface IProps {
+    titleText: string
+    submitText: string
     form: InertiaForm<{
         title: string
         content: string
@@ -24,10 +25,13 @@ const props = defineProps<IProps>()
 <template>
     <BaseForm
         className="form"
-        submitText="Сохранить"
+        :submitText="submitText"
         :submitAction="props.submitAction"
         :goBackAction="props.goBackAction"
     >
+        <template #header>
+            <h2 class="form__header-text">{{ props.titleText }}</h2>
+        </template>
         <template #body>
             <div class="content">
                 <TextInput
@@ -56,6 +60,11 @@ const props = defineProps<IProps>()
         width: sizes.$card-max-width;
         max-width: sizes.$card-max-width;
     }
+
+    &__header-text {
+        margin: 0 10px 10px 10px;
+        text-align: center;
+    }
 }
 
 .content {
@@ -66,6 +75,13 @@ const props = defineProps<IProps>()
 
 @media (max-width: 425px) {
     .form {
+        border: none;
+        border-radius: 0;
+        width: 100%;
+        height: 100%;
+        padding: 20px 20px;
+        box-sizing: border-box;
+
         &__item {
             width: 100%;
             max-width: none;
