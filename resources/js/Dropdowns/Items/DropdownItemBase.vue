@@ -4,6 +4,7 @@ import type {Component} from "vue";
 interface IProps {
     ico: Component,
     text: string,
+    className?: string
 }
 
 const props = defineProps<IProps>()
@@ -12,8 +13,11 @@ const props = defineProps<IProps>()
 <template>
     <div
         class="dropdown-menu-item"
+        :class="props.className"
     >
-        <component :is="props.ico" class="dropdown-menu-item__ico"/>
+        <span class="dropdown-menu-item__ico">
+            <component :is="props.ico"/>
+        </span>
         <p class="dropdown-menu-item__text">{{ props.text}}</p>
     </div>
 </template>
@@ -25,11 +29,10 @@ const props = defineProps<IProps>()
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 12px 12px;
     cursor: pointer;
     text-decoration: none;
 
-    &:hover &__ico, {
+    &:hover &__ico {
         color: colors.$ico-focus;
     }
 
@@ -39,8 +42,6 @@ const props = defineProps<IProps>()
 
     &__ico {
         color: colors.$ico-primary;
-        height: 20px;
-        width: 20px;
     }
 
     &__text {
