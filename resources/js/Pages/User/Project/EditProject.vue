@@ -1,7 +1,9 @@
 <script setup lang="ts">
-  import BaseProject from "@/Pages/User/Project/BaseProject.vue";
   import type {IProject} from "@/Types/models.ts";
   import {useForm} from "@inertiajs/vue3";
+  import {useGoBack} from "@/composables/useGoBack.ts";
+  import BaseLayout from "@/Layouts/BaseLayout.vue";
+  import ProjectForm from "@/UI/Forms/ProjectForm.vue";
 
   interface IProps {
       project: IProject,
@@ -19,14 +21,30 @@
 </script>
 
 <template>
-  <BaseProject
-      titleText="Редактировать проект"
-      buttonText="Сохранить"
-      :form="form"
-      :submitAction="submit"
-  />
+    <BaseLayout>
+        <section class="project">
+            <ProjectForm
+                :form="form"
+                :goBackAction="useGoBack().dashboard"
+                :submitAction="submit"
+                titleText="Создать проект"
+                submitText="Создать"
+            />
+        </section>
+    </BaseLayout>
 </template>
 
 <style scoped lang="scss">
+.project {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+}
 
+@media (max-width: 425px) {
+    .project {
+        margin: 0;
+        height: 100%;
+    }
+}
 </style>

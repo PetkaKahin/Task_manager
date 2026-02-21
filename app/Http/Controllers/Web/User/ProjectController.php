@@ -53,6 +53,8 @@ class ProjectController extends Controller
 
     public function destroy(string $id)
     {
+        Project::query()->findOrFail($id)->delete();
 
+        return response()->noContent();
     }
 }
