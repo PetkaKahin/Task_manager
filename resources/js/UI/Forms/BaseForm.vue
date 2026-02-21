@@ -21,8 +21,6 @@ const goBack = () => {
     if (props.goBackAction) return props.goBackAction()
     else router.visit(route("home"))
 }
-
-// TODO сделать гибкий шаблон для форм: NewProject, EditProject, NewCategory, EditCategory
 </script>
 
 <template>

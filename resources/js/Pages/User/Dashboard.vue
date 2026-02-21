@@ -10,6 +10,9 @@ import {useBreakpoints} from "@/composables/useBreakpoints.ts";
 import KanbanBoardMobile from "@/Blocks/Kanban/KanbanBoardMobile.vue";
 import EditIco from "@/UI/Icons/EditIco.vue";
 import {Link} from "@inertiajs/vue3";
+import BaseButton from "@/UI/Buttons/BaseButton.vue";
+import DeleteIco from "@/UI/Icons/DeleteIco.vue";
+import {useKanbanProject} from "@/composables/ui/useKanbanProject.ts";
 
 interface IProps {
     project: IProject,
@@ -23,12 +26,15 @@ const breakpoints = useBreakpoints()
 
 // Для навигации Inertia назад
 watch(() => props.categories, (categories) => {
-    kanbanStore.setColumns(categories)
+    kanbanStore.setCategory(categories)
 }, { immediate: true })
 watch(() => props.project, (project) => {
-    projectStore.setProject(project)
+    projectStore.setCurrentProject(project)
 }, { immediate: true })
 
+function deleteProject() {
+    useKanbanProject().projectDelete(props.project)
+}
 </script>
 
 <template>
@@ -36,15 +42,25 @@ watch(() => props.project, (project) => {
         <DeleteModal/>
         <main class="home-page">
             <header class="home-page__header header">
-                <h2 class="header__text">
-                    {{ props.project.title }}
-                </h2>
-                <Link :href="route('project.edit', {
-                    id: project.id,
-                    from_project_id: project,
-                })">
-                    <EditIco class="header__ico" :size="22"/>
-                </Link>
+                <div class="header__left-block">
+                    <h2 class="header__text">
+                        {{ props.project.title }}
+                    </h2>
+                    <Link :href="route('project.edit', {
+                        id: project.id,
+                        from_project_id: project.id,
+                    })">
+                        <EditIco class="header__ico" :size="22"/>
+                    </Link>
+                    <DeleteIco class="header__ico" @click="deleteProject" :size="22"/>
+                </div>
+                <div class="header__right-block">
+                    <Link :href="route('category.create', {
+                        from_project_id: project.id
+                    })">
+                        <BaseButton className="header__button" text="+ Добавить категорию"/>
+                    </Link>
+                </div>
             </header>
 
             <KanbanBoard v-if="breakpoints.isLaptop.value"/>
@@ -74,9 +90,10 @@ watch(() => props.project, (project) => {
 
 .header {
     display: flex;
-    gap: 15px;
+    justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
+
 
     &__text {
         font-weight: 300;
@@ -85,10 +102,25 @@ watch(() => props.project, (project) => {
 
     &__ico {
         color: colors.$text-disabled;
+        cursor: pointer;
 
         &:hover {
             color: colors.$text-focus;
         }
+    }
+
+    &__button {
+        padding: 5px;
+
+        :deep(.text) {
+            font-size: 16px;
+        }
+    }
+
+    &__left-block {
+        display: flex;
+        gap: 15px;
+        align-items: center;
     }
 }
 

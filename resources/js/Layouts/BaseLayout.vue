@@ -10,6 +10,7 @@ import {route} from "ziggy-js";
 import type {IProject} from "@/Types/models.ts";
 import {useProjectStore} from "@/stores/project.store.ts";
 import {sidebarService} from "@/services/sidebarService.ts";
+import {projectService} from "@/services/api/projectService.ts";
 
 const {isOpen} = useSidebar()
 const projectStore = useProjectStore()
@@ -17,11 +18,8 @@ const projectStore = useProjectStore()
 sidebarService().innit()
 
 onMounted(async () => {
-    apiRequest.get(route('api.projects.index')).then((response) => {
-        projectStore.setProjects(response.data as IProject[])
-    }).catch((error: Error) => {
-        console.log(error)
-    })
+    const response = await projectService().getProjects()
+    projectStore.setProjects(response.data)
 })
 </script>
 

@@ -30,6 +30,7 @@ const props = withDefaults(defineProps<IProps>(), {
     &__text {
         margin: 0;
         font-weight: 400;
+        white-space: nowrap;
     }
 }
 </style>

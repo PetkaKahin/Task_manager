@@ -6,12 +6,19 @@ import {useSidebar} from "@/composables/ui/useSidebar.ts";
 import {Link} from "@inertiajs/vue3";
 import {useProjectStore} from "@/stores/project.store.ts";
 import EditIco from "@/UI/Icons/EditIco.vue";
+import DeleteIco from "@/UI/Icons/DeleteIco.vue";
+import type {IProject} from "@/Types/models.ts";
+import {useKanbanProject} from "@/composables/ui/useKanbanProject.ts";
 
 const {isDesktop, projectsList} = useSidebar()
 const {currentProject} = useProjectStore()
 
 function toggleSidebar() {
     useSidebar().toggle()
+}
+
+function deleteProject(project: IProject) {
+    useKanbanProject().projectDelete(project)
 }
 </script>
 
@@ -45,12 +52,15 @@ function toggleSidebar() {
                     <Link :href="route('dashboard.index', project.id)" class="item__link">
                         <div class="item__wrapper">
                             <span class="item__title">{{ project.title }}</span>
-                            <Link :href="route('project.edit', {
-                                id: project.id,
-                                from_project_id: currentProject?.id
-                            })">
-                                <EditIco class="item__ico" :size="16"/>
-                            </Link>
+                            <div class="item__icons">
+                                <Link :href="route('project.edit', {
+                                    id: project.id,
+                                    from_project_id: currentProject?.id
+                                })">
+                                    <EditIco class="item__ico" :size="16"/>
+                                </Link>
+                                <DeleteIco class="item__ico" :size="16" @click="deleteProject(project)"/>
+                            </div>
                         </div>
                     </Link>
                 </li>
@@ -92,6 +102,7 @@ function toggleSidebar() {
 
     &__add-project {
         padding: 10px 5px;
+        width: 100%;
     }
 
     &__content {
@@ -133,24 +144,42 @@ function toggleSidebar() {
     }
 
     &__title {
-
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        min-width: 0
     }
 
     &__wrapper {
         display: flex;
         justify-content: space-between;
+        align-items: center;
+        gap: 20px;
     }
 
     &__ico {
         z-index: 1;
+        color: colors.$text-muted;
 
         &:hover {
             color: colors.$border-focus;
         }
     }
+
+    &__icons {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
 }
 
 .divider {
     margin: 20px 0;
+}
+
+@media (max-width: 425px)  {
+    .sidebar-menu {
+        max-width: 300px;
+    }
 }
 </style>

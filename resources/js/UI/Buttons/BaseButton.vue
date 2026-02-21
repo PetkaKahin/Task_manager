@@ -6,9 +6,7 @@ interface IProps {
     type?: "button" | "submit" | "reset" | undefined,
 }
 
-const props = withDefaults(defineProps<IProps>(), {
-    text: "Текст",
-})
+const props = defineProps<IProps>()
 
 function action() {
     if (props.action) props.action()
@@ -22,7 +20,8 @@ function action() {
         :type="props.type ?? 'button'"
         @click="action"
     >
-        <span class="base-button__text text">{{ props.text }}</span>
+        <span v-if="props.text" class="base-button__text text">{{ props.text }}</span>
+        <slot v-else></slot>
     </button>
 </template>
 

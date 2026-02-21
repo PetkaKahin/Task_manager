@@ -4,6 +4,9 @@ import InputSearch from "@/UI/Inputs/InputSearch.vue";
 import UserDropdown from "@/Blocks/UserDropdown.vue";
 import BigLogo from "@/Blocks/BigLogo.vue";
 import {useSidebar} from "@/composables/ui/useSidebar.ts";
+import {useProjectStore} from "@/stores/project.store.ts";
+
+const {currentProject} = useProjectStore()
 
 function onSearch(fieldSearch: string) {
     console.log(fieldSearch)
@@ -24,7 +27,8 @@ function toggleSidebar() {
                 <span class="toggle-menu__line"></span>
                 <span class="toggle-menu__line"></span>
             </button>
-            <BigLogo class="page-header__big-logo" url="#"/>
+            <BigLogo class="page-header__big-logo" :url="route('home')"/>
+            <h3 class="page-header__project-title">{{currentProject?.title}}</h3>
         </div>
 
         <nav class="page-header__nav header-navbar page-header__right-block">
@@ -67,6 +71,11 @@ function toggleSidebar() {
     &__left-block {
         display: flex;
         gap: 20px;
+        min-width: 0;
+    }
+
+    &__project-title {
+        display: none;
     }
 }
 
@@ -107,6 +116,22 @@ function toggleSidebar() {
 
         &__toggle-sidebar {
             display: flex;
+        }
+    }
+}
+
+@media (max-width: 768px)  {
+    .page-header {
+
+        &__project-title {
+            display: block;
+            margin: 0;
+
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+            min-width: 0;
         }
     }
 }
