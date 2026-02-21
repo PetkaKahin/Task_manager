@@ -47,20 +47,31 @@ input {
   background: colors.$accent-primary !important;
 }
 
-* {
+@supports not selector(::-webkit-scrollbar) {
+  * {
     scrollbar-width: thin;
     scrollbar-color: colors.$scroll-thumb colors.$scroll-track;
+  }
 }
 
-*::-webkit-scrollbar-track {
-    background: colors.$scroll-track;
-}
+@supports selector(::-webkit-scrollbar) {
+  *::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
 
-*::-webkit-scrollbar-thumb {
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  *::-webkit-scrollbar-thumb {
     background-color: colors.$scroll-thumb;
-    border-radius: 3px;
-}
+    border-radius: 10px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
 
-*::-webkit-scrollbar-thumb:hover {
+  *::-webkit-scrollbar-thumb:hover {
     background-color: colors.$scroll-thumb-active;
+  }
 }
