@@ -73,11 +73,11 @@ onMounted(async () => {
 @use "@scss/variables/colors";
 
 .kanban-board-wrapper {
-    overflow-x: auto;
+    overflow: hidden;
     flex: 1;
     display: grid;
-    grid-template-columns: auto;
-    grid-auto-rows: auto 1fr;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(0, 1fr);
 }
 
 .header {
