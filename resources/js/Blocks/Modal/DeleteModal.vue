@@ -7,7 +7,7 @@ const modal = useModal()
 
 function deleteButton() {
     modal.close()
-    modal.runActionClosing('delete.task')
+    modal.runActionClosing()
 }
 
 function saveButton() {

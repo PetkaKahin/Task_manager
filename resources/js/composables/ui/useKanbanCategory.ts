@@ -1,10 +1,16 @@
 import {DnDOperations, useDraggable, useDroppable} from "@vue-dnd-kit/core";
 import {computed, type ComputedRef} from "vue";
 import {useKanban, cardDragState} from "@/composables/ui/useKanban.ts";
-import type {ITask} from "@/Types/models.ts";
+import type {ICategory, ITask} from "@/Types/models.ts";
+import axios from "axios";
+import {route} from "ziggy-js";
+import {useModal} from "@/composables/ui/useModal.ts";
+import {useKanbanStore} from "@/stores/kanban.store.ts";
 
 export function useKanbanCategory() {
+    const kanbanStore = useKanbanStore()
     const kanban = useKanban()
+    const modal = useModal()
 
     function getDraggableData(source: any, index: ComputedRef<number>) {
         const {elementRef, handleDragStart, isDragging, isOvered} = useDraggable({
@@ -44,8 +50,19 @@ export function useKanbanCategory() {
         }
     }
 
+    function categoryDelete(category: ICategory) {
+        modal.addActionClosing(
+            'delete.category',
+            () => {
+                kanbanStore.deleteCategory(category)
+                axios.delete(route('category.destroy', category.id))
+            }
+        )
+        modal.open()
+    }
     return {
         getDraggableData,
         getDroppableData,
+        categoryDelete,
     }
 }

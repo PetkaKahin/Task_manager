@@ -38,10 +38,18 @@ export function useModal() {
 
     /**
      * Выполняет action по ключу и удаляет его
+     * Если ключ == null, то удаляет последний добавленный элемент в списке
      *
      * @param key
      */
-    function runActionClosing(key: string) {
+    function runActionClosing(key: string | null = null) {
+        if (!key) {
+            const keys = [...actionsClosing.keys()]
+            key = keys[keys.length - 1] ?? null
+        }
+
+        if (!key) return
+
         const action = actionsClosing.get(key)
         if (!action) return
 
