@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\Web\User;
 
 use App\Http\Controllers\Controller;
-use App\Models\Project;
-use Illuminate\Http\Request;
+use App\Http\Requests\Api\Category\UpdateCategoryRequest;
+use App\Http\Requests\Web\Category\StoreCategoryRequest;
+use App\Models\Category;
 use Inertia\Inertia;
 
 class CategoryController extends Controller
@@ -16,15 +17,14 @@ class CategoryController extends Controller
 
     public function create()
     {
-
+        return Inertia::render('User/Category/NewCategory');
     }
 
-    public function store(Request $request)
+    public function store(StoreCategoryRequest $request)
     {
-        $user = auth()->user();
-        $newProject = Project::factory()->default($user, $request->title)->create();
+        $category = Category::query()->create($request->validated());
 
-        return redirect()->intended(route('dashboard.view.project', $newProject->id));
+        return redirect()->intended(route('dashboard.index', $category->project_id));
     }
 
     public function show(string $id)
@@ -34,16 +34,25 @@ class CategoryController extends Controller
 
     public function edit(string $id)
     {
+        $category = Category::query()->findOrFail($id);
 
+        return Inertia::render('User/Category/EditCategory', [
+            'category' => $category,
+        ]);
     }
 
-    public function update(Request $request, string $id)
+    public function update(UpdateCategoryRequest $request, string $id)
     {
+        $category = Category::query()->findOrFail($id);
+        $category->update($request->validated());
 
+        return redirect()->intended(route('dashboard.index', $category->project_id));
     }
 
     public function destroy(string $id)
     {
+        Category::query()->findOrFail($id)->delete();
 
+        return response()->noContent();
     }
 }
