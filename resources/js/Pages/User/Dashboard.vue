@@ -73,7 +73,7 @@ function deleteProject() {
 @use "@scss/variables/colors";
 
 .home-page {
-    padding: 30px;
+    padding: 10px 10px 10px 30px;
     height: 100%;
     box-sizing: border-box;
     display: flex;

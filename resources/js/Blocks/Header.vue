@@ -56,7 +56,7 @@ function toggleSidebar() {
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid colors.$border-default;
-    padding: 0 50px 0 20px;
+    padding: 0 20px;
     background-color: colors.$bg-base;
 
     &__dropdown-profile {
