@@ -45,6 +45,9 @@ const editor = useEditor({
     ],
     editable: true,
     editorProps: {
+        attributes: {
+            inputmode: 'none',
+        },
         handleKeyDown: () => true, // блокирует клавиатуру
         handlePaste: () => true,   // блокирует вставку
         handleDrop: () => true,    // блокирует drag&drop
@@ -119,6 +122,8 @@ const taskDelete = () => useKanbanCard().taskDelete(props.task)
     background-color: colors.$bg-base;
     padding: 10px;
     max-width: sizes.$card-max-width;
+    user-select: none;
+    pointer-events: auto;
 
     display: flex;
     justify-content: space-between;
@@ -145,6 +150,25 @@ const taskDelete = () => useKanbanCard().taskDelete(props.task)
     &__drag {
         color: colors.$border-default;
         touch-action: none; // обязательно для управления тачами
+    }
+
+    [contenteditable] {
+        -webkit-user-modify: read-only;
+        user-modify: read-only;
+    }
+
+    .tiptap {
+        pointer-events: none;
+    }
+
+    ul[data-type="taskList"] input[type="checkbox"] {
+        pointer-events: auto;
+        cursor: pointer;
+    }
+
+    ul[data-type="taskList"] li {
+        -webkit-user-select: auto;
+        user-select: auto;
     }
 }
 
