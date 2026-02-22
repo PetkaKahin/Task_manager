@@ -9,9 +9,11 @@ import EditIco from "@/UI/Icons/EditIco.vue";
 import DeleteIco from "@/UI/Icons/DeleteIco.vue";
 import type {IProject} from "@/Types/models.ts";
 import {useKanbanProject} from "@/composables/ui/useKanbanProject.ts";
+import {ref} from "vue";
 
 const {isDesktop, projectsList} = useSidebar()
 const {currentProject} = useProjectStore()
+const isItemActive = ref<boolean | number>(false)
 
 function toggleSidebar() {
     useSidebar().toggle()
@@ -48,21 +50,27 @@ function deleteProject(project: IProject) {
                 <li
                     v-for="project in projectsList"
                     class="projects-list__item item"
+                    :class="{'item--active': isItemActive == project.id}"
                 >
-                    <Link :href="route('dashboard.index', project.id)" class="item__link">
-                        <div class="item__wrapper">
+                    <div class="item__wrapper">
+                        <Link
+                            :href="route('dashboard.index', project.id)"
+                            class="item__link"
+                            @mouseenter="isItemActive = project.id"
+                            @mouseleave="isItemActive = false"
+                        >
                             <span class="item__title">{{ project.title }}</span>
-                            <div class="item__icons">
-                                <Link :href="route('project.edit', {
-                                    id: project.id,
-                                    from_project_id: currentProject?.id
-                                })">
-                                    <EditIco class="item__ico" :size="16"/>
-                                </Link>
-                                <DeleteIco class="item__ico" :size="16" @click="deleteProject(project)"/>
-                            </div>
+                        </Link>
+                        <div class="item__icons">
+                            <Link :href="route('project.edit', {
+                                id: project.id,
+                                from_project_id: currentProject?.id
+                            })">
+                                <EditIco class="item__ico" :size="16"/>
+                            </Link>
+                            <DeleteIco class="item__ico" :size="16" @click="deleteProject(project)"/>
                         </div>
-                    </Link>
+                    </div>
                 </li>
             </ul>
         </div>
@@ -120,7 +128,6 @@ function deleteProject(project: IProject) {
     gap: 5px;
 
     &__item {
-        padding: 5px 0;
         list-style-type: none;
     }
 }
@@ -129,14 +136,18 @@ function deleteProject(project: IProject) {
     border: 1px solid colors.$border-default;
     border-radius: 5px;
     background-color: colors.$bg-elevated;
-    padding: 5px 8px;
+    padding: 0;
 
-    &:hover {
+    &--active {
         border-color: colors.$border-focus;
     }
 
     &__link {
+        padding: 5px 8px;
         text-decoration: none;
+        display: block;
+        flex: 1;
+        min-width: 0;
 
         &:hover {
             color: colors.$text-primary;
@@ -147,7 +158,14 @@ function deleteProject(project: IProject) {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        min-width: 0
+        min-width: 0;
+    }
+
+    &__icons {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding-right: 8px;
     }
 
     &__wrapper {
@@ -160,16 +178,11 @@ function deleteProject(project: IProject) {
     &__ico {
         z-index: 1;
         color: colors.$text-muted;
+        cursor: pointer;
 
         &:hover {
             color: colors.$border-focus;
         }
-    }
-
-    &__icons {
-        display: flex;
-        align-items: center;
-        gap: 10px;
     }
 }
 
