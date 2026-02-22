@@ -50,7 +50,6 @@ const editor = useEditor({
         handleDrop: () => true,    // блокирует drag&drop
     },
     onUpdate: ({ editor }) => {
-        console.log(props.task.content)
         if (!currentProject) return
         apiRequest.patch(route('api.tasks.update', {
             projectId: currentProject.id,
