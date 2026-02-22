@@ -92,6 +92,14 @@ onMounted(async () => {
     padding: 2px 10px;
     height: 100%;
 
+    &:hover {
+        border-color: colors.$border-default;
+    }
+
+    &:focus {
+        border-color: colors.$border-focus;
+    }
+
     &__ico {
         font-size: 22px;
     }

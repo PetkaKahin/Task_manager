@@ -18,7 +18,7 @@ interface IProps {
 const props = defineProps<IProps>()
 const isHoverIco = ref<boolean>(false)
 
-const {elementRef: droppableRef} = useKanbanCategory().getDroppableData(props.category.tasks)
+const {elementRef: droppableRef, isOvered} = useKanbanCategory().getDroppableData(props.category.tasks)
 
 const handleItemClick = () => {
     if (!isHoverIco.value) {
@@ -32,7 +32,7 @@ const handleItemClick = () => {
         class="item"
         :class="[
             props.className,
-            {'item--active': props.isActive}
+            {'item--active': props.isActive || isOvered},
         ]"
         ref="droppableRef"
         @click="handleItemClick"
@@ -73,7 +73,7 @@ const handleItemClick = () => {
     border-radius: 5px;
     padding: 4px 2px 4px 10px;
 
-    &--active, &:hover {
+    &--active {
         border-color: colors.$text-focus;
     }
 
