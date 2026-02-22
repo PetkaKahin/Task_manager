@@ -27,8 +27,8 @@
                 :form="form"
                 :goBackAction="useGoBack().dashboard"
                 :submitAction="submit"
-                titleText="Создать проект"
-                submitText="Создать"
+                titleText="Редактировать проект"
+                submitText="Сохранить"
             />
         </section>
     </BaseLayout>
