@@ -29,7 +29,7 @@ export function useKanbanCategory() {
         }
     }
 
-    function getDroppableData(tasks: ITask[]) {
+    function getDroppableData(tasks: ITask[], onAfterDrop?: () => void) {
         const {elementRef, isOvered} = useDroppable({
             groups: ['kanban-cards'],
             data: computed(() => ({
@@ -40,6 +40,7 @@ export function useKanbanCategory() {
                     if (!cardDragState.hasMoved) return
                     kanban.taskMoved(payload)
                     DnDOperations.applyTransfer(store)
+                    onAfterDrop?.()
                 },
             },
         })
