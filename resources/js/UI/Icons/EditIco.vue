@@ -29,5 +29,6 @@ const props = withDefaults(defineProps<Props>(), {
 .edit-ico {
     display: inline-block;
     vertical-align: middle;
+    cursor: pointer;
 }
 </style>

@@ -40,5 +40,6 @@ const props = withDefaults(defineProps<Props>(), {
 .settings-ico {
     display: inline-block;
     vertical-align: middle;
+    cursor: pointer;
 }
 </style>

@@ -33,5 +33,6 @@ const props = withDefaults(defineProps<IProps>(), {
 .eye-ico {
     display: inline-block;
     vertical-align: middle;
+    cursor: pointer;
 }
 </style>

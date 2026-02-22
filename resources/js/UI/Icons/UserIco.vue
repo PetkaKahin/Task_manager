@@ -38,5 +38,6 @@ const props = withDefaults(defineProps<IProps>(), {
 .user-ico {
     display: inline-block;
     vertical-align: middle;
+    cursor: pointer;
 }
 </style>

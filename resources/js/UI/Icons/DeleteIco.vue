@@ -27,5 +27,6 @@ const props = withDefaults(defineProps<Props>(), {
 .delete-ico {
     display: inline-block;
     vertical-align: middle;
+    cursor: pointer;
 }
 </style>

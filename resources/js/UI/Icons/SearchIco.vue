@@ -43,5 +43,7 @@ const props = withDefaults(defineProps<IProps>(), {
 </template>
 
 <style scoped lang="scss">
-
+.search-ico {
+    cursor: pointer;
+}
 </style>

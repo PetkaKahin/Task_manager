@@ -49,5 +49,6 @@ const props = withDefaults(defineProps<IProps>(), {
 .logout-ico {
     display: inline-block;
     vertical-align: middle;
+    cursor: pointer;
 }
 </style>

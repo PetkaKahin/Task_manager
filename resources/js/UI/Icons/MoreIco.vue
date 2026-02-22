@@ -32,5 +32,6 @@ const WIDTH_SCALE = 0.22
 <style scoped lang="scss">
 .more-ico {
     display: block;
+    cursor: pointer;
 }
 </style>
