@@ -20,6 +20,7 @@ export function useKanbanCard() {
             groups: ['kanban-cards'],
         })
 
+        // Проверяем, что итем не меняет позицию
         function handleDragStart(event: PointerEvent) {
             cardDragState.hasMoved = false
 

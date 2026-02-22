@@ -38,6 +38,12 @@ export function useKanbanCategory() {
             events: {
                 onDrop: (store, payload) => {
                     if (!cardDragState.hasMoved) return
+
+                    if (!store.hovered.element.value) {
+                        const draggedSource = payload.items[0]?.data?.source
+                        if (draggedSource === tasks) return
+                    }
+
                     kanban.taskMoved(payload)
                     DnDOperations.applyTransfer(store)
                     onAfterDrop?.()
