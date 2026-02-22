@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import {useModal} from "@/composables/ui/useModal.ts";
 
-const {isOpen} = useModal();
+const {isOpen, currentZIndex} = useModal();
 </script>
 
 <template>
-    <div class="base-modal" v-if="isOpen">
+    <div
+        class="base-modal"
+        :style="{ zIndex: currentZIndex }"
+        v-if="isOpen"
+    >
         <slot/>
     </div>
 </template>
@@ -18,7 +22,6 @@ const {isOpen} = useModal();
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    z-index: 10;
 
     padding: 20px;
     background-color: colors.$bg-elevated;

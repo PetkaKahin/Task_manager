@@ -27,8 +27,8 @@ onMounted(async () => {
     <div class="base-layout">
         <div class="base-layout__header">
             <Header/>
-            <BaseBackdrop/>
         </div>
+        <BaseBackdrop/>
         <div
             class="base-layout__sidebar"
             :class="{'base-layout__sidebar--open' : isOpen}"

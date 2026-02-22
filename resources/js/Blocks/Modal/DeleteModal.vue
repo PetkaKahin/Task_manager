@@ -2,6 +2,7 @@
 import BaseModal from "@/Blocks/Modal/BaseModal.vue";
 import BaseButton from "@/UI/Buttons/BaseButton.vue";
 import {useModal} from "@/composables/ui/useModal.ts";
+import {onMounted} from "vue";
 
 const modal = useModal()
 
@@ -13,6 +14,10 @@ function deleteButton() {
 function saveButton() {
     modal.close()
 }
+
+onMounted(() => {
+    modal.setZIndex(99)
+})
 </script>
 
 <template>

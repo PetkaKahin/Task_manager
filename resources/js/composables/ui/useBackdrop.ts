@@ -2,12 +2,18 @@ import {computed, ref} from "vue";
 
 export interface Subscriber {
     key: string,
+    zIndex: number,
     unsubscribeCallback: () => void,
 }
-
+const DEFAULT_Z_INDEX = 10
 const subscribers = ref<Subscriber[]>([])
 
 export function useBackdrop() {
+
+    const currentZIndex = computed(() => {
+        if (subscribers.value.length === 0) return DEFAULT_Z_INDEX
+        return subscribers.value[subscribers.value.length - 1]!.zIndex
+    })
 
     const isVisible = computed(() => {
         return subscribers.value.length !== 0
@@ -63,6 +69,7 @@ export function useBackdrop() {
 
     return {
         isVisible,
+        currentZIndex,
         open,
         close,
         closeLast,

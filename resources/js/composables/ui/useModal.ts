@@ -2,12 +2,12 @@ import {type Subscriber, useBackdrop} from "@/composables/ui/useBackdrop.ts";
 import {ref} from "vue";
 
 const MODAL_KEY = "modal"
-
 const isOpen = ref<boolean>(false)
 const backdrop = useBackdrop()
-
+const currentZIndex = ref<number>(0)
 const subscriber: Subscriber = {
     key: MODAL_KEY,
+    get zIndex() { return currentZIndex.value - 1 },
     unsubscribeCallback: () => isOpen.value = false,
 }
 
@@ -57,13 +57,19 @@ export function useModal() {
         actionsClosing.delete(key)
     }
 
+    function setZIndex(value: number) {
+        currentZIndex.value = value
+    }
+
     return {
-        actionsClosing,
+        currentZIndex,
         isOpen,
+        actionsClosing,
         open,
         close,
         toggle,
         addActionClosing,
         runActionClosing,
+        setZIndex,
     }
 }

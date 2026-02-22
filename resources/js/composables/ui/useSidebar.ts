@@ -11,6 +11,7 @@ const SIDEBAR_KEY = "sidebar"
 
 const subscriber: Subscriber = {
     key: SIDEBAR_KEY,
+    zIndex: 2,
     unsubscribeCallback: () => isOpen.value = false,
 }
 
