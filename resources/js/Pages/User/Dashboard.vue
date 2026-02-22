@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import BaseLayout from "@/Layouts/BaseLayout.vue";
 import type {ICategory, IProject} from "@/Types/models.ts";
-import KanbanBoard from "@/Blocks/Kanban/KanbanBoard.vue";
-import {watch} from "vue";
+import {defineAsyncComponent, watch} from "vue";
 import {useKanbanStore} from "@/stores/kanban.store.ts";
 import {useProjectStore} from "@/stores/project.store.ts";
 import DeleteModal from "@/Blocks/Modal/DeleteModal.vue";
 import {useBreakpoints} from "@/composables/useBreakpoints.ts";
-import KanbanBoardMobile from "@/Blocks/Kanban/KanbanBoardMobile.vue";
 import EditIco from "@/UI/Icons/EditIco.vue";
 import {Link} from "@inertiajs/vue3";
 import BaseButton from "@/UI/Buttons/BaseButton.vue";
@@ -23,6 +21,8 @@ const props = defineProps<IProps>()
 const kanbanStore = useKanbanStore()
 const projectStore = useProjectStore()
 const breakpoints = useBreakpoints()
+const KanbanBoard = defineAsyncComponent(() => import('@/Blocks/Kanban/KanbanBoard.vue'))
+const KanbanBoardMobile = defineAsyncComponent(() => import('@/Blocks/Kanban/KanbanBoardMobile.vue'))
 
 // Для навигации Inertia назад
 watch(() => props.categories, (categories) => {
