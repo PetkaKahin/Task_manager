@@ -1,15 +1,11 @@
-<template>
-    <article class="tiptap-task" :class="props.className">
-        <div class="tiptap-wrapper">
-            <EditorContent :editor="editor"/>
-        </div>
-        <span class="text">Markdown</span>
-    </article>
-</template>
-
 <script setup lang="ts">
 import {useEditor, EditorContent} from '@tiptap/vue-3'
 import StarterKit from '@tiptap/starter-kit'
+import {TaskItem, TaskList} from "@tiptap/extension-list";
+import BulletListIco from "@/UI/Icons/BulletListIco.vue";
+import HorizontalRuleIco from "@/UI/Icons/HorizontalRuleIco.vue";
+import CheckMarkIco from "@/UI/Icons/CheckMarkIco.vue";
+import TextIco from "@/UI/Icons/TextIco.vue";
 
 interface IProps {
     className: string,
@@ -25,14 +21,64 @@ const editor = useEditor({
     },
     extensions: [
         StarterKit,
+        TaskList.configure({
+            HTMLAttributes: {
+                class: 'task-item-list',
+            },
+        }),
+        TaskItem.configure({
+            HTMLAttributes: {
+                class: 'task-item',
+            },
+            nested: true,
+        })
     ],
     editable: true,
     injectCSS: false,
 })
 </script>
 
+<template>
+    <article class="tiptap-task" :class="props.className">
+        <div class="nodes-block">
+            <TextIco class="ico ico-text" text="H1" :size="24" @click="editor?.chain().focus().toggleHeading({ level: 1 }).run()"/>
+            <TextIco class="ico ico-text" text="H2" :size="24" @click="editor?.chain().focus().toggleHeading({ level: 2 }).run()"/>
+            <TextIco class="ico ico-text" text="H3" :size="24" @click="editor?.chain().focus().toggleHeading({ level: 3 }).run()"/>
+
+            <TextIco class="ico ico-text" text="S" :strikethrough="true" :size="24" @click="editor?.chain().focus().toggleStrike().run()"/>
+            <TextIco class="ico ico-text" text="U" :underline="true" :size="24" @click="editor?.chain().focus().toggleUnderline().run()"/>
+            <TextIco class="ico ico-text" text="B" :bold="true" :size="24" @click="editor?.chain().focus().toggleBold().run()"/>
+            <TextIco class="ico ico-text" text="I" :italic="true" :size="24" @click="editor?.chain().focus().toggleItalic().run()"/>
+
+            <BulletListIco class="ico" :size="18" @click="editor?.chain().focus().toggleBulletList().run()"/>
+            <HorizontalRuleIco class="ico" :size="18" @click="editor?.chain().focus().setHorizontalRule().run()"/>
+            <CheckMarkIco
+                class="ico"
+                :size="18"
+                @click="editor?.chain().focus().toggleTaskList().run()"
+                :class="{ 'is-active': editor?.isActive('taskList') }"
+            />
+        </div>
+        <div class="tiptap-wrapper">
+            <EditorContent :editor="editor"/>
+        </div>
+        <span class="text">Markdown</span>
+    </article>
+</template>
+
 <style scoped lang="scss">
 @use "@scss/variables/colors";
+
+.tiptap-task {
+    margin-top: 20px;
+}
+
+.nodes-block {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+    gap: 5px;
+}
 
 .text {
     display: inline-block;
@@ -50,6 +96,22 @@ const editor = useEditor({
     box-sizing: border-box;
     border: 1px solid colors.$border-default;
     border-radius: 5px;
+}
+
+.ico {
+    color: colors.$ico-disabled;
+    border: 1px solid colors.$border-default;
+    border-radius: 5px;
+    padding: 5px;
+    user-select: none;
+
+    &:hover {
+        color: colors.$border-focus;
+    }
+}
+
+.ico-text {
+    padding: 2px;
 }
 </style>
 
@@ -69,6 +131,12 @@ const editor = useEditor({
 
     ul {
         margin: 0;
+        padding-left: 30px;
+
+        &[data-type="taskList"] li[data-checked="true"] p {
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
     }
 
     hr {
@@ -106,6 +174,31 @@ const editor = useEditor({
 
     p {
         margin: 0;
+    }
+
+    .task-item {
+        display: flex;
+        gap: 5px;
+    }
+
+    .task-item-list {
+        padding-left: 0;
+    }
+
+    h1, h2, h3 {
+        margin: 0;
+    }
+
+    h1 {
+        font-size: 20px;
+    }
+
+    h2 {
+        font-size: 18px;
+    }
+
+    h3 {
+        font-size: 16px;
     }
 }
 </style>

@@ -10,6 +10,10 @@ import {Link} from "@inertiajs/vue3";
 import {useKanbanCard} from "@/composables/ui/useKanbanCard.ts";
 import {computed} from "vue";
 import {useProjectStore} from "@/stores/project.store.ts";
+import {TaskItem, TaskList} from "@tiptap/extension-list";
+import {apiRequest} from "@/shared/api/apiRequest.ts";
+import {useKanbanStore} from "@/stores/kanban.store.ts";
+import Heading from "@tiptap/extension-heading";
 
 interface IProps {
     task: ITask
@@ -19,7 +23,7 @@ interface IProps {
 }
 
 const props = defineProps<IProps>()
-
+const {currentProject} = useProjectStore()
 const {
     elementRef,
     handleDragStart,
@@ -31,8 +35,31 @@ const editor = useEditor({
     content: props.task.content,
     extensions: [
         StarterKit,
+        TaskList.configure({
+            HTMLAttributes: { class: 'task-item-list' },
+        }),
+        TaskItem.configure({
+            HTMLAttributes: { class: 'task-item' },
+            nested: true,
+        }),
     ],
-    editable: false,
+    editable: true,
+    editorProps: {
+        handleKeyDown: () => true, // блокирует клавиатуру
+        handlePaste: () => true,   // блокирует вставку
+        handleDrop: () => true,    // блокирует drag&drop
+    },
+    onUpdate: ({ editor }) => {
+        console.log(props.task.content)
+        if (!currentProject) return
+        apiRequest.patch(route('api.tasks.update', {
+            projectId: currentProject.id,
+            categoryId: props.task.category_id,
+            taskId: props.task.id,
+        }), {
+            content: editor.getHTML()
+        })
+    },
 })
 
 const taskDelete = () => useKanbanCard().taskDelete(props.task)
