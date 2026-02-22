@@ -155,6 +155,9 @@ const taskDelete = () => useKanbanCard().taskDelete(props.task)
 
     .tiptap {
         pointer-events: none;
+        user-select: none;
+        -webkit-user-select: none;
+        -webkit-touch-callout: none;
     }
 
     ul[data-type="taskList"] input[type="checkbox"] {
