@@ -48,6 +48,10 @@ const editor = useEditor({
         attributes: {
             inputmode: 'none',
         },
+        handleDOMEvents: {
+            cut: (_view, event) => { event.preventDefault(); return true },
+            contextmenu: (_view, event) => { event.preventDefault(); return true },
+        },
         handleKeyDown: () => true,   // блокирует клавиатуру
         handleTextInput: () => true, // блокирует мобильный ввод (IME/composition)
         handlePaste: () => true,     // блокирует вставку
