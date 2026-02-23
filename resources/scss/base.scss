@@ -29,6 +29,14 @@ a:hover {
     }
 }
 
+.text-no-wrap {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
 button {
     cursor: pointer;
     padding: 0;
