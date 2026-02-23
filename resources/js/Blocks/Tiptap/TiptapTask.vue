@@ -2,10 +2,19 @@
 import {useEditor, EditorContent} from '@tiptap/vue-3'
 import StarterKit from '@tiptap/starter-kit'
 import {TaskItem, TaskList} from "@tiptap/extension-list";
-import BulletListIco from "@/UI/Icons/BulletListIco.vue";
-import HorizontalRuleIco from "@/UI/Icons/HorizontalRuleIco.vue";
-import CheckMarkIco from "@/UI/Icons/CheckMarkIco.vue";
-import TextIco from "@/UI/Icons/TextIco.vue";
+import BulletListIco from "@/UI/Icons/TextEditor/BulletListIco.vue";
+import HorizontalRuleIco from "@/UI/Icons/TextEditor/HorizontalRuleIco.vue";
+import CheckMarkIco from "@/UI/Icons/TextEditor/CheckMarkIco.vue";
+import H1Ico from "@/UI/Icons/TextEditor/H1Ico.vue";
+import H2Ico from "@/UI/Icons/TextEditor/H2Ico.vue";
+import H3Ico from "@/UI/Icons/TextEditor/H3Ico.vue";
+import H4Ico from "@/UI/Icons/TextEditor/H4Ico.vue";
+import H5Ico from "@/UI/Icons/TextEditor/H5Ico.vue";
+import H6Ico from "@/UI/Icons/TextEditor/H6Ico.vue";
+import ItalicIco from "@/UI/Icons/TextEditor/ItalicIco.vue";
+import UnderlineIco from "@/UI/Icons/TextEditor/UnderlineIco.vue";
+import StrikethroughIco from "@/UI/Icons/TextEditor/StrikethroughIco.vue";
+import BoldIco from "@/UI/Icons/TextEditor/BoldIco.vue";
 
 interface IProps {
     className: string,
@@ -41,23 +50,32 @@ const editor = useEditor({
 <template>
     <article class="tiptap-task" :class="props.className">
         <div class="nodes-block">
-            <TextIco class="ico ico-text" text="H1" :size="24" @click="editor?.chain().focus().toggleHeading({ level: 1 }).run()"/>
-            <TextIco class="ico ico-text" text="H2" :size="24" @click="editor?.chain().focus().toggleHeading({ level: 2 }).run()"/>
-            <TextIco class="ico ico-text" text="H3" :size="24" @click="editor?.chain().focus().toggleHeading({ level: 3 }).run()"/>
-
-            <TextIco class="ico ico-text" text="S" :strikethrough="true" :size="24" @click="editor?.chain().focus().toggleStrike().run()"/>
-            <TextIco class="ico ico-text" text="U" :underline="true" :size="24" @click="editor?.chain().focus().toggleUnderline().run()"/>
-            <TextIco class="ico ico-text" text="B" :bold="true" :size="24" @click="editor?.chain().focus().toggleBold().run()"/>
-            <TextIco class="ico ico-text" text="I" :italic="true" :size="24" @click="editor?.chain().focus().toggleItalic().run()"/>
-
-            <BulletListIco class="ico" :size="18" @click="editor?.chain().focus().toggleBulletList().run()"/>
-            <HorizontalRuleIco class="ico" :size="18" @click="editor?.chain().focus().setHorizontalRule().run()"/>
-            <CheckMarkIco
-                class="ico"
-                :size="18"
-                @click="editor?.chain().focus().toggleTaskList().run()"
-                :class="{ 'is-active': editor?.isActive('taskList') }"
-            />
+            <div class="nodes-block__line">
+                <H1Ico class="ico" text="H1" :size="18" @click="editor?.chain().focus().toggleHeading({ level: 1 }).run()"/>
+                <H2Ico class="ico" text="H2" :size="18" @click="editor?.chain().focus().toggleHeading({ level: 2 }).run()"/>
+                <H3Ico class="ico" text="H3" :size="18" @click="editor?.chain().focus().toggleHeading({ level: 3 }).run()"/>
+                <H4Ico class="ico" text="H4" :size="18" @click="editor?.chain().focus().toggleHeading({ level: 4 }).run()"/>
+                <H5Ico class="ico" text="H5" :size="18" @click="editor?.chain().focus().toggleHeading({ level: 5 }).run()"/>
+                <H6Ico class="ico" text="H6" :size="18" @click="editor?.chain().focus().toggleHeading({ level: 6 }).run()"/>
+            </div>
+            <div class="nodes-block__line">
+                <StrikethroughIco class="ico" :size="18" @click="editor?.chain().focus().toggleStrike().run()"/>
+                <UnderlineIco class="ico" :size="18" @click="editor?.chain().focus().toggleUnderline().run()"/>
+                <BoldIco class="ico" :size="18" @click="editor?.chain().focus().toggleBold().run()"/>
+                <ItalicIco class="ico" :size="18" @click="editor?.chain().focus().toggleItalic().run()"/>
+            </div>
+            <div class="nodes-block__line">
+                <BulletListIco class="ico" :size="18" @click="editor?.chain().focus().toggleBulletList().run()"/>
+                <HorizontalRuleIco class="ico" :size="18" @click="editor?.chain().focus().setHorizontalRule().run()"/>
+                <CheckMarkIco
+                    class="ico"
+                    :size="18"
+                    @click="editor?.chain().focus().toggleTaskList().run()"
+                    :class="{ 'is-active': editor?.isActive('taskList') }"
+                />
+            </div>
+            <div class="nodes-block__border"/>
+            <div class="nodes-block__border-bg"/>
         </div>
         <div class="tiptap-wrapper">
             <EditorContent :editor="editor"/>
@@ -69,15 +87,47 @@ const editor = useEditor({
 <style scoped lang="scss">
 @use "@scss/variables/colors";
 
+$component-margin-top: 20px;
+
 .tiptap-task {
-    margin-top: 20px;
+    margin-top: $component-margin-top;
 }
 
 .nodes-block {
     display: flex;
-    flex-wrap: wrap;
-    margin-bottom: 15px;
+    flex-direction: column;
     gap: 5px;
+    z-index: 1;
+    background-color: colors.$bg-elevated;
+    position: sticky;
+    top: 0 - $component-margin-top;
+    padding: 10px 0;
+
+    &__line {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+
+    &__border {
+        border: 1px solid colors.$border-default;
+        border-bottom: none;
+        width: calc(100% - 2px);
+        height: 9px;
+        border-radius: 5px 5px 0 0;
+
+        position: absolute;
+        bottom: -10px;
+    }
+
+    &__border-bg {
+        background-color: colors.$bg-elevated;
+        width: 100%;
+        height: 5px;
+        position: absolute;
+        bottom: -5px;
+        z-index: -1;
+    }
 }
 
 .text {
@@ -108,10 +158,6 @@ const editor = useEditor({
     &:hover {
         color: colors.$border-focus;
     }
-}
-
-.ico-text {
-    padding: 2px;
 }
 </style>
 
@@ -185,7 +231,7 @@ const editor = useEditor({
         padding-left: 0;
     }
 
-    h1, h2, h3 {
+    h1, h2, h3, h4, h5, h6 {
         margin: 0;
     }
 
@@ -199,6 +245,22 @@ const editor = useEditor({
 
     h3 {
         font-size: 16px;
+    }
+
+    h4 {
+        font-size: 14px;
+    }
+
+    h5 {
+        font-size: 12px;
+    }
+
+    h6 {
+        font-size: 10px;
+    }
+
+    input[type="checkbox"] {
+        margin-left: 8px;
     }
 }
 </style>
