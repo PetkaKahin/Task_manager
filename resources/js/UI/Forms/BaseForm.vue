@@ -51,13 +51,21 @@ const goBack = () => {
     width: fit-content;
     padding: 20px;
     background-color: colors.$bg-elevated;
+    box-sizing: border-box;
 
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    overflow: auto;
     gap: 20px;
+
+    height: 100%;
 
     border: 1px solid colors.$border-default;
     border-radius: 5px;
+
+    &__main {
+        height: auto;
+    }
 
     &__footer {
         display: flex;
@@ -67,6 +75,17 @@ const goBack = () => {
 
     &__button {
         padding: 5px;
+    }
+}
+</style>
+
+<style lang="scss">
+.base-layout {
+    height: 100vh;
+    max-height: 100vh;
+
+    &__content {
+        overflow: hidden !important;
     }
 }
 </style>
