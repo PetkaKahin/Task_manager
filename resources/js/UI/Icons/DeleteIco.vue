@@ -13,7 +13,11 @@ const props = withDefaults(defineProps<Props>(), {
 <template>
     <svg
         class="delete-ico"
-        viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg" :width="props.size" :height="props.size" fill="none"
+        viewBox="0 0 22 22"
+        xmlns="http://www.w3.org/2000/svg"
+        :width="props.size"
+        :height="props.size"
+        fill="none"
     >
         <path d="M3.5 21L18.5 21L18.5 4L3.5 4L3.5 21Z" fill-rule="nonzero" :stroke="color" stroke-linejoin="round" stroke-width="1.500000" />
         <path d="M9 9L9 15.5" :stroke="color" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.500000" />
