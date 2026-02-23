@@ -57,8 +57,10 @@ function deleteProject() {
                 <div class="header__right-block">
                     <Link :href="route('category.create', {
                         from_project_id: project.id
-                    })">
-                        <BaseButton className="header__button" text="+ Добавить категорию"/>
+                    })"
+                          class="header__link"
+                    >
+                        <BaseButton className="header__button text-no-wrap" text="+ Добавить категорию"/>
                     </Link>
                 </div>
             </header>
@@ -93,7 +95,7 @@ function deleteProject() {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
-
+    gap: 20px;
 
     &__text {
         font-weight: 300;
@@ -103,6 +105,8 @@ function deleteProject() {
     &__ico {
         color: colors.$text-disabled;
         cursor: pointer;
+        min-width: 22px;
+        min-height: 22px;
 
         &:hover {
             color: colors.$text-focus;
@@ -121,6 +125,10 @@ function deleteProject() {
         display: flex;
         gap: 15px;
         align-items: center;
+    }
+
+    &__link {
+        text-decoration: none;
     }
 }
 
