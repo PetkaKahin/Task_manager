@@ -25,9 +25,9 @@ onMounted(async () => {
 
 <template>
     <div class="base-layout">
-        <div class="base-layout__header">
+        <header class="base-layout__header">
             <Header/>
-        </div>
+        </header>
         <BaseBackdrop/>
         <div
             class="base-layout__sidebar"
@@ -45,7 +45,7 @@ onMounted(async () => {
 @use "@scss/base";
 
 .base-layout {
-    height: 100vh;
+    min-height: 100vh;
     display: grid;
     grid-template-columns: auto 1fr;
     grid-template-rows: auto 1fr;
