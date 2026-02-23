@@ -43,7 +43,7 @@ function submit() {
 
 @media (max-width: 425px) {
     .new-task {
-        margin: 0;
+        padding: 0;
     }
 }
 </style>
