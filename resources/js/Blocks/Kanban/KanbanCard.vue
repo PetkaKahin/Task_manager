@@ -12,8 +12,6 @@ import {computed} from "vue";
 import {useProjectStore} from "@/stores/project.store.ts";
 import {TaskItem, TaskList} from "@tiptap/extension-list";
 import {apiRequest} from "@/shared/api/apiRequest.ts";
-import {useKanbanStore} from "@/stores/kanban.store.ts";
-import Heading from "@tiptap/extension-heading";
 
 interface IProps {
     task: ITask
@@ -50,7 +48,6 @@ const editor = useEditor({
         },
         handleDOMEvents: {
             cut: (_view, event) => { event.preventDefault(); return true },
-            contextmenu: (_view, event) => { event.preventDefault(); return true },
         },
         handleKeyDown: () => true,   // блокирует клавиатуру
         handleTextInput: () => true, // блокирует мобильный ввод (IME/composition)
@@ -127,7 +124,6 @@ const taskDelete = () => useKanbanCard().taskDelete(props.task)
     background-color: colors.$bg-base;
     padding: 10px;
     max-width: sizes.$card-max-width;
-    user-select: none;
     pointer-events: auto;
 
     display: flex;
@@ -136,6 +132,7 @@ const taskDelete = () => useKanbanCard().taskDelete(props.task)
 
     &--is-dragging {
         opacity: 0.6;
+        //user-select: none;
     }
 
     &__left-block, &__right-block {
@@ -158,10 +155,7 @@ const taskDelete = () => useKanbanCard().taskDelete(props.task)
     }
 
     .tiptap {
-        pointer-events: none;
-        user-select: none;
-        -webkit-user-select: none;
-        -webkit-touch-callout: none;
+        user-select: text;
     }
 
     ul[data-type="taskList"] input[type="checkbox"] {
@@ -177,6 +171,7 @@ const taskDelete = () => useKanbanCard().taskDelete(props.task)
 
     &__title {
         margin: 0;
+        user-select: text;
     }
 }
 
