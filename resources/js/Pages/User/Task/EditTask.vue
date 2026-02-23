@@ -39,15 +39,16 @@ function submit() {
 <style scoped lang="scss">
 
 .task {
-    margin-top: 20px;
+    height: 100%;
+    padding: 20px 0;
     display: flex;
     justify-content: center;
+    box-sizing: border-box;
 }
 
 @media (max-width: 425px) {
     .task {
         margin: 0;
-        height: 100%;
     }
 }
 </style>
