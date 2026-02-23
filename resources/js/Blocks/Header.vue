@@ -101,6 +101,7 @@ function toggleSidebar() {
     outline: none;
     border: none;
     width: 22px;
+    min-width: 22px;
 
     &__line {
         display: block;

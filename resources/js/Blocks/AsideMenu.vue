@@ -155,6 +155,7 @@ function deleteProject(project: IProject) {
     }
 
     &__title {
+        display: block;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;

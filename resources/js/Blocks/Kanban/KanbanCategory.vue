@@ -54,6 +54,7 @@ const menuItems = [
 
 <style scoped lang="scss">
 @use '@scss/variables/colors';
+@use '@scss/variables/sizes';
 
 .header {
     display: flex;
@@ -63,6 +64,7 @@ const menuItems = [
     margin-bottom: 15px;
     padding-bottom: 15px;
     gap: 10px;
+    max-width: sizes.$card-max-width;
 
     &__left-block {
         display: flex;
@@ -94,6 +96,7 @@ const menuItems = [
 
     &__drug {
         color: colors.$ico-inactive;
+        min-width: 15px;
     }
 }
 </style>
