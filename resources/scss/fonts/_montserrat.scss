@@ -17,5 +17,5 @@ $weights: (
 @each $weight, $name in $weights {
     @include font.font-face("Montserrat", "#{$font-path}/Montserrat-#{$name}", $weight);
 
-    @include font.font-face("Montserrat", "#{$font-path}/Montserrat-#{$name}italic", $weight, italic);
+    @include font.font-face("Montserrat", "#{$font-path}/Montserrat-#{$name}Italic", $weight, italic);
 }
