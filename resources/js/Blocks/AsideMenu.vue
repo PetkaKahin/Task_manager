@@ -38,7 +38,7 @@ function deleteProject(project: IProject) {
             v-if="isDesktop === false"
         />
 
-        <Link :href="route('project.create', {
+        <Link :href="route('projects.create', {
             from_project_id: useProjectStore()?.currentProject?.id
         })">
             <BaseButton text="+ Добавить проект" className="sidebar-menu__add-project"/>
@@ -54,7 +54,7 @@ function deleteProject(project: IProject) {
                 >
                     <div class="item__wrapper">
                         <Link
-                            :href="route('dashboard.index', project.id)"
+                            :href="route('projects.show', project.id)"
                             class="item__link"
                             @mouseenter="isItemActive = project.id"
                             @mouseleave="isItemActive = false"
@@ -62,7 +62,7 @@ function deleteProject(project: IProject) {
                             <span class="item__title">{{ project.title }}</span>
                         </Link>
                         <div class="item__icons">
-                            <Link :href="route('project.edit', {
+                            <Link :href="route('projects.edit', {
                                 id: project.id,
                                 from_project_id: currentProject?.id
                             })">

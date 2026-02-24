@@ -61,7 +61,7 @@ export function useBackdrop() {
     }
 
     const closeAll = (): void => {
-        for (let i = subscribers.value.length; i > 0; i--) {
+        for (let i = subscribers.value.length - 1; i >= 0; i--) {
             subscribers.value[i]!.unsubscribeCallback()
             subscribers.value.splice(i, 1)
         }

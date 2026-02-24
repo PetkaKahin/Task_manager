@@ -27,6 +27,6 @@ class RegisterController extends Controller
 
         $project = $user->projects()->orderBy('updated_at')->first();
 
-        return redirect()->intended(route('dashboard.index', $project?->id));
+        return redirect()->intended(route('projects.show', $project?->id));
     }
 }

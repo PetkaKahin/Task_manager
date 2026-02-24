@@ -12,9 +12,13 @@ export function useKanbanProject() {
     function projectDelete(project: IProject) {
         modal.addActionClosing(
             'delete.project',
-            () => {
+            async () => {
                 projectStore.deleteProject(project)
-                axios.delete(route('project.destroy', project.id))
+                try {
+                    await axios.delete(route('projects.destroy', project.id))
+                } catch (error) {
+                    console.error(error)
+                }
                 router.visit(route('home'))
             }
         )

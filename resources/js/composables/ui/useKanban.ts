@@ -46,7 +46,7 @@ export function useKanban() {
             moveAfter = prevCategory?.id ?? null
         }
 
-        categoryService.updatePosition(projectStore.currentProject.id, category.id, moveAfter)
+        categoryService.updatePosition(category.id, moveAfter)
     }
 
     /**
@@ -68,23 +68,18 @@ export function useKanban() {
         const newCategoryIndex = kanbanStore.getCategoryIndexByTaskId(task.id)
         const newTaskPosition: number = kanbanStore.getTaskIndex(task.id, newCategoryIndex)
 
-        let moveAfter, newCategoryId
+        // Позиция и категория не изменились — ничего не делаем
+        if (oldTaskIndex === newTaskPosition && oldCategoryIndex === newCategoryIndex) return
 
-        // Заполняем moveAfter и newCategoryId
-        if (oldTaskIndex === newTaskPosition) {
-            if (oldCategoryIndex === newCategoryIndex) return
-        } else {
-            const prevTask = kanbanStore.categories[newCategoryIndex]!.tasks[newTaskPosition - 1]
-            moveAfter = prevTask?.id ?? null
-        }
+        const prevTask = kanbanStore.categories[newCategoryIndex]!.tasks[newTaskPosition - 1]
+        const moveAfter: number | null = prevTask?.id ?? null
 
+        let newCategoryId: number | undefined
         if (oldCategoryIndex !== newCategoryIndex) {
             newCategoryId = kanbanStore.categories[newCategoryIndex]!.id
         }
 
         taskService.updatePosition(
-            projectStore.currentProject!.id,
-            kanbanStore.categories[oldCategoryIndex]!.id,
             task.id,
             moveAfter,
             newCategoryId

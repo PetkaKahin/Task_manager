@@ -3,19 +3,16 @@
 namespace App\Http\Controllers\Web\User;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Web\Project\DestroyProjectRequest;
+use App\Http\Requests\Web\Project\EditProjectRequest;
+use App\Http\Requests\Web\Project\ShowProjectRequest;
 use App\Http\Requests\Web\Project\StoreProjectRequest;
 use App\Http\Requests\Web\Project\UpdateProjectRequest;
 use App\Models\Project;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class ProjectController extends Controller
 {
-    public function index()
-    {
-
-    }
-
     public function create()
     {
         return Inertia::render('User/Project/NewProject');
@@ -26,34 +23,39 @@ class ProjectController extends Controller
         $user = auth()->user();
         $newProject = Project::factory()->default($user, $request->title)->create();
 
-        return redirect()->intended(route('dashboard.index', $newProject->id));
+        return redirect()->intended(route('projects.show', $newProject->id));
     }
 
-    public function show(string $id)
+    public function show(ShowProjectRequest $request, Project $project)
     {
+        // TODO сделать билдер для моделей использующих lexorank
+        $categories = $project->categories()->sorted()
+            ->with(['tasks' => fn ($query) => $query->sorted()])
+            ->get();
 
+        return Inertia::render('User/Dashboard', [
+            'project'    => $project,
+            'categories' => $categories,
+        ]);
     }
 
-    public function edit(string $id)
+    public function edit(EditProjectRequest $request, Project $project)
     {
-        $project = Project::query()->findOrFail($id);
-
         return Inertia::render('User/Project/EditProject', [
             'project' => $project,
         ]);
     }
 
-    public function update(UpdateProjectRequest $request, string $id)
+    public function update(UpdateProjectRequest $request, Project $project)
     {
-        $project = Project::query()->findOrFail($id);
         $project->update($request->validated());
 
-        return redirect()->intended(route('dashboard.index', $project->id));
+        return redirect()->intended(route('projects.show', $project->id));
     }
 
-    public function destroy(string $id)
+    public function destroy(DestroyProjectRequest $request, Project $project)
     {
-        Project::query()->findOrFail($id)->delete();
+        $project->delete();
 
         return response()->noContent();
     }

@@ -32,7 +32,7 @@ onMounted(async () => {
                 :clickAction="() => activeCategory=item"
             />
             <Link
-                :href="route('category.create', {
+                :href="route('categories.create', {
                     from_project_id: currentProject?.id
                 })"
                 class="header__link"

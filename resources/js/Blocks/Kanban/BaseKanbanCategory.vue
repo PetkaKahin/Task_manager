@@ -18,7 +18,7 @@ interface IProps {
 const props = defineProps<IProps>()
 const {animationsEnabled} = storeToRefs(useKanbanStore())
 const {getDraggableData, getDroppableData} = useKanbanCategory()
-const {elementRef: bodyRef, isOvered: bodyIsOvered} = getDroppableData(props.category.tasks)
+const {elementRef: bodyRef, isOvered: bodyIsOvered} = getDroppableData(() => props.category.tasks)
 const {
     elementRef: categoryRef,
     isDragging,
@@ -57,9 +57,9 @@ const {
             </TransitionGroup>
         </div>
 
-        <Link :href="route('task.create', {
+        <Link :href="route('tasks.create', {
             category_id: category.id,
-            from_project_id: useProjectStore()!.currentProject!.id
+            from_project_id: useProjectStore().currentProject?.id
         })"
               class="link--no-decor"
         >

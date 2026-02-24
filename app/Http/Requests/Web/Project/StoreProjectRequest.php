@@ -8,6 +8,7 @@ class StoreProjectRequest extends FormRequest
 {
     public function authorize(): bool
     {
+        // TODO подумать, нужны ли ограничения?
         return true;
     }
 

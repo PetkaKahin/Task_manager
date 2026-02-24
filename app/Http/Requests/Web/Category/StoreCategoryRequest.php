@@ -2,12 +2,14 @@
 
 namespace App\Http\Requests\Web\Category;
 
+use App\Rules\ProjectBelongsToUser;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreCategoryRequest extends FormRequest
 {
     public function authorize(): bool
     {
+        // TODO подумать, нужны ли ограничения?
         return true;
     }
 
@@ -21,7 +23,7 @@ class StoreCategoryRequest extends FormRequest
             ],
             'project_id' => [
                 'required',
-                'exists:projects,id',
+                new ProjectBelongsToUser,
             ]
         ];
     }

@@ -8,13 +8,14 @@ class UpdateCategoryRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true;
+        return $this->user()->can('update', $this->route('category'));
     }
 
     public function rules(): array
     {
         return [
             'title' => [
+                'required',
                 'string',
                 'max:255',
             ],

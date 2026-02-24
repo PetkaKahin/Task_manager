@@ -2,12 +2,14 @@
 
 namespace App\Http\Requests\Web\Task;
 
+use App\Rules\CategoryBelongsToUser;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreTaskRequest extends FormRequest
 {
     public function authorize(): bool
     {
+        // TODO подумать, нужны ли ограничения?
         return true;
     }
 
@@ -21,7 +23,7 @@ class StoreTaskRequest extends FormRequest
             ],
             'category_id' => [
                 'required',
-                'exists:categories,id',
+                new CategoryBelongsToUser,
             ],
             'content' => [
                 'string',

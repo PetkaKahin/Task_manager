@@ -18,7 +18,7 @@ const form = useForm({
 })
 
 function submit() {
-    form.patch(route('task.update', props.task.id))
+    form.patch(route('tasks.update', props.task.id))
 }
 </script>
 

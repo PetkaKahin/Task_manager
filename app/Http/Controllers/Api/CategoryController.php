@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\Category\DestroyCategoryRequest;
 use App\Http\Requests\Api\Category\ReorderCategoryRequest;
+use App\Http\Requests\Api\Category\ShowCategoryRequest;
 use App\Http\Requests\Api\Category\UpdateCategoryRequest;
 use App\Http\Resources\CategoryResource;
+use App\Models\Category;
 use App\Services\CategoryService;
-use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
@@ -15,50 +17,30 @@ class CategoryController extends Controller
     {
     }
 
-    public function index()
+    public function show(ShowCategoryRequest $request, Category $category)
     {
-
-    }
-
-    public function store(Request $request)
-    {
-
-    }
-
-    public function show(string $projectId, string $categoryId)
-    {
-        $category = auth()->user()
-            ->projects()->findOrFail($projectId)
-            ->categories()->with('tasks')->findOrFail($categoryId);
-
         return new CategoryResource($category);
     }
 
-    public function update(UpdateCategoryRequest $request, string $projectId, string $categoryId)
+    public function update(UpdateCategoryRequest $request, Category $category)
     {
-        $category = auth()->user()
-            ->projects()->findOrFail($projectId)
-            ->categories()->findOrFail($categoryId);
-
         $category->update($request->validated());
 
         return new CategoryResource($category);
     }
 
-    public function destroy(string $id)
+    public function destroy(DestroyCategoryRequest $request, Category $category)
     {
-        $category = auth()->user()->categories()->findOrFail($id);
         $category->delete();
 
         return response()->noContent();
     }
 
     // TODO добавить переодическую оптимизацию позиции
-    public function reorder(ReorderCategoryRequest $request, string $projectId, string $categoryId)
+    public function reorder(ReorderCategoryRequest $request, Category $category)
     {
-        $project = auth()->user()->projects()->findOrFail($projectId);
-        $category = $project->categories()->findOrFail($categoryId);
-
+        $category->loadMissing('project');
+        $project = $category->project;
         $this->categoryService->reorder($request, $project, $category);
 
         return new CategoryResource($category);

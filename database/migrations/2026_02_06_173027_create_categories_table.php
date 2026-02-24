@@ -19,9 +19,9 @@ return new class extends Migration
             } else {
                 $table->string('position')->index();
             }
-            $table->unsignedBigInteger('project_id');
+            $table->unsignedBigInteger('project_id')->index();
             $table->timestamps();
-            $table->softDeletes();
+            $table->softDeletes()->index();
         });
     }
 

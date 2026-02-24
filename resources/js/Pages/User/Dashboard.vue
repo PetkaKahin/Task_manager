@@ -46,7 +46,7 @@ function deleteProject() {
                     <h2 class="header__text">
                         {{ props.project.title }}
                     </h2>
-                    <Link :href="route('project.edit', {
+                    <Link :href="route('projects.edit', {
                         id: project.id,
                         from_project_id: project.id,
                     })">
@@ -55,7 +55,7 @@ function deleteProject() {
                     <DeleteIco class="header__ico" @click="deleteProject" :size="22"/>
                 </div>
                 <div class="header__right-block">
-                    <Link :href="route('category.create', {
+                    <Link :href="route('categories.create', {
                         from_project_id: project.id
                     })"
                           class="header__link"

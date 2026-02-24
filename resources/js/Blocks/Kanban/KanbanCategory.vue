@@ -20,7 +20,7 @@ const {currentProject} = useProjectStore()
 const props = defineProps<IProps>()
 const menuItems = [
     h(DropdownItemEditCategory, {
-        url: route('category.edit', {
+        url: route('categories.edit', {
             id: props.category.id,
             from_project_id: currentProject?.id
         })

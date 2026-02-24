@@ -2,13 +2,14 @@
 
 namespace App\Http\Requests\Api\Task;
 
+use App\Rules\CategoryBelongsToUser;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateTaskRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true;
+        return $this->user()->can('update', $this->route('task'));
     }
 
     public function rules(): array
@@ -28,7 +29,7 @@ class UpdateTaskRequest extends FormRequest
             'category_id' => [
                 'nullable',
                 'integer',
-                'exists:categories,id',
+                new CategoryBelongsToUser(),
             ],
         ];
     }

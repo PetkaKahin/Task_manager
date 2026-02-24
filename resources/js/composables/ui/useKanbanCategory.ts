@@ -29,11 +29,11 @@ export function useKanbanCategory() {
         }
     }
 
-    function getDroppableData(tasks: ITask[], onAfterDrop?: () => void) {
+    function getDroppableData(getTasks: () => ITask[], onAfterDrop?: () => void) {
         const {elementRef, isOvered} = useDroppable({
             groups: ['kanban-cards'],
             data: computed(() => ({
-                source: tasks,
+                source: getTasks(),
             })),
             events: {
                 onDrop: (store, payload) => {
@@ -41,7 +41,7 @@ export function useKanbanCategory() {
 
                     if (!store.hovered.element.value) {
                         const draggedSource = payload.items[0]?.data?.source
-                        if (draggedSource === tasks) return
+                        if (draggedSource === getTasks()) return
                     }
 
                     kanban.taskMoved(payload)
@@ -61,8 +61,13 @@ export function useKanbanCategory() {
         modal.addActionClosing(
             'delete.category',
             () => {
+                const index = kanbanStore.getCategoryIndex(category.id)
                 kanbanStore.deleteCategory(category)
-                axios.delete(route('category.destroy', category.id))
+                axios.delete(route('categories.destroy', category.id))
+                    .catch((error) => {
+                        console.error(error)
+                        kanbanStore.addCategory(index, category)
+                    })
             }
         )
         modal.open()

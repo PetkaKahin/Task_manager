@@ -9,17 +9,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('project_user', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('project_id');
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('project_id')->index();
+            $table->unsignedBigInteger('user_id')->index();
             $table->string('role')->default('member');
             $table->timestamps();
         });
 
         Schema::table('project_user', function (Blueprint $table) {
             $table->unique(['project_id', 'user_id']);
-            $table->foreign('project_id')->references('id')->on('projects');
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('project_id')->references('id')->on('projects')->cascadeOnDelete();
+            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
         });
     }
 

@@ -25,7 +25,7 @@ class LoginController extends Controller
         $user = Auth::user();
         $project = $user->projects()->first();
 
-        return redirect()->intended(route("dashboard.index", $project?->id));
+        return redirect()->intended(route("projects.show", $project?->id));
     }
 
     protected function authenticate(LoginRequest $request): void

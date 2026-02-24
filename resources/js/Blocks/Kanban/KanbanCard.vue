@@ -21,14 +21,16 @@ interface IProps {
 }
 
 const props = defineProps<IProps>()
-const {currentProject} = useProjectStore()
+const projectStore = useProjectStore()
+const kanbanCard = useKanbanCard()
 const {
     elementRef,
     handleDragStart,
     isDragging,
     isOvered
-} = useKanbanCard().getDraggableData(props.source, computed(() => props.index));
+} = kanbanCard.getDraggableData(props.source, computed(() => props.index));
 
+let updateTimeout: ReturnType<typeof setTimeout>
 const editor = useEditor({
     content: props.task.content,
     extensions: [
@@ -55,18 +57,17 @@ const editor = useEditor({
         handleDrop: () => true,      // блокирует drag&drop
     },
     onUpdate: ({ editor }) => {
-        if (!currentProject) return
-        apiRequest.patch(route('api.tasks.update', {
-            projectId: currentProject.id,
-            categoryId: props.task.category_id,
-            taskId: props.task.id,
-        }), {
-            content: editor.getHTML()
-        })
+        if (!projectStore.currentProject) return
+        clearTimeout(updateTimeout)
+        updateTimeout = setTimeout(() => {
+            apiRequest.patch(route('api.tasks.update', props.task.id), {
+                content: editor.getHTML()
+            })
+        }, 500)
     },
 })
 
-const taskDelete = () => useKanbanCard().taskDelete(props.task)
+const taskDelete = () => kanbanCard.taskDelete(props.task)
 </script>
 
 <template>
@@ -96,9 +97,9 @@ const taskDelete = () => useKanbanCard().taskDelete(props.task)
                 :size="iconsSize ? iconsSize - 3 : 14"
             />
             <Link
-                :href="route('task.edit', {
-                    id:props.task.id, from_project_id:
-                    useProjectStore()!.currentProject!.id
+                :href="route('tasks.edit', {
+                    id: props.task.id,
+                    from_project_id: projectStore.currentProject?.id
                 })"
             >
                 <EditIco class="ico" :size="iconsSize ?? 16"/>
@@ -132,7 +133,6 @@ const taskDelete = () => useKanbanCard().taskDelete(props.task)
 
     &--is-dragging {
         opacity: 0.6;
-        //user-select: none;
     }
 
     &__left-block, &__right-block {
