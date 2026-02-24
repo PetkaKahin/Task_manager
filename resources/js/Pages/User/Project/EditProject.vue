@@ -16,7 +16,7 @@
   })
 
   function submit() {
-      form.patch(route('project.update', props.project.id))
+      form.patch(route('projects.update', props.project.id))
   }
 </script>
 

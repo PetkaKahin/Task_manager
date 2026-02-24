@@ -54,7 +54,11 @@ export function useKanbanCard() {
             'delete.task',
             () => {
                 kanbanStore.deleteTask(task)
-                axios.delete(route('task.destroy', task.id))
+                axios.delete(route('tasks.destroy', task.id))
+                    .catch((error) => {
+                        console.error(error)
+                        kanbanStore.addTask(task.category_id, task)
+                    })
             }
         )
         modal.open()

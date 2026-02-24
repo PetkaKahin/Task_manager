@@ -12,7 +12,7 @@ const form = useForm({
 })
 
 function submit() {
-    form.post(route('category.store'))
+    form.post(route('categories.store'))
 }
 </script>
 

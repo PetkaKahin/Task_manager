@@ -18,7 +18,7 @@ interface IProps {
 const props = defineProps<IProps>()
 const isHoverIco = ref<boolean>(false)
 
-const {elementRef: droppableRef, isOvered} = useKanbanCategory().getDroppableData(props.category.tasks)
+const {elementRef: droppableRef, isOvered} = useKanbanCategory().getDroppableData(() => props.category.tasks)
 
 const handleItemClick = () => {
     if (!isHoverIco.value) {
@@ -47,7 +47,7 @@ const handleItemClick = () => {
             @mouseleave="isHoverIco = false"
             :menuItems="[
                 h(DropdownItemEditCategory, {
-                    url: route('category.edit', {
+                    url: route('categories.edit', {
                         id: props.category.id,
                         from_project_id: props.category.project_id
                     })

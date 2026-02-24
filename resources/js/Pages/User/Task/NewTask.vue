@@ -13,7 +13,7 @@ const form = useForm({
 })
 
 function submit() {
-    form.post(route('task.store'))
+    form.post(route('tasks.store'))
 }
 </script>
 

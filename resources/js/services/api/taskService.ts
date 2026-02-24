@@ -14,8 +14,6 @@ export const taskService = {
      * undefined - поле будет проигнорировано
      */
     updatePosition(
-        projectId: number,
-        categoryId: number,
         taskId: number,
         moveAfter: number | null | undefined = undefined,
         newCategoryId: number | null | undefined = undefined,
@@ -23,11 +21,11 @@ export const taskService = {
     {
         const payload: any = {}
 
-        if (moveAfter !== undefined) payload.move_after = moveAfter
+        if (moveAfter !== undefined) payload.move_after_id = moveAfter
         if (newCategoryId !== undefined) payload.category_id = newCategoryId
 
         apiRequest.patch(
-            `/projects/${projectId}/categories/${categoryId}/tasks/${taskId}/reorder`,
+            route('api.tasks.reorder', taskId),
             payload
         ).catch((error) => {
             console.error(error)

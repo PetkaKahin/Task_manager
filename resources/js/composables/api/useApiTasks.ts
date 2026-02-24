@@ -1,11 +1,12 @@
 import {type ITask} from "@/Types/models"
 import {useApi} from "@/composables/api/useApi.ts";
 import {apiRequest} from "@/shared/api/apiRequest.ts";
+import {route} from "ziggy-js";
 
-export function useCategories() {
-    function updateTask(projectId: number, categoryId: number, task: ITask) {
+export function useApiTasks() {
+    function updateTask(task: ITask) {
         return useApi<ITask>(
-            () => apiRequest.patch(`projects/${projectId}/categories/${categoryId}/tasks/${task.id}`, task),
+            () => apiRequest.patch(route('api.tasks.update', task.id), task),
             [] as unknown as ITask
         )
     }
