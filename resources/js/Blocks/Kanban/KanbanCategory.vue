@@ -64,7 +64,6 @@ const menuItems = [
     margin-bottom: 15px;
     padding-bottom: 15px;
     gap: 10px;
-    max-width: sizes.$card-max-width;
 
     &__left-block {
         display: flex;

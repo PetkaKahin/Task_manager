@@ -72,6 +72,7 @@ const {
 
 <style scoped lang="scss">
 @use '@scss/variables/colors';
+@use '@scss/variables/sizes';
 
 .kanban-category {
     border: 1px solid colors.$border-default;
@@ -79,6 +80,7 @@ const {
     padding: 15px;
     background-color: colors.$bg-elevated;
     min-width: 200px;
+    max-width: sizes.$category-max-width;
     height: 100%;
     display: flex;
     flex-direction: column;
