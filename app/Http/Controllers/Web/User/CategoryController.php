@@ -3,18 +3,15 @@
 namespace App\Http\Controllers\Web\User;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\Category\UpdateCategoryRequest;
+use App\Http\Requests\Web\Category\UpdateCategoryRequest;
+use App\Http\Requests\Web\Category\DestroyCategoryRequest;
+use App\Http\Requests\Web\Category\EditCategoryRequest;
 use App\Http\Requests\Web\Category\StoreCategoryRequest;
 use App\Models\Category;
 use Inertia\Inertia;
 
 class CategoryController extends Controller
 {
-    public function index()
-    {
-
-    }
-
     public function create()
     {
         return Inertia::render('User/Category/NewCategory');
@@ -22,36 +19,28 @@ class CategoryController extends Controller
 
     public function store(StoreCategoryRequest $request)
     {
-        $category = Category::query()->create($request->validated());
+        $category = Category::create($request->validated());
 
-        return redirect()->intended(route('dashboard.index', $category->project_id));
+        return redirect()->intended(route('projects.show', $category->project_id));
     }
 
-    public function show(string $id)
+    public function edit(EditCategoryRequest $request, Category $category)
     {
-
-    }
-
-    public function edit(string $id)
-    {
-        $category = Category::query()->findOrFail($id);
-
         return Inertia::render('User/Category/EditCategory', [
             'category' => $category,
         ]);
     }
 
-    public function update(UpdateCategoryRequest $request, string $id)
+    public function update(UpdateCategoryRequest $request, Category $category)
     {
-        $category = Category::query()->findOrFail($id);
         $category->update($request->validated());
 
-        return redirect()->intended(route('dashboard.index', $category->project_id));
+        return redirect()->intended(route('projects.show', $category->project_id));
     }
 
-    public function destroy(string $id)
+    public function destroy(DestroyCategoryRequest $request, Category $category)
     {
-        Category::query()->findOrFail($id)->delete();
+        $category->delete();
 
         return response()->noContent();
     }

@@ -9,18 +9,11 @@ use App\Models\Project;
 class CategoryService {
 
     /**
-     * Вставляет Category после ReorderCategoryRequest->move_after
-     *
-     * @param ReorderCategoryRequest $request
-     * @param Project $project
-     * @param Category $category
-     * @return void
-     * @throws \AlexCrawford\Sortable\SortableException
+     * Вставляет Category после ReorderCategoryRequest->move_after_id
      */
-
     public function reorder(ReorderCategoryRequest $request, Project $project, Category $category): void
     {
-        if ($request->move_after === null) {
+        if ($request->move_after_id === null) {
             $first = $project->categories()
                 ->sorted()
                 ->where('id', '!=', $category->id)
@@ -31,7 +24,7 @@ class CategoryService {
             }
         } else {
             $category->moveAfter(
-                $project->categories()->findOrFail($request->move_after)
+                $project->categories()->findOrFail($request->move_after_id)
             );
         }
     }

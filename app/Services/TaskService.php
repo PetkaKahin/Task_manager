@@ -3,40 +3,30 @@
 namespace App\Services;
 
 use App\Http\Requests\Api\Task\ReorderTaskRequest;
+use App\Models\Category;
 use App\Models\Project;
 use App\Models\Task;
 
 class TaskService {
 
     /**
-     * Вставляет Task после ReorderTaskRequest->move_after и возвращает его <br>
+     * Вставляет Task после ReorderTaskRequest->move_after_id и возвращает его <br>
      * Сам обращается к БД за нужными данными
-     *
-     * @param ReorderTaskRequest $request
-     * @param Project $project
-     * @param int $categoryId
-     * @param int $taskId
-     * @return Task
      */
-
-    public function reorder(ReorderTaskRequest $request, Project $project, int $categoryId, int $taskId): Task
+    public function reorder(ReorderTaskRequest $request, Project $project, Category $category, Task $task): Task
     {
-        // Находим таску в текущей категории
-        $currentCategory = $project->categories()->findOrFail($categoryId);
-        $task = $currentCategory->tasks()->findOrFail($taskId);
-
         // Определяем целевую категорию
-        $targetCategory = $request->has('category_id')
+        $targetCategory = $request->filled('category_id')
             ? $project->categories()->findOrFail($request->category_id)
-            : $currentCategory;
+            : $category;
 
         // Если категория меняется — обновляем связь
-        if ($targetCategory->id !== $currentCategory->id) {
+        if ($targetCategory->id !== $category->id) {
             $task->update(['category_id' => $targetCategory->id]);
         }
 
         // Перемещаем
-        if ($request->move_after === null) {
+        if ($request->move_after_id === null) {
             $first = $targetCategory->tasks()
                 ->sorted()
                 ->where('id', '!=', $task->id)
@@ -47,7 +37,7 @@ class TaskService {
             }
         } else {
             $task->moveAfter(
-                $targetCategory->tasks()->findOrFail($request->move_after)
+                $targetCategory->tasks()->findOrFail($request->move_after_id)
             );
         }
 

@@ -3,19 +3,15 @@
 namespace App\Http\Controllers\Web\User;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Web\Task\DestroyTaskRequest;
+use App\Http\Requests\Web\Task\EditTaskRequest;
 use App\Http\Requests\Web\Task\StoreTaskRequest;
 use App\Http\Requests\Web\Task\UpdateTaskRequest;
-use App\Models\Category;
 use App\Models\Task;
 use Inertia\Inertia;
 
 class TaskController extends Controller
 {
-    public function index()
-    {
-
-    }
-
     public function create()
     {
         return Inertia::render('User/Task/NewTask');
@@ -23,40 +19,32 @@ class TaskController extends Controller
 
     public function store(StoreTaskRequest $request)
     {
-        Task::query()->create($request->validated());
-        $category = Category::query()->findOrFail($request->category_id);
-        $project = $category->project()->findOrFail($category->project_id);
+        $task = Task::query()->create($request->validated());
 
-        return redirect()->intended(route('dashboard.index',$project->id));
+        return redirect()->intended(route(
+            'projects.show',
+            $task->category()->value('project_id')
+        ));
     }
 
-    public function show(string $id)
+    public function edit(EditTaskRequest $request, Task $task)
     {
-
-    }
-
-    public function edit(string $id)
-    {
-        $task = Task::query()->findOrFail($id);
-
         return Inertia::render('User/Task/EditTask', [
             'task' => $task,
         ]);
     }
 
-    public function update(UpdateTaskRequest $request, string $id)
+    public function update(UpdateTaskRequest $request, Task $task)
     {
-        $task = Task::query()->findOrFail($id);
         $task->update($request->validated());
-        $category = Category::query()->findOrFail($task->category_id);
-        $project = $category->project()->findOrFail($category->project_id);
+        $projectId = $task->category()->value('project_id');
 
-        return redirect()->intended(route('dashboard.index',$project->id));
+        return redirect()->intended(route('projects.show', $projectId));
     }
 
-    public function destroy(string $id)
+    public function destroy(DestroyTaskRequest $request, Task $task)
     {
-        Task::query()->findOrFail($id)->delete();
+        $task->delete();
 
         return response()->noContent();
     }
