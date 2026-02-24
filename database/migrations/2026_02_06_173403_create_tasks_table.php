@@ -19,9 +19,9 @@ return new class extends Migration
                 $table->string('position')->index();
             }
             $table->text('content')->nullable();
-            $table->unsignedBigInteger('category_id');
+            $table->unsignedBigInteger('category_id')->index();
             $table->timestamps();
-            $table->softDeletes();
+            $table->softDeletes()->index();
         });
     }
 
