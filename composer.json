@@ -15,7 +15,9 @@
         "tightenco/ziggy": "^2.6"
     },
     "require-dev": {
+        "barryvdh/laravel-ide-helper": "^3.6",
         "fakerphp/faker": "^1.23",
+        "fruitcake/laravel-debugbar": "^4.0",
         "laravel-lang/lang": "^15.28",
         "laravel/pail": "^1.2.2",
         "laravel/pint": "^1.24",
