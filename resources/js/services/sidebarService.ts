@@ -5,7 +5,7 @@ import {useSidebar} from "@/composables/ui/useSidebar.ts";
 export const sidebarService = () => {
     const {isOpen, close} = useSidebar()
 
-    const innit = () => {
+    const init = () => {
         router.on('navigate', () => {
             if (isOpen.value && !useBreakpoints().isDesktop.value) {
                 close()
@@ -14,6 +14,6 @@ export const sidebarService = () => {
     }
 
     return {
-        innit,
+        init,
     }
 }

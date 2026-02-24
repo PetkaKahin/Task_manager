@@ -35,13 +35,5 @@ createInertiaApp({
             cacheFor: "1m",
             hoverDelay: 150,
         },
-        visitOptions: (href, options) => {
-            return {
-                headers: {
-                    ...options.headers,
-                    "X-Custom-Header": "value",
-                },
-            };
-        },
     },
 })
