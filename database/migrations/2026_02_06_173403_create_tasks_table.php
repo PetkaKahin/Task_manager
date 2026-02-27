@@ -12,7 +12,6 @@ return new class extends Migration
             $driver = DB::getDriverName();
 
             $table->id();
-            $table->string('title');
             if ($driver === 'mysql' || $driver === 'mariadb') {
                 $table->string('position')->charset('utf8mb4')->collation('utf8mb4_bin')->index();
             } else {

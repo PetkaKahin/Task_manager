@@ -1,7 +1,6 @@
 <script setup lang="ts">
 
 import Tiptap from "@/Blocks/Tiptap/TiptapTask.vue";
-import TextInput from "@/UI/Inputs/TextInput.vue";
 import BaseForm from "@/UI/Forms/BaseForm.vue";
 import {type InertiaForm} from "@inertiajs/vue3";
 
@@ -34,14 +33,6 @@ const props = defineProps<IProps>()
         </template>
         <template #body>
             <div class="content">
-                <TextInput
-                    id="title"
-                    name="title"
-                    label="Заголовок"
-                    className="form__item"
-                    :error="form.errors.title"
-                    v-model="form.title"
-                />
                 <Tiptap
                     className="form__item"
                     :error="form.errors.content"
@@ -56,6 +47,8 @@ const props = defineProps<IProps>()
 @use '@scss/variables/sizes';
 
 .form {
+    gap: 0;
+
     &__item {
         width: sizes.$card-max-width;
         max-width: sizes.$card-max-width;

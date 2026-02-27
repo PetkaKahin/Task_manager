@@ -16,11 +16,6 @@ class StoreTaskRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => [
-                'required',
-                'string',
-                'max:255',
-            ],
             'category_id' => [
                 'required',
                 new CategoryBelongsToUser,

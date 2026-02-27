@@ -80,12 +80,6 @@ const taskDelete = () => kanbanCard.taskDelete(props.task)
         }"
     >
         <div class="kanban-card__left-block">
-
-            <!-- TODO а нужен ли этот title для .md? -->
-
-            <header class="kanban-card__header header">
-                <h4 class="header__title">{{ task.title }}</h4>
-            </header>
             <div class="kanban-card__content">
                 <EditorContent :editor="editor"/>
             </div>
@@ -161,17 +155,6 @@ const taskDelete = () => kanbanCard.taskDelete(props.task)
     ul[data-type="taskList"] input[type="checkbox"] {
         pointer-events: auto;
         cursor: pointer;
-    }
-}
-
-.header {
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;
-
-    &__title {
-        margin: 0;
-        user-select: text;
     }
 }
 

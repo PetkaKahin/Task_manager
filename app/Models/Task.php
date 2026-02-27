@@ -21,7 +21,6 @@ class Task extends Model
     protected static $sortableGroupField = 'category_id';
 
     protected $fillable = [
-        'title',
         'content',
         'category_id',
         'position',

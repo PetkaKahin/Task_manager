@@ -90,7 +90,7 @@ const editor = useEditor({
 $component-margin-top: 20px;
 
 .tiptap-task {
-    margin-top: $component-margin-top;
+
 }
 
 .nodes-block {
