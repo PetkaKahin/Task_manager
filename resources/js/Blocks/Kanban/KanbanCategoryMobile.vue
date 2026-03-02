@@ -25,6 +25,8 @@ const props = defineProps<IProps>()
     border-radius: 0;
     border: none;
     overflow-y: auto;
+    width: 100%;
+    max-width: none;
 
     :deep(.kanban-category__body) {
         flex: none;
