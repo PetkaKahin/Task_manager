@@ -1,12 +1,14 @@
 <script setup lang="ts">
-import type {ICategory} from "@/Types/models.ts";
+import type {ICategory, ITask} from "@/Types/models.ts";
 import {Link} from "@inertiajs/vue3";
 import {useKanbanCategory} from "@/composables/ui/useKanbanCategory.ts";
 import KanbanCard from "@/Blocks/Kanban/KanbanCard.vue";
-import {computed} from "vue";
+import {computed, ref} from "vue";
 import {useProjectStore} from "@/stores/project.store.ts";
 import {useKanbanStore} from "@/stores/kanban.store.ts";
 import {storeToRefs} from "pinia";
+import {useBreakpoints} from "@/composables/useBreakpoints.ts";
+import {useApiTasks} from "@/composables/api/useApiTasks.ts";
 
 interface IProps {
     category: ICategory
@@ -16,7 +18,10 @@ interface IProps {
 }
 
 const props = defineProps<IProps>()
-const {animationsEnabled} = storeToRefs(useKanbanStore())
+const kanbanStore = useKanbanStore()
+const {animationsEnabled} = storeToRefs(kanbanStore)
+const {isLaptop: isDesktop} = useBreakpoints()
+const {storeTask} = useApiTasks()
 const {getDraggableData, getDroppableData} = useKanbanCategory()
 const {elementRef: bodyRef, isOvered: bodyIsOvered} = getDroppableData(() => props.category.tasks)
 const {
@@ -25,6 +30,16 @@ const {
     handleDragStart: handleColumnDrag,
     isOvered: categoryIsOvered
 } = getDraggableData(props.categories, computed(() => props.categoryIndex))
+
+async function addCard() {
+    const {execute} = storeTask({category_id: props.category.id, content: null})
+    const response = await execute()
+    if (response?.data) {
+        kanbanStore.animationsEnabled = false
+        kanbanStore.addTask(props.category.id, response.data)
+        kanbanStore.pendingEditTaskId = response.data.id
+    }
+}
 </script>
 
 <template>
@@ -45,6 +60,7 @@ const {
             ref="bodyRef"
             class="kanban-category__body"
             :class="{ 'kanban-category__body--is-over': bodyIsOvered }"
+            data-category-body
         >
             <TransitionGroup :name="animationsEnabled ? 'cards' : ''" tag="div" class="kanban-category__cards">
                 <KanbanCard
@@ -53,11 +69,15 @@ const {
                     :task="task"
                     :source="category.tasks"
                     :index="index"
+                    :categoryRef="bodyRef"
                 />
             </TransitionGroup>
         </div>
 
-        <Link :href="route('tasks.create', {
+        <div v-if="isDesktop" class="kanban-category__footer add-card" @click="addCard">
+            <h4 class="add-card__text">+ Добавить</h4>
+        </div>
+        <Link v-else :href="route('tasks.create', {
             category_id: category.id,
             from_project_id: useProjectStore().currentProject?.id
         })"

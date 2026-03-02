@@ -15,6 +15,9 @@ Route::middleware('auth:web')->group(function () {
     Route::patch('categories/{category}/reorder', [CategoryController::class, 'reorder'])
         ->name('api.categories.reorder');
 
+    Route::post('tasks', [TaskController::class, 'store'])
+        ->name('api.tasks.store');
+
     Route::patch('tasks/{task}', [TaskController::class, 'update'])
         ->name('api.tasks.update');
     Route::patch('tasks/{task}/reorder', [TaskController::class, 'reorder'])

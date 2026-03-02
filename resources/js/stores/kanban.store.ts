@@ -10,6 +10,7 @@ export interface IData {
 export const useKanbanStore = defineStore('kanban', () => {
     const categories = ref<ICategory[]>([])
     const animationsEnabled = ref(false)
+    const pendingEditTaskId = ref<number | null>(null)
 
     function addTask(categoryId: number, task: ITask) {
         const category = categories.value.find(category => category.id === categoryId)
@@ -58,6 +59,7 @@ export const useKanbanStore = defineStore('kanban', () => {
     return {
         categories,
         animationsEnabled,
+        pendingEditTaskId,
         addTask,
         addCategory,
         deleteTask,
