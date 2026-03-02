@@ -5,6 +5,8 @@ import DeleteIco from "@/UI/Icons/DeleteIco.vue";
 import type {ICategory} from "@/Types/models.ts";
 import {useKanbanCategory} from "@/composables/ui/useKanbanCategory.ts";
 import DropdownItemBase from "@/Dropdowns/Items/DropdownItemBase.vue";
+import {useDeleteConfirm} from "@/composables/useDeleteConfirm.ts";
+import DeleteModal from "@/UI/Modals/DeleteModal.vue";
 
 interface IProps {
     category: ICategory
@@ -16,17 +18,24 @@ const ico = h(
         size: 16,
     }
 )
+const {isOpen: isDeleteModal, target: targetDelete, confirm: deleteConfirm} = useDeleteConfirm<ICategory>()
 
-const categoryDelete = () => useKanbanCategory().categoryDelete(props.category)
+function deleteCategory() {
+    if (targetDelete.value) useKanbanCategory().categoryDelete(targetDelete.value)
+}
 </script>
 
 <template>
-    <DropdownItemBase
-        @click="categoryDelete"
-        className="item-edit"
-        :ico="ico"
-        text="Удалить"
-    />
+    <div>
+        <DeleteModal v-model="isDeleteModal" :onDelete="deleteCategory"/>
+
+        <DropdownItemBase
+            @click="deleteConfirm(props.category)"
+            className="item-edit"
+            :ico="ico"
+            text="Удалить"
+        />
+    </div>
 </template>
 
 <style scoped lang="scss">

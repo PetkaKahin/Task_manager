@@ -12,7 +12,6 @@ interface IProps {
 
 const props = defineProps<IProps>()
 const form = useForm({
-    title: props.task.title,
     content: props.task.content,
     category_id: route().params.category_id,
 })

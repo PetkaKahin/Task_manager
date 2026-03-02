@@ -1,78 +1,58 @@
-import {computed, ref} from "vue";
+import {type Component, computed, markRaw, reactive, readonly, ref} from "vue"
 
-export interface Subscriber {
-    key: string,
-    zIndex: number,
-    unsubscribeCallback: () => void,
-}
-const DEFAULT_Z_INDEX = 10
-const subscribers = ref<Subscriber[]>([])
+const backdrop = ref<Component | null>(null)
+const stack = reactive<number[]>([])
 
+let nextId = 0
+
+/**
+ * Composable для управления единственным backdrop-компонентом
+ * между несколькими потребителями.
+ *
+ * Backdrop один на проект и отображается только у последнего
+ * вызвавшего `open()`. При закрытии backdrop возвращается
+ * к предыдущему в стеке.
+ *
+ * @example
+ * // Инициализация (один раз в корне приложения)
+ * const { init } = useBackdrop()
+ * init(BaseBackdrop)
+ *
+ * @example
+ * // Использование в компоненте
+ * const { component, open, close } = useBackdrop()
+ * open(() => console.log('closed'))
+ *
+ * <component :is="component" @click="close" />
+ */
 export function useBackdrop() {
+    const id = nextId++
+    let onClose: (() => void) | null = null
 
-    const currentZIndex = computed(() => {
-        if (subscribers.value.length === 0) return DEFAULT_Z_INDEX
-        return subscribers.value[subscribers.value.length - 1]!.zIndex
+    const component = computed(() => {
+        return stack[stack.length - 1] === id ? backdrop.value : null
     })
 
-    const isVisible = computed(() => {
-        return subscribers.value.length !== 0
-    })
-
-    const toggle = (subscriber: Subscriber): void => {
-        if (subscribers.value.findIndex(s => s.key === subscriber.key) === -1) {
-            open(subscriber)
-        } else {
-            close(subscriber.key)
-        }
+    const init = (backdropComponent: Component) => {
+        backdrop.value = markRaw(backdropComponent)
     }
 
-    const open = (subscriber: Subscriber): void => {
-        const subscriberIndex: number = subscribers.value.findIndex(
-            s => s.key === subscriber.key
-        )
-
-        if (subscriberIndex !== -1)
-            return console.warn(`Ключ "${subscriber.key}" уже используется`)
-
-        subscribers.value.push(subscriber)
+    const open = (closeCallback: (() => void) | null = null) => {
+        onClose = closeCallback
+        stack.push(id)
     }
 
-    const close = (key: string): void => {
-        const subscriberIndex: number = subscribers.value.findIndex(
-            s => s.key === key
-        )
-
-        if (subscriberIndex === -1)
-            return console.warn(`Попытка удалить несуществующий элемент по ключу: "${key}"`)
-
-
-        subscribers.value[subscriberIndex]!.unsubscribeCallback()
-        subscribers.value.splice(subscriberIndex, 1)
-    }
-
-    const closeLast = (): void => {
-        if (subscribers.value.length === 0) return
-
-        const indexLastSubscriber: number = subscribers.value.length - 1
-
-        subscribers.value[indexLastSubscriber]!.unsubscribeCallback()
-        subscribers.value.pop()
-    }
-
-    const closeAll = (): void => {
-        for (let i = subscribers.value.length - 1; i >= 0; i--) {
-            subscribers.value[i]!.unsubscribeCallback()
-            subscribers.value.splice(i, 1)
-        }
+    const close = () => {
+        const pos = stack.indexOf(id)
+        if (pos !== -1) stack.splice(pos, 1)
+        onClose?.()
+        onClose = null
     }
 
     return {
-        isVisible,
-        currentZIndex,
+        component: readonly(component),
+        init,
         open,
         close,
-        closeLast,
-        toggle,
     }
 }

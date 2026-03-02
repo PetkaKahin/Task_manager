@@ -5,11 +5,9 @@ import BaseForm from "@/UI/Forms/BaseForm.vue";
 import {type InertiaForm} from "@inertiajs/vue3";
 
 interface IProps {
-    titleText: string
     submitText: string
     form: InertiaForm<{
-        title: string
-        content: string
+        content: Record<string, any> | null
         category_id: string | undefined
     }>,
     submitAction?: () => void,
@@ -28,9 +26,6 @@ const props = defineProps<IProps>()
         :submitAction="props.submitAction"
         :goBackAction="props.goBackAction"
     >
-        <template #header>
-            <h2 class="form__header-text">{{ props.titleText }}</h2>
-        </template>
         <template #body>
             <div class="content">
                 <Tiptap

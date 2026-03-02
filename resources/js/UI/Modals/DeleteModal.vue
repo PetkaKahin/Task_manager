@@ -1,27 +1,26 @@
 <script setup lang="ts">
-import BaseModal from "@/Blocks/Modal/BaseModal.vue";
 import BaseButton from "@/UI/Buttons/BaseButton.vue";
-import {useModal} from "@/composables/ui/useModal.ts";
-import {onMounted} from "vue";
+import Modal from "@/UI/Modals/Modal.vue";
 
-const modal = useModal()
+interface IProps {
+    onDelete: () => void
+}
+
+const props = defineProps<IProps>()
+const isActive = defineModel<boolean>()
 
 function deleteButton() {
-    modal.close()
-    modal.runActionClosing()
+    props.onDelete()
+    isActive.value = false
 }
 
 function saveButton() {
-    modal.close()
+    isActive.value = false
 }
-
-onMounted(() => {
-    modal.setZIndex(99)
-})
 </script>
 
 <template>
-    <BaseModal>
+    <Modal v-model="isActive">
         <div class="delete-modal">
             <header class="delete-modal__header header">
                 <h3 class="header__text">Удалить?</h3>
@@ -31,13 +30,18 @@ onMounted(() => {
                 <BaseButton text="Нет" className="button" @click="saveButton"/>
             </footer>
         </div>
-    </BaseModal>
+    </Modal>
 </template>
 
 <style scoped lang="scss">
 @use "@scss/variables/colors";
 
 .delete-modal {
+    background-color: colors.$bg-elevated;
+    border: 1px solid colors.$border-default;
+    border-radius: 5px;
+    padding: 20px;
+
     &__footer {
         display: flex;
         gap: 20px;
