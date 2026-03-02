@@ -14,10 +14,11 @@ return new class extends Migration
             $table->id();
             if ($driver === 'mysql' || $driver === 'mariadb') {
                 $table->string('position')->charset('utf8mb4')->collation('utf8mb4_bin')->index();
+                $table->json('content')->nullable();
             } else {
                 $table->string('position')->index();
+                $table->jsonb('content')->nullable();
             }
-            $table->text('content')->nullable();
             $table->unsignedBigInteger('category_id')->index();
             $table->timestamps();
             $table->softDeletes()->index();
