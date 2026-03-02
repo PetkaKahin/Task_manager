@@ -17,8 +17,7 @@ class UpdateTaskRequest extends FormRequest
         return [
             'content' => [
                 'nullable',
-                'string',
-                'max:65535',
+                'array',
             ],
             'category_id' => [
                 'nullable',

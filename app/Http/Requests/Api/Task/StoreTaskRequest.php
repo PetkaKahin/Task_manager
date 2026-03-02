@@ -1,28 +1,27 @@
 <?php
 
-namespace App\Http\Requests\Web\Task;
+namespace App\Http\Requests\Api\Task;
 
 use App\Rules\CategoryBelongsToUser;
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateTaskRequest extends FormRequest
+class StoreTaskRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()->can('update', $this->route('task'));
+        return true;
     }
 
     public function rules(): array
     {
         return [
+            'category_id' => [
+                'required',
+                new CategoryBelongsToUser,
+            ],
             'content' => [
                 'nullable',
                 'array',
-            ],
-            'category_id' => [
-                'nullable',
-                'integer',
-                new CategoryBelongsToUser,
             ],
         ];
     }

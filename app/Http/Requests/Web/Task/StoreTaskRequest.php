@@ -21,9 +21,8 @@ class StoreTaskRequest extends FormRequest
                 new CategoryBelongsToUser,
             ],
             'content' => [
-                'string',
                 'nullable',
-                'max:65535',
+                'array',
             ],
         ];
     }

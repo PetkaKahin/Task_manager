@@ -1,18 +1,9 @@
 import {readonly, ref} from "vue";
 import {useBreakpoints} from "@/composables/useBreakpoints.ts";
-import {useBackdrop, type Subscriber} from "@/composables/ui/useBackdrop.ts";
 import {useProjectStore} from "@/stores/project.store.ts";
 import {storeToRefs} from "pinia";
 
 const isOpen = ref<boolean>(false)
-const backdrop = useBackdrop()
-const SIDEBAR_KEY = "sidebar"
-
-const subscriber: Subscriber = {
-    key: SIDEBAR_KEY,
-    zIndex: 2,
-    unsubscribeCallback: () => isOpen.value = false,
-}
 
 export function useSidebar()
 {
@@ -28,12 +19,10 @@ export function useSidebar()
 
     const open = (): void => {
         isOpen.value = true
-        backdrop.open(subscriber)
     }
 
     const close = (): void => {
         isOpen.value = false
-        backdrop.close(subscriber.key)
     }
 
     return {

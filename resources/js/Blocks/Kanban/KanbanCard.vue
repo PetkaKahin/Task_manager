@@ -8,21 +8,31 @@ import DeleteIco from "@/UI/Icons/DeleteIco.vue";
 import {route} from "ziggy-js";
 import {Link} from "@inertiajs/vue3";
 import {useKanbanCard} from "@/composables/ui/useKanbanCard.ts";
-import {computed} from "vue";
+import {computed, nextTick, onMounted, toRef, watch} from "vue";
 import {useProjectStore} from "@/stores/project.store.ts";
+import {useKanbanStore} from "@/stores/kanban.store.ts";
 import {TaskItem, TaskList} from "@tiptap/extension-list";
-import {apiRequest} from "@/shared/api/apiRequest.ts";
+import {useDeleteConfirm} from "@/composables/useDeleteConfirm.ts";
+import DeleteModal from "@/UI/Modals/DeleteModal.vue";
+import {useBreakpoints} from "@/composables/useBreakpoints.ts";
+import {useApiTasks} from "@/composables/api/useApiTasks.ts";
+import {useCardEditMode} from "@/composables/ui/useCardEditMode.ts";
+import NodesBlockPC from "@/Blocks/Tiptap/NodesBlockPC.vue";
 
 interface IProps {
     task: ITask
     source: any[]
     index: number
+    categoryRef?: HTMLElement | null
     iconsSize?: number
 }
 
 const props = defineProps<IProps>()
 const projectStore = useProjectStore()
 const kanbanCard = useKanbanCard()
+const kanbanStore = useKanbanStore()
+const {updateTask} = useApiTasks()
+const {isLaptop: isDesktop} = useBreakpoints()
 const {
     elementRef,
     handleDragStart,
@@ -30,77 +40,116 @@ const {
     isOvered
 } = kanbanCard.getDraggableData(props.source, computed(() => props.index));
 
-let updateTimeout: ReturnType<typeof setTimeout>
+let initialContent = JSON.stringify(props.task.content)
+
+function saveContent(json: Record<string, any> | null) {
+    const currentContent = JSON.stringify(json)
+    if (currentContent === initialContent) return
+
+    props.task.content = json
+    const {execute} = updateTask({...props.task, content: json})
+    execute()
+    initialContent = currentContent
+}
+
 const editor = useEditor({
     content: props.task.content,
     extensions: [
         StarterKit,
         TaskList.configure({
-            HTMLAttributes: { class: 'task-item-list' },
+            HTMLAttributes: {class: 'task-item-list'},
         }),
         TaskItem.configure({
-            HTMLAttributes: { class: 'task-item' },
+            HTMLAttributes: {class: 'task-item'},
             nested: true,
         }),
     ],
-    editable: true,
-    editorProps: {
-        attributes: {
-            inputmode: 'none',
-        },
-        handleDOMEvents: {
-            cut: (_view, event) => { event.preventDefault(); return true },
-        },
-        handleKeyDown: () => true,   // блокирует клавиатуру
-        handleTextInput: () => true, // блокирует мобильный ввод (IME/composition)
-        handlePaste: () => true,     // блокирует вставку
-        handleDrop: () => true,      // блокирует drag&drop
-    },
-    onUpdate: ({ editor }) => {
-        if (!projectStore.currentProject) return
-        clearTimeout(updateTimeout)
-        updateTimeout = setTimeout(() => {
-            apiRequest.patch(route('api.tasks.update', props.task.id), {
-                content: editor.getHTML()
-            })
-        }, 500)
+    editable: isDesktop.value,
+    onUpdate({editor: e}) {
+        if (isEditing.value) return
+
+        saveContent(e.getJSON())
     },
 })
 
-const taskDelete = () => kanbanCard.taskDelete(props.task)
+watch(isDesktop, (val) => editor.value?.setEditable(val))
+
+const {isEditing, cardPlaceholderRef, backdropComponent, start: startEdit, stop: stopEdit} = useCardEditMode(
+    toRef(props, 'categoryRef'), elementRef, {
+    onClose() {
+        saveContent(editor.value?.getJSON() ?? null)
+    },
+})
+const {isOpen: isDeleteModal, target: targetDelete, confirm: deleteConfirm} = useDeleteConfirm<ITask>()
+
+function taskDelete() {
+    if (targetDelete.value) kanbanCard.taskDelete(props.task)
+}
+
+function handleEditorClick(event: MouseEvent) {
+    if (!isDesktop.value) return
+
+    const target = event.target as HTMLElement
+    if (target.closest('a, input')) return
+
+    startEdit(() => editor.value?.commands.focus())
+}
+
+onMounted(async () => {
+    if (kanbanStore.pendingEditTaskId === props.task.id) {
+        kanbanStore.pendingEditTaskId = null
+        await nextTick()
+        elementRef.value?.scrollIntoView({block: 'nearest'})
+        startEdit(() => editor.value?.commands.focus())
+        kanbanStore.animationsEnabled = true
+    }
+})
 </script>
 
 <template>
-    <article
-        ref="elementRef"
-        class="kanban-card"
-        :class="{
-            'kanban-card--is-dragging': isDragging,
-            'kanban-card--is-overed': isOvered,
-        }"
-    >
-        <div class="kanban-card__left-block">
-            <div class="kanban-card__content">
-                <EditorContent :editor="editor"/>
-            </div>
-        </div>
-        <div class="kanban-card__right-block">
-            <DragHandleIco
-                className="kanban-card__drag"
-                @pointerdown="handleDragStart"
-                :size="iconsSize ? iconsSize - 3 : 14"
-            />
-            <Link
-                :href="route('tasks.edit', {
-                    id: props.task.id,
-                    from_project_id: projectStore.currentProject?.id
-                })"
-            >
-                <EditIco class="ico" :size="iconsSize ?? 16"/>
-            </Link>
-            <DeleteIco @click="taskDelete" class="ico" :size="iconsSize ?? 16"/>
-        </div>
-    </article>
+    <div>
+        <Teleport to="#mount-point" :disabled="!isEditing">
+            <component :is="backdropComponent" @click="stopEdit"/>
+                <article
+                    ref="elementRef"
+                    class="kanban-card"
+                    :class="{
+                        'kanban-card--is-dragging': isDragging,
+                        'kanban-card--is-overed': isOvered,
+                        'kanban-card--is-editing': isEditing,
+                    }"
+                >
+                    <NodesBlockPC :editor="editor" v-if="isEditing" className="nodes"/>
+
+                    <div class="kanban-card__left-block" @click="handleEditorClick">
+                        <div class="kanban-card__content">
+                            <EditorContent :editor="editor"/>
+                        </div>
+                    </div>
+                    <div class="kanban-card__right-block">
+                        <DragHandleIco
+                            class="kanban-card__drag"
+                            :class="{ 'kanban-card__drag--inactive': isEditing }"
+                            @pointerdown="(e: PointerEvent) => !isEditing && handleDragStart(e)"
+                            :size="iconsSize ? iconsSize - 3 : 14"
+                        />
+                        <Link
+                            v-if="!isDesktop"
+                            :href="route('tasks.edit', {
+                            id: props.task.id,
+                            from_project_id: projectStore.currentProject?.id
+                        })"
+                        >
+                            <EditIco class="ico" :size="iconsSize ?? 16"/>
+                        </Link>
+                        <DeleteIco @click="deleteConfirm(task)" class="ico" :size="iconsSize ?? 16"/>
+                    </div>
+                </article>
+        </Teleport>
+
+        <DeleteModal v-model="isDeleteModal" :onDelete="taskDelete"/>
+        <div class="card-void" v-if="isEditing" ref="cardPlaceholderRef"></div>
+    </div>
 </template>
 
 <style scoped lang="scss">
@@ -120,6 +169,7 @@ const taskDelete = () => kanbanCard.taskDelete(props.task)
     padding: 10px;
     max-width: sizes.$card-max-width;
     pointer-events: auto;
+    box-sizing: border-box;
 
     display: flex;
     justify-content: space-between;
@@ -129,6 +179,19 @@ const taskDelete = () => kanbanCard.taskDelete(props.task)
         opacity: 0.6;
     }
 
+    &--is-editing {
+        position: fixed;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+        justify-content: center;
+
+        .kanban-card__left-block {
+            flex-basis: auto;
+            overflow-x: hidden;
+            overflow-y: auto;
+
+        }
+    }
+
     &__left-block, &__right-block {
         display: flex;
         flex-direction: column;
@@ -136,6 +199,10 @@ const taskDelete = () => kanbanCard.taskDelete(props.task)
 
     &__left-block {
         gap: 15px;
+        flex: 1 1 0;
+        overflow: hidden;
+        padding-bottom: 1px;
+        cursor: text;
     }
 
     &__right-block {
@@ -146,10 +213,22 @@ const taskDelete = () => kanbanCard.taskDelete(props.task)
     &__drag {
         color: colors.$border-default;
         touch-action: none; // обязательно для управления тачами
+
+        &--inactive {
+            color: colors.$bg-elevated;
+            cursor: default;
+        }
     }
 
     .tiptap {
         user-select: text;
+        min-height: 1em;
+        width: 100%;
+    }
+
+    .nodes {
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+        top: -135px;
     }
 
     ul[data-type="taskList"] input[type="checkbox"] {

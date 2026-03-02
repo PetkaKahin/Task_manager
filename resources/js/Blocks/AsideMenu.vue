@@ -8,29 +8,39 @@ import {useProjectStore} from "@/stores/project.store.ts";
 import EditIco from "@/UI/Icons/EditIco.vue";
 import DeleteIco from "@/UI/Icons/DeleteIco.vue";
 import type {IProject} from "@/Types/models.ts";
+import {ref, watch} from "vue";
+import {useBackdrop} from "@/composables/ui/useBackdrop.ts";
 import {useKanbanProject} from "@/composables/ui/useKanbanProject.ts";
-import {ref} from "vue";
+import DeleteModal from "@/UI/Modals/DeleteModal.vue";
+import {useDeleteConfirm} from "@/composables/useDeleteConfirm.ts";
 
-const {isDesktop, projectsList} = useSidebar()
+const {isDesktop, projectsList, toggle, close, isOpen} = useSidebar()
 const {currentProject} = useProjectStore()
 const isItemActive = ref<boolean | number>(false)
+const {component: componentBackdrop, open: openBackdrop, close: closeBackdrop} = useBackdrop()
+const {isOpen: isDeleteModal, target: targetDelete, confirm: deleteConfirm} = useDeleteConfirm<IProject>()
 
-function toggleSidebar() {
-    useSidebar().toggle()
+function deleteProject() {
+    if (targetDelete.value) useKanbanProject().projectDelete(targetDelete.value)
 }
 
-function deleteProject(project: IProject) {
-    useKanbanProject().projectDelete(project)
-}
+watch(isOpen, (value) => {
+    if (value) openBackdrop()
+    else closeBackdrop()
+})
 </script>
 
 <template>
+    <component :is="componentBackdrop" @click="close"/>
+
+    <DeleteModal v-model="isDeleteModal" :onDelete="deleteProject"/>
+
     <aside class="sidebar-menu">
         <header
             class="sidebar-menu__header"
             v-if="isDesktop === false"
         >
-            <BaseButton className="sidebar-menu__toggle" text="X" @click="toggleSidebar"/>
+            <BaseButton className="sidebar-menu__toggle" text="X" @click="toggle"/>
         </header>
 
         <BaseDivider
@@ -68,7 +78,7 @@ function deleteProject(project: IProject) {
                             })">
                                 <EditIco class="item__ico" :size="16"/>
                             </Link>
-                            <DeleteIco class="item__ico" :size="16" @click="deleteProject(project)"/>
+                            <DeleteIco class="item__ico" :size="16" @click="deleteConfirm(project)"/>
                         </div>
                     </div>
                 </li>
@@ -88,6 +98,7 @@ function deleteProject(project: IProject) {
     max-width: 350px;
     box-sizing: border-box;
     padding: 10px;
+    position: relative;
 
     &__button {
         margin: 15px;

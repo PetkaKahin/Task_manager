@@ -6,7 +6,7 @@ export interface IProject {
 export interface ITask {
     id: number
     category_id: number
-    content: string
+    content: Record<string, any> | null
 }
 
 export interface ICategory {

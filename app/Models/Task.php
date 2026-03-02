@@ -26,6 +26,10 @@ class Task extends Model
         'position',
     ];
 
+    protected $casts = [
+        'content' => 'json',
+    ];
+
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);

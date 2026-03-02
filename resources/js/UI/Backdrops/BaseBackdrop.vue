@@ -1,18 +1,12 @@
 <script setup lang="ts">
 import {useBackdrop} from "@/composables/ui/useBackdrop.ts";
 
-const {isVisible, closeLast, currentZIndex} = useBackdrop()
-
-function close() {
-    closeLast()
-}
+const {close} = useBackdrop()
 </script>
 
 <template>
     <div
         class="base-backdrop"
-        :class="{'base-backdrop--visible' : isVisible}"
-        :style="{ zIndex: currentZIndex }"
         @click="close"
     ></div>
 </template>
@@ -22,16 +16,10 @@ function close() {
     position: fixed;
     top: 0;
     left: 0;
-    z-index: 9;
-
-    display: none;
+    display: block;
     width: 100vw;
     height: 100vh;
 
     background-color: rgba(0, 0, 0, 0.5);
-
-    &--visible {
-        display: block;
-    }
 }
 </style>

@@ -2,14 +2,12 @@ import axios from "axios";
 import {route} from "ziggy-js";
 import type {ITask} from "@/Types/models.ts";
 import {useKanbanStore} from "@/stores/kanban.store.ts";
-import {useModal} from "@/composables/ui/useModal.ts";
 import {useDraggable} from "@vue-dnd-kit/core";
 import {computed, type ComputedRef} from "vue";
 import {cardDragState} from "@/composables/ui/useKanban.ts";
 
 export function useKanbanCard() {
     const kanbanStore = useKanbanStore()
-    const modal = useModal()
 
     function getDraggableData(source: any, index: ComputedRef<number>) {
         const {elementRef, handleDragStart: startDrag, isDragging, isOvered} = useDraggable({
@@ -50,18 +48,11 @@ export function useKanbanCard() {
     }
 
     function taskDelete(task: ITask) {
-        modal.addActionClosing(
-            'delete.task',
-            () => {
-                kanbanStore.deleteTask(task)
-                axios.delete(route('tasks.destroy', task.id))
-                    .catch((error) => {
-                        console.error(error)
-                        kanbanStore.addTask(task.category_id, task)
-                    })
-            }
-        )
-        modal.open()
+        kanbanStore.deleteTask(task)
+        axios.delete(route('tasks.destroy', task.id)).catch((error) => {
+            console.error(error)
+            kanbanStore.addTask(task.category_id, task)
+        })
     }
 
     return {

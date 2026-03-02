@@ -3,13 +3,14 @@
 import Header from "@/Blocks/Header.vue";
 import AsideMenu from "@/Blocks/AsideMenu.vue";
 import {useSidebar} from "@/composables/ui/useSidebar.ts";
-import BaseBackdrop from "@/UI/Backdrops/BaseBackdrop.vue";
 import {onMounted} from "vue";
 import {useProjectStore} from "@/stores/project.store.ts";
 import {sidebarService} from "@/services/sidebarService.ts";
 import {projectService} from "@/services/api/projectService.ts";
+import {useBackdrop} from "@/composables/ui/useBackdrop.ts";
+import BaseBackdrop from "@/UI/Backdrops/BaseBackdrop.vue";
 
-const {isOpen} = useSidebar()
+const {isOpen: isOpenSidebar} = useSidebar()
 const projectStore = useProjectStore()
 
 sidebarService().init()
@@ -17,6 +18,7 @@ sidebarService().init()
 onMounted(async () => {
     const response = await projectService().getProjects()
     projectStore.setProjects(response.data)
+    useBackdrop().init(BaseBackdrop)
 })
 </script>
 
@@ -25,16 +27,16 @@ onMounted(async () => {
         <header class="base-layout__header">
             <Header/>
         </header>
-        <BaseBackdrop/>
         <div
             class="base-layout__sidebar"
-            :class="{'base-layout__sidebar--open' : isOpen}"
+            :class="{'base-layout__sidebar--open' : isOpenSidebar}"
         >
             <AsideMenu/>
         </div>
         <div class="base-layout__content">
             <slot/>
         </div>
+        <div class="mount-point" id="mount-point"></div>
     </div>
 </template>
 
@@ -67,6 +69,10 @@ onMounted(async () => {
     overflow-y: auto;
 }
 
+#mount-point {
+    z-index: 10;
+}
+
 @media (max-width: 1024px) {
     .base-layout {
         &__sidebar {
@@ -83,4 +89,8 @@ onMounted(async () => {
         }
     }
 }
+</style>
+
+<style lang="scss">
+@use '@scss/tiptap';
 </style>

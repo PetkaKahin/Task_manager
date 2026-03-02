@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Task\ReorderTaskRequest;
+use App\Http\Requests\Api\Task\StoreTaskRequest;
 use App\Http\Requests\Api\Task\UpdateTaskRequest;
 use App\Http\Resources\TaskResource;
 use App\Models\Task;
@@ -14,6 +15,13 @@ class TaskController extends Controller
     public function __construct(
         private TaskService $taskService
     ){}
+
+    public function store(StoreTaskRequest $request)
+    {
+        $task = Task::query()->create($request->validated());
+
+        return new TaskResource($task);
+    }
 
     public function update(UpdateTaskRequest $request, Task $task)
     {

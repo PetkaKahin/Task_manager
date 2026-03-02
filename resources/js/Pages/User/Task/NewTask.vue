@@ -7,8 +7,7 @@ import {route} from "ziggy-js";
 import {useGoBack} from "@/composables/useGoBack.ts";
 
 const form = useForm({
-    title: '',
-    content: '<p>Можешь писать любой текст</p>',
+    content: null,
     category_id: route().params.category_id,
 })
 

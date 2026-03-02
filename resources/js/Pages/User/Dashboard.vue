@@ -4,13 +4,14 @@ import type {ICategory, IProject} from "@/Types/models.ts";
 import {defineAsyncComponent, watch} from "vue";
 import {useKanbanStore} from "@/stores/kanban.store.ts";
 import {useProjectStore} from "@/stores/project.store.ts";
-import DeleteModal from "@/Blocks/Modal/DeleteModal.vue";
 import {useBreakpoints} from "@/composables/useBreakpoints.ts";
 import EditIco from "@/UI/Icons/EditIco.vue";
 import {Link} from "@inertiajs/vue3";
 import BaseButton from "@/UI/Buttons/BaseButton.vue";
 import DeleteIco from "@/UI/Icons/DeleteIco.vue";
 import {useKanbanProject} from "@/composables/ui/useKanbanProject.ts";
+import DeleteModal from "@/UI/Modals/DeleteModal.vue";
+import {useDeleteConfirm} from "@/composables/useDeleteConfirm.ts";
 
 interface IProps {
     project: IProject,
@@ -23,23 +24,26 @@ const projectStore = useProjectStore()
 const breakpoints = useBreakpoints()
 const KanbanBoard = defineAsyncComponent(() => import('@/Blocks/Kanban/KanbanBoard.vue'))
 const KanbanBoardMobile = defineAsyncComponent(() => import('@/Blocks/Kanban/KanbanBoardMobile.vue'))
+const {isOpen: isDeleteModal, target: targetDelete, confirm: deleteConfirm} = useDeleteConfirm<IProject>()
+
+function deleteProject() {
+    if (targetDelete.value) useKanbanProject().projectDelete(targetDelete.value)
+}
 
 // Для навигации Inertia назад
 watch(() => props.categories, (categories) => {
     kanbanStore.setCategory(categories)
 }, { immediate: true })
+
 watch(() => props.project, (project) => {
     projectStore.setCurrentProject(project)
 }, { immediate: true })
-
-function deleteProject() {
-    useKanbanProject().projectDelete(props.project)
-}
 </script>
 
 <template>
     <BaseLayout>
-        <DeleteModal/>
+        <DeleteModal v-model="isDeleteModal" :onDelete="deleteProject"/>
+
         <main class="home-page">
             <header class="home-page__header header">
                 <div class="header__left-block">
@@ -52,7 +56,11 @@ function deleteProject() {
                     })">
                         <EditIco class="header__ico" :size="22"/>
                     </Link>
-                    <DeleteIco class="header__ico" @click="deleteProject" :size="22"/>
+                    <DeleteIco
+                        class="header__ico"
+                        :size="22"
+                        @click="deleteConfirm(project)"
+                    />
                 </div>
                 <div class="header__right-block">
                     <Link :href="route('categories.create', {
