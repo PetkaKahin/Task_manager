@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {useKanbanStore} from "@/stores/kanban.store.ts";
 import {storeToRefs} from "pinia";
-import {nextTick, onMounted, ref} from "vue";
+import {nextTick, onMounted, type Ref, ref} from "vue";
 import type {ICategory} from "@/Types/models.ts";
 import KanbanCategoryMobile from "@/Blocks/Kanban/KanbanCategoryMobile.vue";
 import {Link} from "@inertiajs/vue3";
@@ -9,12 +9,18 @@ import BaseButton from "@/UI/Buttons/BaseButton.vue";
 import {useProjectStore} from "@/stores/project.store.ts";
 import {route} from "ziggy-js";
 import KanbanMobileHeaderItem from "@/Blocks/Kanban/KanbanMobileHeaderItem.vue";
+import {useEdgeScroll} from "@/composables/ui/useEdgeScroll.ts";
 
 const store = useKanbanStore()
 const {currentProject} = useProjectStore()
 const {categories} = storeToRefs(store)
 const activeCategory = ref<ICategory>()
-
+const headerRef: Ref<HTMLElement | null> = ref(null)
+useEdgeScroll(headerRef, {
+    id: 'mobile-header',
+    horizontal: true,
+    vertical: false,
+})
 
 onMounted(async () => {
     await nextTick()
@@ -24,7 +30,7 @@ onMounted(async () => {
 
 <template>
     <div ref="elementRef" class="kanban-board-wrapper">
-        <header class="header">
+        <header class="header" ref="headerRef">
             <KanbanMobileHeaderItem
                 v-for="(item, i) in categories" :key="i"
                 :isActive="activeCategory?.id === item.id"

@@ -4,10 +4,11 @@ import BaseKanbanCategory from "@/Blocks/Kanban/BaseKanbanCategory.vue";
 import DragHandleIco from "@/UI/Icons/DragHandleIco.vue";
 import MoreButton from "@/UI/Buttons/MoreButton.vue";
 import DropdownItemEditCategory from "@/Dropdowns/Items/KanbanCategory/DropdownItemEditCategory.vue";
-import {h} from "vue";
+import {computed, h, ref, watch} from "vue";
 import {route} from "ziggy-js";
 import {useProjectStore} from "@/stores/project.store.ts";
 import DropdownItemDeleteCategory from "@/Dropdowns/Items/KanbanCategory/DropdownItemDeleteCategory.vue";
+import {useEdgeScroll} from "@/composables/ui/useEdgeScroll.ts";
 
 interface IProps {
     category: ICategory;
@@ -18,6 +19,21 @@ interface IProps {
 const {currentProject} = useProjectStore()
 
 const props = defineProps<IProps>()
+const baseRef = ref<InstanceType<typeof BaseKanbanCategory> | null>(null)
+const bodyEl = computed<HTMLElement | null>(() => baseRef.value?.bodyRef ?? null)
+const {startDrag, stopDrag} = useEdgeScroll(bodyEl, {
+    zoneSize: 80,
+    containerOnly: true,
+})
+
+watch(() => baseRef.value?.bodyIsOvered, (isOver) => {
+    if (isOver) {
+        startDrag()
+    } else {
+        stopDrag()
+    }
+})
+
 const menuItems = [
     h(DropdownItemEditCategory, {
         url: route('categories.edit', {
@@ -32,7 +48,7 @@ const menuItems = [
 </script>
 
 <template>
-    <BaseKanbanCategory :category="props.category" :categories="props.categories" :category-index="props.categoryIndex">
+    <BaseKanbanCategory ref="baseRef" :category="props.category" :categories="props.categories" :category-index="props.categoryIndex">
         <template #header="{ handleDrag }">
             <div class="header">
                 <div class="header__left-block">

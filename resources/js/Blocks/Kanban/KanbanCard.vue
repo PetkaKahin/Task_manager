@@ -18,6 +18,7 @@ import {useBreakpoints} from "@/composables/useBreakpoints.ts";
 import {useApiTasks} from "@/composables/api/useApiTasks.ts";
 import {useCardEditMode} from "@/composables/ui/useCardEditMode.ts";
 import NodesBlockPC from "@/Blocks/Tiptap/NodesBlockPC.vue";
+import {useEdgeScrollStore} from "@/stores/edgeScroll.store.ts";
 
 interface IProps {
     task: ITask
@@ -33,6 +34,7 @@ const kanbanCard = useKanbanCard()
 const kanbanStore = useKanbanStore()
 const {updateTask} = useApiTasks()
 const {isLaptop: isDesktop} = useBreakpoints()
+const edgeScrollStore = useEdgeScrollStore()
 const {
     elementRef,
     handleDragStart,
@@ -95,6 +97,14 @@ function handleEditorClick(event: MouseEvent) {
     startEdit(() => editor.value?.commands.focus())
 }
 
+function pointerDrug(e: PointerEvent) {
+    if (!isEditing.value) {
+        handleDragStart(e)
+        edgeScrollStore.get('mobile-header')?.startDrag(e)
+        edgeScrollStore.get(`category-${props.task.category_id}`)?.startDrag(e)
+    }
+}
+
 onMounted(async () => {
     if (kanbanStore.pendingEditTaskId === props.task.id) {
         kanbanStore.pendingEditTaskId = null
@@ -130,7 +140,7 @@ onMounted(async () => {
                         <DragHandleIco
                             class="kanban-card__drag"
                             :class="{ 'kanban-card__drag--inactive': isEditing }"
-                            @pointerdown="(e: PointerEvent) => !isEditing && handleDragStart(e)"
+                            @pointerdown="pointerDrug"
                             :size="iconsSize ? iconsSize - 3 : 14"
                         />
                         <Link
