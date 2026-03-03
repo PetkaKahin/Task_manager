@@ -36,10 +36,10 @@ watch(() => baseRef.value?.bodyIsOvered, (isOver) => {
 
 const menuItems = [
     h(DropdownItemEditCategory, {
-        url: route('categories.edit', {
-            id: props.category.id,
-            from_project_id: currentProject?.id
-        })
+        url: route('categories.edit', [
+            props.category.id,
+            {from_project_id: currentProject?.id}
+        ])
     }),
     h(DropdownItemDeleteCategory, {
         category: props.category

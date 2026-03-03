@@ -48,9 +48,10 @@ watch(isOpen, (value) => {
             v-if="isDesktop === false"
         />
 
-        <Link :href="route('projects.create', {
-            from_project_id: useProjectStore()?.currentProject?.id
-        })">
+        <Link
+            :href="route('projects.create')"
+            :data="{from_project_id: useProjectStore()?.currentProject?.id}"
+        >
             <BaseButton text="+ Добавить проект" className="sidebar-menu__add-project"/>
         </Link>
 
@@ -72,10 +73,10 @@ watch(isOpen, (value) => {
                             <span class="item__title">{{ project.title }}</span>
                         </Link>
                         <div class="item__icons">
-                            <Link :href="route('projects.edit', {
-                                id: project.id,
-                                from_project_id: currentProject?.id
-                            })">
+                            <Link
+                                :href="route('projects.edit', project.id)"
+                                :data="{from_project_id: currentProject?.id}"
+                            >
                                 <EditIco class="item__ico" :size="16"/>
                             </Link>
                             <DeleteIco class="item__ico" :size="16" @click="deleteConfirm(project)"/>

@@ -50,10 +50,10 @@ watch(() => props.project, (project) => {
                     <h2 class="header__text">
                         {{ props.project.title }}
                     </h2>
-                    <Link :href="route('projects.edit', {
-                        id: project.id,
-                        from_project_id: project.id,
-                    })">
+                    <Link
+                        :href="route('projects.edit', project.id)"
+                        :data="{from_project_id: project.id,}"
+                    >
                         <EditIco class="header__ico" :size="22"/>
                     </Link>
                     <DeleteIco
@@ -63,10 +63,10 @@ watch(() => props.project, (project) => {
                     />
                 </div>
                 <div class="header__right-block">
-                    <Link :href="route('categories.create', {
-                        from_project_id: project.id
-                    })"
-                          class="header__link"
+                    <Link
+                        :href="route('categories.create')"
+                        :data="{from_project_id: project.id}"
+                        class="header__link"
                     >
                         <BaseButton className="header__button text-no-wrap" text="+ Добавить категорию"/>
                     </Link>

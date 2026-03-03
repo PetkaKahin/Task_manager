@@ -38,9 +38,8 @@ onMounted(async () => {
                 :clickAction="() => activeCategory=item"
             />
             <Link
-                :href="route('categories.create', {
-                    from_project_id: currentProject?.id
-                })"
+                :href="route('categories.create')"
+                :data="{from_project_id: currentProject?.id}"
                 class="header__link"
             >
                 <BaseButton className="header__button button">

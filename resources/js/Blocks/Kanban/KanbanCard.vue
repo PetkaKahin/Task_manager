@@ -145,10 +145,8 @@ onMounted(async () => {
                         />
                         <Link
                             v-if="!isDesktop"
-                            :href="route('tasks.edit', {
-                            id: props.task.id,
-                            from_project_id: projectStore.currentProject?.id
-                        })"
+                            :href="route('tasks.edit', props.task.id)"
+                            :data="{from_project_id: projectStore.currentProject?.id,}"
                         >
                             <EditIco class="ico" :size="iconsSize ?? 16"/>
                         </Link>

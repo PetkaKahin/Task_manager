@@ -84,10 +84,12 @@ async function addCard() {
         <div v-if="isDesktop" class="kanban-category__footer add-card" @click="addCard">
             <h4 class="add-card__text">+ Добавить</h4>
         </div>
-        <Link v-else :href="route('tasks.create', {
-            category_id: category.id,
-            from_project_id: useProjectStore().currentProject?.id
-        })"
+        <Link v-else
+              :href="route('tasks.create')"
+              :data="{
+                  category_id: category.id,
+                  from_project_id: useProjectStore().currentProject?.id,
+              }"
               class="link--no-decor"
         >
             <div class="kanban-category__footer add-card">

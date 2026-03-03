@@ -47,10 +47,10 @@ const handleItemClick = () => {
             @mouseleave="isHoverIco = false"
             :menuItems="[
                 h(DropdownItemEditCategory, {
-                    url: route('categories.edit', {
-                        id: props.category.id,
-                        from_project_id: props.category.project_id
-                    })
+                    url: route('categories.edit', [
+                        props.category.id,
+                        { from_project_id: props.category.project_id }
+                    ])
                 }),
                 h(DropdownItemDeleteCategory, {
                     category: props.category
