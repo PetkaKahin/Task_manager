@@ -1,14 +1,15 @@
 <script setup lang="ts">
-import type {ICategory, ITask} from "@/Types/models.ts";
+import type {ICategory} from "@/Types/models.ts";
 import {Link} from "@inertiajs/vue3";
 import {useKanbanCategory} from "@/composables/ui/useKanbanCategory.ts";
 import KanbanCard from "@/Blocks/Kanban/KanbanCard.vue";
-import {computed, ref} from "vue";
+import {computed} from "vue";
 import {useProjectStore} from "@/stores/project.store.ts";
 import {useKanbanStore} from "@/stores/kanban.store.ts";
 import {storeToRefs} from "pinia";
 import {useBreakpoints} from "@/composables/useBreakpoints.ts";
 import {useApiTasks} from "@/composables/api/useApiTasks.ts";
+
 
 interface IProps {
     category: ICategory
@@ -30,6 +31,12 @@ const {
     handleDragStart: handleColumnDrag,
     isOvered: categoryIsOvered
 } = getDraggableData(props.categories, computed(() => props.categoryIndex))
+
+defineExpose({
+    bodyRef,
+    bodyIsOvered,
+    categoryRef,
+})
 
 async function addCard() {
     const {execute} = storeTask({category_id: props.category.id, content: null})

@@ -4,6 +4,7 @@ import {useKanbanStore} from "@/stores/kanban.store.ts";
 import {storeToRefs} from "pinia";
 import {useKanban} from "@/composables/ui/useKanban.ts";
 import KanbanCategory from "@/Blocks/Kanban/KanbanCategory.vue";
+import {useEdgeScroll} from "@/composables/ui/useEdgeScroll.ts";
 
 const kanban = useKanban()
 const store = useKanbanStore()
@@ -17,6 +18,14 @@ const {elementRef} = useDroppable({
         },
     },
 })
+const {startDrag: startScrollDrag} = useEdgeScroll(elementRef, {
+    horizontal: true,
+    vertical: false,
+    zoneSize: 200,
+    maxSpeed: 20,
+    outsideMultiplier: 1.5,
+    containerOnly: false,
+})
 </script>
 
 <template>
@@ -28,6 +37,7 @@ const {elementRef} = useDroppable({
                 :category="category"
                 :categories="categories"
                 :category-index="index"
+                @pointerdown="startScrollDrag"
             />
         </TransitionGroup>
     </div>
