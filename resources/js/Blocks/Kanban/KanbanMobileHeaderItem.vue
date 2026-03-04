@@ -1,12 +1,17 @@
 <script setup lang="ts">
 
-import {h, ref} from "vue";
+import {computed, h, ref} from "vue";
 import DropdownItemEditCategory from "@/Dropdowns/Items/KanbanCategory/DropdownItemEditCategory.vue";
 import {route} from "ziggy-js";
 import DropdownItemDeleteCategory from "@/Dropdowns/Items/KanbanCategory/DropdownItemDeleteCategory.vue";
 import MoreButton from "@/UI/Buttons/MoreButton.vue";
 import type {ICategory} from "@/Types/models.ts";
 import {useKanbanCategory} from "@/composables/ui/useKanbanCategory.ts";
+import {useLongPress} from "@/composables/ui/useLongPress.ts";
+import {useKanbanStore} from "@/stores/kanban.store.ts";
+import {storeToRefs} from "pinia";
+import {useEdgeScrollStore} from "@/stores/edgeScroll.store.ts";
+import {useTouchScrollStore} from "@/stores/touchScroll.store.ts";
 
 interface IProps {
     category: ICategory
@@ -17,8 +22,41 @@ interface IProps {
 
 const props = defineProps<IProps>()
 const isHoverIco = ref<boolean>(false)
+const kanbanStore = useKanbanStore()
+const {categories} = storeToRefs(kanbanStore)
 
-const {elementRef: droppableRef, isOvered} = useKanbanCategory().getDroppableData(() => props.category.tasks)
+const {getDraggableData, getDroppableData} = useKanbanCategory()
+const {elementRef: droppableRef, isOvered} = getDroppableData(() => props.category.tasks)
+const {elementRef: draggableRef, handleDragStart, isDragging} = getDraggableData(
+    categories.value,
+    computed(() => kanbanStore.getCategoryIndex(props.category.id)),
+)
+
+const edgeScrollStore = useEdgeScrollStore()
+const touchScrollStore = useTouchScrollStore()
+
+const {isPressing, handlePress} = useLongPress({
+    delay: 500,
+    onReady: (e) => {
+        touchScrollStore.get('mobile-header')?.pause()
+        handleDragStart(e as PointerEvent)
+        edgeScrollStore.get('mobile-header')?.startDrag(e)
+
+        window.addEventListener('pointerup', () => {
+            touchScrollStore.get('mobile-header')?.resume()
+        }, {once: true})
+    },
+})
+
+function setItemRef(el: HTMLElement | null) {
+    droppableRef.value = el
+    draggableRef.value = el
+}
+
+function onPointerDown(e: PointerEvent) {
+    if (isHoverIco.value) return
+    handlePress(e)
+}
 
 const handleItemClick = () => {
     if (!isHoverIco.value) {
@@ -33,9 +71,12 @@ const handleItemClick = () => {
         :class="[
             props.className,
             {'item--active': props.isActive || isOvered},
+            {'item--is-dragging': isDragging},
+            {'item--pressing': isPressing},
         ]"
-        ref="droppableRef"
+        :ref="(el) => setItemRef(el as HTMLElement)"
         @click="handleItemClick"
+        @pointerdown="onPointerDown"
     >
         <h3
             class="item__text"
@@ -68,6 +109,9 @@ const handleItemClick = () => {
     gap: 5px;
     align-items: center;
     cursor: pointer;
+    user-select: none;
+    touch-action: none;
+    background-color: colors.$bg-base;
 
     border: 1px solid colors.$border-default;
     border-radius: 5px;
@@ -75,6 +119,11 @@ const handleItemClick = () => {
 
     &--active {
         border-color: colors.$text-focus;
+    }
+
+    &--pressing {
+        transition: transform 0.3s ease;
+        transform: scale(0.95);
     }
 
     &__text {
