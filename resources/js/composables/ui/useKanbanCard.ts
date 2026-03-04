@@ -47,9 +47,13 @@ export function useKanbanCard() {
         };
     }
 
-    function taskDelete(task: ITask) {
+    async function taskDelete(task: ITask) {
         kanbanStore.deleteTask(task)
-        axios.delete(route('tasks.destroy', task.id)).catch((error) => {
+
+        const realId = await kanbanStore.awaitRealId(task.id)
+        if (!realId) return
+
+        axios.delete(route('tasks.destroy', realId)).catch((error) => {
             console.error(error)
             kanbanStore.addTask(task.category_id, task)
         })
