@@ -22,8 +22,9 @@ const props = defineProps<IProps>()
 const baseRef = ref<InstanceType<typeof BaseKanbanCategory> | null>(null)
 const bodyEl = computed<HTMLElement | null>(() => baseRef.value?.bodyRef ?? null)
 const {startDrag, stopDrag} = useEdgeScroll(bodyEl, {
-    zoneSize: 80,
+    zoneSize: 100,
     containerOnly: true,
+    maxSpeed: 25,
 })
 
 watch(() => baseRef.value?.bodyIsOvered, (isOver) => {
