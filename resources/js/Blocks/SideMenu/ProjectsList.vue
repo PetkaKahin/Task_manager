@@ -58,6 +58,7 @@ function deleteProject() {
     margin: 5px 0;
     padding: 0;
     color: colors.$text-primary;
+    touch-action: none;
 
     display: flex;
     flex-direction: column;
