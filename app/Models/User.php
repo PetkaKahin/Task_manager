@@ -3,15 +3,16 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use AlexCrawford\Sortable\BelongsToSortedMany;
+use AlexCrawford\Sortable\BelongsToSortedManyTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, HasApiTokens;
+    use HasFactory, Notifiable, HasApiTokens, BelongsToSortedManyTrait;
 
     protected $fillable = [
         'name',
@@ -32,9 +33,9 @@ class User extends Authenticatable
         ];
     }
 
-    public function projects(): BelongsToMany
+    public function projects(): BelongsToSortedMany
     {
-        return $this->belongsToMany(Project::class)
+        return $this->belongsToSortedMany(Project::class)
             ->withPivot('role')
             ->withTimestamps();
     }
