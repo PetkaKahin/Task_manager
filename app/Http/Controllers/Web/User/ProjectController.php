@@ -23,13 +23,14 @@ class ProjectController extends Controller
         $user = auth()->user();
         $newProject = Project::factory()->default($user, $request->title)->create();
 
-        $first = $user->projects()
-            ->sorted()
+        $userProjects = $user->projects();
+        $newProjectWithPivot = $userProjects->findOrFail($newProject->id);
+        $first = $userProjects
             ->where('projects.id', '!=', $newProject->id)
             ->first();
 
         if ($first) {
-            $newProject->moveBefore($first);
+            $userProjects->moveBefore($newProjectWithPivot, $first);
         }
 
         return redirect()->intended(route('projects.show', $newProject->id));

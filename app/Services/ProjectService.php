@@ -12,21 +12,20 @@ class ProjectService {
      */
     public function reorder(ReorderProjectRequest $request, Project $project): void
     {
-        $userProjects = $request->user()->projects();
+        $user = $request->user();
+        $projectWithPivot = $user->projects()->findOrFail($project->id);
 
         if ($request->move_after_id === null) {
-            $first = $userProjects
-                ->sorted()
+            $first = $user->projects()
                 ->where('projects.id', '!=', $project->id)
                 ->first();
 
             if ($first) {
-                $project->moveBefore($first);
+                $user->projects()->moveBefore($projectWithPivot, $first);
             }
         } else {
-            $project->moveAfter(
-                $userProjects->findOrFail($request->move_after_id)
-            );
+            $afterProject = $user->projects()->findOrFail($request->move_after_id);
+            $user->projects()->moveAfter($projectWithPivot, $afterProject);
         }
     }
 }

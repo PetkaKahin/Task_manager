@@ -14,7 +14,7 @@ class ProjectResource extends JsonResource
         return [
             'id'         => $this->id,
             'title'      => $this->title,
-            'position'   => $this->position,
+            'position'   => $this->pivot?->position ?? null,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];
