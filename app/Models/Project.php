@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use AlexCrawford\Sortable\SortableTrait;
 use Database\Factories\ProjectFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -14,10 +15,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Project extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, SortableTrait;
 
     protected $fillable = [
         'title',
+        'position',
     ];
 
     public function users(): BelongsToMany

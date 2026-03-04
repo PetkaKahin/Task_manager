@@ -1,6 +1,7 @@
 export interface IProject {
     id: number
     title: string
+    position: string
 }
 
 export interface ITask {

@@ -1,5 +1,5 @@
 import {DnDOperations, useDraggable, useDroppable} from "@vue-dnd-kit/core";
-import {computed, type ComputedRef, type Ref} from "vue";
+import {computed, type ComputedRef} from "vue";
 import {useKanban, cardDragState} from "@/composables/ui/useKanban.ts";
 import type {ICategory, ITask} from "@/Types/models.ts";
 import axios from "axios";

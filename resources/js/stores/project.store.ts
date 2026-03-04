@@ -18,7 +18,8 @@ export const useProjectStore = defineStore('project', () => {
     }
 
     function setProjects(newProjects: IProject[]) {
-        projects.value = newProjects
+        projects.value.length = 0
+        projects.value.push(...newProjects)
     }
 
     function findIndexProject(projectId: number) {
@@ -27,11 +28,17 @@ export const useProjectStore = defineStore('project', () => {
         return projects.value.findIndex(project => project.id === projectId)
     }
 
+    function addProject(index: number, project: IProject) {
+        projects.value.splice(index, 0, project)
+    }
+
     return {
         currentProject,
         projects,
         setProjects,
         setCurrentProject,
         deleteProject,
+        findIndexProject,
+        addProject,
     };
 });

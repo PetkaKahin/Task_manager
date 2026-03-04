@@ -10,7 +10,6 @@ import {storeToRefs} from "pinia";
 import {useBreakpoints} from "@/composables/useBreakpoints.ts";
 import {useApiTasks} from "@/composables/api/useApiTasks.ts";
 
-
 interface IProps {
     category: ICategory
     categories: ICategory[]
