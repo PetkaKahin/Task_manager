@@ -19,6 +19,7 @@ import {useApiTasks} from "@/composables/api/useApiTasks.ts";
 import {useCardEditMode} from "@/composables/ui/useCardEditMode.ts";
 import NodesBlockPC from "@/Blocks/Tiptap/NodesBlockPC.vue";
 import {useEdgeScrollStore} from "@/stores/edgeScroll.store.ts";
+import {useSwipeGestureStore} from "@/stores/swipeGesture.store.ts";
 
 interface IProps {
     task: ITask
@@ -35,6 +36,7 @@ const kanbanStore = useKanbanStore()
 const {updateTask} = useApiTasks()
 const {isLaptop: isDesktop} = useBreakpoints()
 const edgeScrollStore = useEdgeScrollStore()
+const swipeGestureStore = useSwipeGestureStore()
 const {
     elementRef,
     handleDragStart,
@@ -105,9 +107,19 @@ function handleEditorClick(event: MouseEvent) {
 
 function pointerDrug(e: PointerEvent) {
     if (!isEditing.value) {
+        swipeGestureStore.get('mobile-content')?.pause()
         handleDragStart(e)
         edgeScrollStore.get('mobile-header')?.startDrag(e)
-        edgeScrollStore.get(`category-${props.task.category_id}`)?.startDrag(e)
+
+        const catIndex = kanbanStore.getCategoryIndexByTaskId(props.task.id)
+        const catId = kanbanStore.categories[catIndex]?.id
+        if (catId != null) {
+            edgeScrollStore.get(`category-${catId}`)?.startDrag(e)
+        }
+
+        window.addEventListener('pointerup', () => {
+            swipeGestureStore.get('mobile-content')?.resume()
+        }, {once: true})
     }
 }
 
