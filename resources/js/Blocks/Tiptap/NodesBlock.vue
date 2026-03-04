@@ -25,21 +25,21 @@ const props = defineProps<IProps>()
 <template>
     <article class="nodes-block">
         <div class="nodes-block__line">
-            <H1Ico class="ico" text="H1" :size="18" @click="props.editor?.chain().focus().toggleHeading({ level: 1 }).run()"/>
-            <H2Ico class="ico" text="H2" :size="18" @click="props.editor?.chain().focus().toggleHeading({ level: 2 }).run()"/>
-            <H3Ico class="ico" text="H3" :size="18" @click="props.editor?.chain().focus().toggleHeading({ level: 3 }).run()"/>
-            <H4Ico class="ico" text="H4" :size="18" @click="props.editor?.chain().focus().toggleHeading({ level: 4 }).run()"/>
-            <H5Ico class="ico" text="H5" :size="18" @click="props.editor?.chain().focus().toggleHeading({ level: 5 }).run()"/>
-            <H6Ico class="ico" text="H6" :size="18" @click="props.editor?.chain().focus().toggleHeading({ level: 6 }).run()"/>
+            <H1Ico class="ico" :class="{ 'is-active': props.editor?.isActive('heading', { level: 1 }) }" text="H1" :size="18" @click="props.editor?.chain().focus().toggleHeading({ level: 1 }).run()"/>
+            <H2Ico class="ico" :class="{ 'is-active': props.editor?.isActive('heading', { level: 2 }) }" text="H2" :size="18" @click="props.editor?.chain().focus().toggleHeading({ level: 2 }).run()"/>
+            <H3Ico class="ico" :class="{ 'is-active': props.editor?.isActive('heading', { level: 3 }) }" text="H3" :size="18" @click="props.editor?.chain().focus().toggleHeading({ level: 3 }).run()"/>
+            <H4Ico class="ico" :class="{ 'is-active': props.editor?.isActive('heading', { level: 4 }) }" text="H4" :size="18" @click="props.editor?.chain().focus().toggleHeading({ level: 4 }).run()"/>
+            <H5Ico class="ico" :class="{ 'is-active': props.editor?.isActive('heading', { level: 5 }) }" text="H5" :size="18" @click="props.editor?.chain().focus().toggleHeading({ level: 5 }).run()"/>
+            <H6Ico class="ico" :class="{ 'is-active': props.editor?.isActive('heading', { level: 6 }) }" text="H6" :size="18" @click="props.editor?.chain().focus().toggleHeading({ level: 6 }).run()"/>
         </div>
         <div class="nodes-block__line">
-            <StrikethroughIco class="ico" :size="18" @click="props.editor?.chain().focus().toggleStrike().run()"/>
-            <UnderlineIco class="ico" :size="18" @click="props.editor?.chain().focus().toggleUnderline().run()"/>
-            <BoldIco class="ico" :size="18" @click="props.editor?.chain().focus().toggleBold().run()"/>
-            <ItalicIco class="ico" :size="18" @click="props.editor?.chain().focus().toggleItalic().run()"/>
+            <StrikethroughIco class="ico" :class="{ 'is-active': props.editor?.isActive('strike') }" :size="18" @click="props.editor?.chain().focus().toggleStrike().run()"/>
+            <UnderlineIco class="ico" :class="{ 'is-active': props.editor?.isActive('underline') }" :size="18" @click="props.editor?.chain().focus().toggleUnderline().run()"/>
+            <BoldIco class="ico" :class="{ 'is-active': props.editor?.isActive('bold') }" :size="18" @click="props.editor?.chain().focus().toggleBold().run()"/>
+            <ItalicIco class="ico" :class="{ 'is-active': props.editor?.isActive('italic') }" :size="18" @click="props.editor?.chain().focus().toggleItalic().run()"/>
         </div>
         <div class="nodes-block__line">
-            <BulletListIco class="ico" :size="18" @click="props.editor?.chain().focus().toggleBulletList().run()"/>
+            <BulletListIco class="ico" :class="{ 'is-active': props.editor?.isActive('bulletList') }" :size="18" @click="props.editor?.chain().focus().toggleBulletList().run()"/>
             <HorizontalRuleIco class="ico" :size="18" @click="props.editor?.chain().focus().setHorizontalRule().run()"/>
             <CheckMarkIco
                 class="ico"
@@ -76,6 +76,11 @@ const props = defineProps<IProps>()
 
     &:hover {
         color: colors.$border-focus;
+    }
+
+    &.is-active {
+        color: colors.$accent-primary;
+        border-color: colors.$accent-primary;
     }
 }
 </style>
