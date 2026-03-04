@@ -44,14 +44,20 @@ const {
 
 let initialContent = JSON.stringify(props.task.content)
 
-function saveContent(json: Record<string, any> | null) {
+async function saveContent(json: Record<string, any> | null) {
     const currentContent = JSON.stringify(json)
     if (currentContent === initialContent) return
 
     props.task.content = json
-    const {execute} = updateTask({...props.task, content: json})
-    execute()
     initialContent = currentContent
+
+    const taskData = {...props.task, content: json}
+    const realId = await kanbanStore.awaitRealId(taskData.id)
+    if (!realId) return
+
+    taskData.id = realId
+    const {execute} = updateTask(taskData)
+    execute()
 }
 
 const editor = useEditor({
