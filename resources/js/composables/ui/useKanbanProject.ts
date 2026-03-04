@@ -63,7 +63,7 @@ export function useKanbanProject() {
         }
     }
 
-    function getDroppableData(projects: IProject[]) {
+    function getDroppableData() {
         const {elementRef} = useDroppable({
             groups: ['sidebar-projects'],
             events: {

@@ -15,7 +15,7 @@ const isItemActive = ref<boolean | number>(false)
 const projectStore = useProjectStore()
 const {target: targetDelete, confirm: deleteConfirm, isOpen: isDeleteModal} = useDeleteConfirm<IProject>()
 const {getDroppableData, projectDelete} = useKanbanProject()
-const {elementRef: listRef} = getDroppableData(projectStore.projects)
+const {elementRef: listRef} = getDroppableData()
 useEdgeScroll(listRef, {
     id: 'project-list',
     zoneSize: 100,
