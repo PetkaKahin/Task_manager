@@ -1,8 +1,7 @@
 <script setup lang="ts">
 
 import {useSidebar} from "@/composables/ui/useSidebar.ts";
-import {type Ref, ref} from "vue";
-import {useProjectStore} from "@/stores/project.store.ts";
+import {ref} from "vue";
 import {useDeleteConfirm} from "@/composables/useDeleteConfirm.ts";
 import type {IProject} from "@/Types/models.ts";
 import DeleteModal from "@/UI/Modals/DeleteModal.vue";
@@ -12,7 +11,6 @@ import {useEdgeScroll} from "@/composables/ui/useEdgeScroll.ts";
 
 const {projectsList} = useSidebar()
 const isItemActive = ref<boolean | number>(false)
-const projectStore = useProjectStore()
 const {target: targetDelete, confirm: deleteConfirm, isOpen: isDeleteModal} = useDeleteConfirm<IProject>()
 const {getDroppableData, projectDelete} = useKanbanProject()
 const {elementRef: listRef} = getDroppableData()
