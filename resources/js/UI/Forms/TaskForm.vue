@@ -10,8 +10,9 @@ interface IProps {
         content: Record<string, any> | null
         category_id: string | undefined
     }>,
-    submitAction?: () => void,
-    goBackAction?: () => void,
+    submitAction?: () => void
+    goBackAction?: () => void
+    titleText?: string
 }
 
 const props = defineProps<IProps>()
@@ -32,6 +33,7 @@ const props = defineProps<IProps>()
                     className="form__item"
                     :error="form.errors.content"
                     v-model="form.content"
+                    :headerText="props.titleText"
                 />
             </div>
         </template>

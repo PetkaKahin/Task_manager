@@ -5,7 +5,8 @@ import {TaskItem, TaskList} from "@tiptap/extension-list";
 import NodesBlock from "@/Blocks/Tiptap/NodesBlock.vue";
 
 interface IProps {
-    className: string,
+    className: string
+    headerText?: string
 }
 
 const model = defineModel<Record<string, any> | null>()
@@ -38,7 +39,7 @@ const editor = useEditor({
 <template>
     <article class="tiptap-task" :class="props.className">
         <header class="header">
-            <h3 class="header__text">Редактировать задачу</h3>
+            <h3 class="header__text">{{ props.headerText }}</h3>
         </header>
         <div class="nodes-section">
             <NodesBlock :editor="editor" class="nodes-section__nodes" />
@@ -59,8 +60,8 @@ $component-margin-top: 20px;
 
 .header {
     &__text {
-        margin: 0;
         text-align: center;
+        margin: 0;
     }
 }
 
