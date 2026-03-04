@@ -34,8 +34,8 @@ return new class extends Migration
                     $position = $projectPosition;
                 } else {
                     $position = $position === null
-                        ? Rank::forEmptySequence()->getPosition()
-                        : Rank::after($position)->getPosition();
+                        ? Rank::forEmptySequence()->get()
+                        : Rank::after(Rank::fromString($position))->get();
                 }
 
                 DB::table('project_user')
@@ -67,7 +67,6 @@ return new class extends Migration
             }
         });
 
-        // Restore positions from first user's pivot data
         $pivotRows = DB::table('project_user')->orderBy('project_id')->get();
         $seen = [];
         foreach ($pivotRows as $row) {
