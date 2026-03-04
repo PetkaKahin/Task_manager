@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 import Header from "@/Blocks/Header.vue";
-import AsideMenu from "@/Blocks/AsideMenu.vue";
+import SideMenu from "@/Blocks/SideMenu/SideMenu.vue";
 import {useSidebar} from "@/composables/ui/useSidebar.ts";
 import {onMounted} from "vue";
 import {useProjectStore} from "@/stores/project.store.ts";
@@ -31,7 +31,7 @@ onMounted(async () => {
             class="base-layout__sidebar"
             :class="{'base-layout__sidebar--open' : isOpenSidebar}"
         >
-            <AsideMenu/>
+            <SideMenu/>
         </div>
         <div class="base-layout__content">
             <slot/>

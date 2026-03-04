@@ -15,8 +15,9 @@ const baseRef = ref<InstanceType<typeof BaseKanbanCategory> | null>(null)
 const sectionEl = computed<HTMLElement | null>(() => baseRef.value?.categoryRef ?? null)
 useEdgeScroll(sectionEl, {
     id: `category-${props.category.id}`,
-    zoneSize: 80,
+    zoneSize: 100,
     containerOnly: true,
+    maxSpeed: 25,
 })
 </script>
 

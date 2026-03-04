@@ -14,7 +14,16 @@ export const projectService = () => {
         }
     }
 
+    const updatePosition = (projectId: number, moveAfter: number | null) => {
+        apiRequest.patch(route('api.projects.reorder', projectId), {
+            move_after_id: moveAfter
+        }).catch((error) => {
+            console.error(error)
+        })
+    }
+
     return {
         getProjects,
+        updatePosition,
     }
 }

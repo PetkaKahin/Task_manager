@@ -25,4 +25,6 @@ Route::middleware('auth:web')->group(function () {
 
     Route::get('projects', [ProjectController::class, 'index'])
         ->name('api.projects.index');
+    Route::patch('projects/{project}/reorder', [ProjectController::class, 'reorder'])
+        ->name('api.projects.reorder');
 });
