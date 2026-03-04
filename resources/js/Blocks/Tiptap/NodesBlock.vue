@@ -65,7 +65,6 @@ const props = defineProps<IProps>()
         flex-wrap: wrap;
         gap: 5px;
     }
-
 }
 
 .ico {

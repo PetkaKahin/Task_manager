@@ -37,10 +37,13 @@ const editor = useEditor({
 
 <template>
     <article class="tiptap-task" :class="props.className">
-        <div class="nodes-block">
-            <NodesBlock :editor="editor" class="nodes" />
-            <div class="nodes-block__border"/>
-            <div class="nodes-block__border-bg"/>
+        <header class="header">
+            <h3 class="header__text">Редактировать задачу</h3>
+        </header>
+        <div class="nodes-section">
+            <NodesBlock :editor="editor" class="nodes-section__nodes" />
+            <div class="nodes-section__border"/>
+            <div class="nodes-section__border-bg"/>
         </div>
         <div class="tiptap-wrapper">
             <EditorContent :editor="editor"/>
@@ -54,13 +57,19 @@ const editor = useEditor({
 
 $component-margin-top: 20px;
 
-.tiptap-task {
-
+.header {
+    &__text {
+        margin: 0;
+        text-align: center;
+    }
 }
 
-.nodes-block {
+.nodes-section {
     position: sticky;
     top: -$component-margin-top;
+    background-color: colors.$bg-elevated;
+    z-index: 1;
+    padding: $component-margin-top 0 20px 0;
 
     &__border {
         border: 1px solid colors.$border-default;
@@ -80,6 +89,10 @@ $component-margin-top: 20px;
         position: absolute;
         bottom: -5px;
         z-index: -1;
+    }
+
+    &__nodes {
+
     }
 }
 
