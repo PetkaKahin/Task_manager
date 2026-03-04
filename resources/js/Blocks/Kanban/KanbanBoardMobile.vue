@@ -47,6 +47,7 @@ function onTabClick(item: ICategory) {
 }
 
 const {init: initSwipe} = useSwipeGesture(contentRef, {
+    id: 'mobile-content',
     onSwipeLeft: () => switchCategory(1),
     onSwipeRight: () => switchCategory(-1),
 })
