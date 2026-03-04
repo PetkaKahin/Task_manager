@@ -11,6 +11,18 @@ export const useKanbanStore = defineStore('kanban', () => {
     const categories = ref<ICategory[]>([])
     const animationsEnabled = ref(false)
     const pendingEditTaskId = ref<number | null>(null)
+    const pendingRealIds = new Map<number, Promise<number | null>>()
+
+    function registerPendingTask(tempId: number, promise: Promise<number | null>) {
+        pendingRealIds.set(tempId, promise)
+    }
+
+    async function awaitRealId(taskId: number): Promise<number | null> {
+        if (taskId >= 0) return taskId
+        const promise = pendingRealIds.get(taskId)
+        if (!promise) return null
+        return promise
+    }
 
     function addTask(categoryId: number, task: ITask) {
         const category = categories.value.find(category => category.id === categoryId)
@@ -67,6 +79,8 @@ export const useKanbanStore = defineStore('kanban', () => {
         deleteCategory,
         getCategoryIndexByTaskId,
         getTaskIndex,
-        getCategoryIndex
+        getCategoryIndex,
+        registerPendingTask,
+        awaitRealId,
     };
 });

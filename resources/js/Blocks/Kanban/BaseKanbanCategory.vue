@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type {ICategory} from "@/Types/models.ts";
+import type {ICategory, ITask} from "@/Types/models.ts";
 import {Link} from "@inertiajs/vue3";
 import {useKanbanCategory} from "@/composables/ui/useKanbanCategory.ts";
 import KanbanCard from "@/Blocks/Kanban/KanbanCard.vue";
@@ -37,14 +37,20 @@ defineExpose({
     categoryRef,
 })
 
-async function addCard() {
+let tempIdCounter = 0
+
+function addCard() {
+    const tempId = --tempIdCounter
+    const tempTask: ITask = {id: tempId, category_id: props.category.id, content: null}
+
+    kanbanStore.animationsEnabled = false
+    kanbanStore.addTask(props.category.id, tempTask)
+    kanbanStore.pendingEditTaskId = tempId
+
     const {execute} = storeTask({category_id: props.category.id, content: null})
-    const response = await execute()
-    if (response?.data) {
-        kanbanStore.animationsEnabled = false
-        kanbanStore.addTask(props.category.id, response.data)
-        kanbanStore.pendingEditTaskId = response.data.id
-    }
+    kanbanStore.registerPendingTask(tempId, execute().then(response => {
+        return response?.data?.id ?? null
+    }))
 }
 </script>
 

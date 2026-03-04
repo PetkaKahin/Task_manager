@@ -136,6 +136,13 @@ export function useCardEditMode(
 
     // --- Public API ---
 
+    const handleKeydown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+            e.preventDefault()
+            stop()
+        }
+    }
+
     const start = (onStart?: () => void) => {
         if (!cardRef.value || isEditing.value) return
 
@@ -143,6 +150,7 @@ export function useCardEditMode(
 
         isEditing.value = true
         backdropOpen(() => stop())
+        document.addEventListener('keydown', handleKeydown)
 
         nextTick(() => {
             const refs = getRefs()
@@ -167,6 +175,7 @@ export function useCardEditMode(
 
         isEditing.value = false
         backdropClose()
+        document.removeEventListener('keydown', handleKeydown)
         options?.onClose?.()
         stopTracking()
         resetStyles()
