@@ -8,7 +8,7 @@ import DeleteIco from "@/UI/Icons/DeleteIco.vue";
 import {route} from "ziggy-js";
 import {Link} from "@inertiajs/vue3";
 import {useKanbanCard} from "@/composables/ui/useKanbanCard.ts";
-import {computed, nextTick, onMounted, toRef, watch} from "vue";
+import {computed, nextTick, onMounted, toRef} from "vue";
 import {useProjectStore} from "@/stores/project.store.ts";
 import {useKanbanStore} from "@/stores/kanban.store.ts";
 import {TaskItem, TaskList} from "@tiptap/extension-list";
@@ -74,15 +74,23 @@ const editor = useEditor({
             nested: true,
         }),
     ],
-    editable: isDesktop.value,
+    editable: true,
+    editorProps: {
+        handleKeyDown: (_, event) => {
+            if (!isDesktop.value && !isEditing.value) {
+                const allowed = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Home', 'End']
+                if (!allowed.includes(event.key)) return true
+            }
+            return false
+        },
+        handlePaste: () => !isDesktop.value && !isEditing.value,
+        handleDrop: () => !isDesktop.value && !isEditing.value,
+        handleTextInput: () => !isDesktop.value && !isEditing.value,
+    },
     onUpdate({editor: e}) {
-        if (isEditing.value) return
-
         saveContent(e.getJSON())
     },
 })
-
-watch(isDesktop, (val) => editor.value?.setEditable(val))
 
 const {isEditing, cardPlaceholderRef, backdropComponent, start: startEdit, stop: stopEdit} = useCardEditMode(
     toRef(props, 'categoryRef'), elementRef, {

@@ -2,6 +2,7 @@
 import {useEditor, EditorContent} from '@tiptap/vue-3'
 import StarterKit from '@tiptap/starter-kit'
 import {TaskItem, TaskList} from "@tiptap/extension-list";
+import {MobileNodeDelete} from "@/Blocks/Tiptap/extensions/MobileNodeDelete.ts";
 import NodesBlock from "@/Blocks/Tiptap/NodesBlock.vue";
 
 interface IProps {
@@ -29,7 +30,8 @@ const editor = useEditor({
                 class: 'task-item',
             },
             nested: true,
-        })
+        }),
+        MobileNodeDelete,
     ],
     editable: true,
     injectCSS: false,
