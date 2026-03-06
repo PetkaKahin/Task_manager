@@ -7,8 +7,6 @@ services:
         GROUP_ID: ${GID}
       context: .
       dockerfile: ./docker/dockerfiles/php/Dockerfile
-    ports:
-      - "${REVERB_PORT:-8080}:8080"
     volumes:
       - ./:${APP_PATH}
       - ./docker/config/php/php.ini:/usr/local/etc/php/conf.d/php.ini
@@ -18,6 +16,28 @@ services:
     depends_on:
       db:
         condition: service_healthy
+
+  reverb:
+    container_name: ${COMPOSE_PROJECT_NAME}-reverb
+    build:
+      args:
+        USER_ID: ${UID}
+        GROUP_ID: ${GID}
+      context: .
+      dockerfile: ./docker/dockerfiles/php/Dockerfile
+    ports:
+      - "${REVERB_PORT:-8080}:8080"
+    volumes:
+      - ./:${APP_PATH}
+      - ./docker/config/php/php.ini:/usr/local/etc/php/conf.d/php.ini
+    networks:
+      - app-network
+    depends_on:
+      db:
+        condition: service_healthy
+    working_dir: ${APP_PATH}
+    command: php artisan reverb:start --host=0.0.0.0 --port=8080
+    restart: unless-stopped
 
   nginx:
     container_name: ${COMPOSE_PROJECT_NAME}-nginx
