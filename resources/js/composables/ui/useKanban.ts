@@ -71,8 +71,15 @@ export function useKanban() {
         // Позиция и категория не изменились — ничего не делаем
         if (oldTaskIndex === newTaskPosition && oldCategoryIndex === newCategoryIndex) return
 
+        const realTaskId = await kanbanStore.awaitRealId(task.id)
+        if (!realTaskId) return
+
         const prevTask = kanbanStore.categories[newCategoryIndex]!.tasks[newTaskPosition - 1]
-        const moveAfter: number | null = prevTask?.id ?? null
+        let moveAfter: number | null = null
+        if (prevTask) {
+            const realPrevId = await kanbanStore.awaitRealId(prevTask.id)
+            moveAfter = realPrevId ?? null
+        }
 
         let newCategoryId: number | undefined
         if (oldCategoryIndex !== newCategoryIndex) {
@@ -80,7 +87,7 @@ export function useKanban() {
         }
 
         taskService.updatePosition(
-            task.id,
+            realTaskId,
             moveAfter,
             newCategoryId
         )

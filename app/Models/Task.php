@@ -3,7 +3,9 @@
 namespace App\Models;
 
 use AlexCrawford\Sortable\SortableTrait;
+use App\Observers\TaskObserver;
 use Database\Factories\TaskFactory;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,6 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * @method static TaskFactory factory($count = null, $state = [])
  */
+#[ObservedBy(TaskObserver::class)]
 class Task extends Model
 {
     use HasFactory, SoftDeletes, SortableTrait;
@@ -29,6 +32,8 @@ class Task extends Model
     protected $casts = [
         'content' => 'json',
     ];
+
+
 
     public function category(): BelongsTo
     {

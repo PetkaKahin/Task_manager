@@ -8,7 +8,7 @@ import DeleteIco from "@/UI/Icons/DeleteIco.vue";
 import {route} from "ziggy-js";
 import {Link} from "@inertiajs/vue3";
 import {useKanbanCard} from "@/composables/ui/useKanbanCard.ts";
-import {computed, nextTick, onMounted, toRef} from "vue";
+import {computed, nextTick, onMounted, toRef, watch} from "vue";
 import {useProjectStore} from "@/stores/project.store.ts";
 import {useKanbanStore} from "@/stores/kanban.store.ts";
 import {TaskItem, TaskList} from "@tiptap/extension-list";
@@ -90,6 +90,15 @@ const editor = useEditor({
     onUpdate({editor: e}) {
         saveContent(e.getJSON())
     },
+})
+
+watch(() => props.task.content, (newContent) => {
+    if (!editor.value) return
+    const current = JSON.stringify(editor.value.getJSON())
+    const incoming = JSON.stringify(newContent)
+    if (current === incoming) return
+    initialContent = incoming
+    editor.value.commands.setContent(newContent, false)
 })
 
 const {isEditing, cardPlaceholderRef, backdropComponent, start: startEdit, stop: stopEdit} = useCardEditMode(
