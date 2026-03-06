@@ -7,6 +7,8 @@ services:
         GROUP_ID: ${GID}
       context: .
       dockerfile: ./docker/dockerfiles/php/Dockerfile
+    ports:
+      - "${REVERB_PORT:-8080}:8080"
     volumes:
       - ./:${APP_PATH}
       - ./docker/config/php/php.ini:/usr/local/etc/php/conf.d/php.ini
