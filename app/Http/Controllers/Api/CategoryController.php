@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Events\Category\ReorderedCategory;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Category\DestroyCategoryRequest;
 use App\Http\Requests\Api\Category\ReorderCategoryRequest;
@@ -42,6 +43,9 @@ class CategoryController extends Controller
         $category->loadMissing('project');
         $project = $category->project;
         $this->categoryService->reorder($request, $project, $category);
+
+        $sortedIds = $project->categories()->sorted()->pluck('id')->all();
+        broadcast(new ReorderedCategory($project->id, $sortedIds))->toOthers();
 
         return new CategoryResource($category);
     }

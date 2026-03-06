@@ -3,7 +3,9 @@
 namespace App\Models;
 
 use AlexCrawford\Sortable\SortableTrait;
+use App\Observers\CategoryObserver;
 use Database\Factories\CategoryFactory;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -13,6 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * @method static CategoryFactory factory($count = null, $state = [])
  */
+#[ObservedBy(CategoryObserver::class)]
 class Category extends Model
 {
     use HasFactory, SoftDeletes, SortableTrait;
