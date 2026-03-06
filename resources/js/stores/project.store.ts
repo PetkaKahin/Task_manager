@@ -32,12 +32,39 @@ export const useProjectStore = defineStore('project', () => {
         projects.value.splice(index, 0, project)
     }
 
+    function updateProject(updatedProject: IProject) {
+        const index = findIndexProject(updatedProject.id)
+        if (index === -1) return
+        projects.value.splice(index, 1, { ...projects.value[index]!, ...updatedProject })
+        if (currentProject.value?.id === updatedProject.id) {
+            currentProject.value = { ...currentProject.value, ...updatedProject }
+        }
+    }
+
+    function reorderProjects(projectIds: number[]) {
+        const projMap = new Map(projects.value.map(p => [p.id, p]))
+        const reordered: IProject[] = []
+        for (const id of projectIds) {
+            const proj = projMap.get(id)
+            if (proj) {
+                reordered.push(proj)
+                projMap.delete(id)
+            }
+        }
+        for (const proj of projMap.values()) {
+            reordered.push(proj)
+        }
+        projects.value.splice(0, projects.value.length, ...reordered)
+    }
+
     return {
         currentProject,
         projects,
         setProjects,
         setCurrentProject,
         deleteProject,
+        updateProject,
+        reorderProjects,
         findIndexProject,
         addProject,
     };

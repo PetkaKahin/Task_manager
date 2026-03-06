@@ -8,8 +8,10 @@ import {useProjectStore} from "@/stores/project.store.ts";
 import {watch} from "vue";
 import {useBackdrop} from "@/composables/ui/useBackdrop.ts";
 import ProjectsList from "@/Blocks/SideMenu/ProjectsList.vue";
+import {useUserSync} from "@/composables/echo/useUserSync.ts";
 
 const {isDesktop, toggle, close, isOpen} = useSidebar()
+useUserSync()
 const {component: componentBackdrop, open: openBackdrop, close: closeBackdrop} = useBackdrop()
 
 watch(isOpen, (value) => {
