@@ -12,6 +12,7 @@ import DeleteIco from "@/UI/Icons/DeleteIco.vue";
 import {useKanbanProject} from "@/composables/ui/useKanbanProject.ts";
 import DeleteModal from "@/UI/Modals/DeleteModal.vue";
 import {useDeleteConfirm} from "@/composables/useDeleteConfirm.ts";
+import {useProjectSync} from "@/composables/echo/useProjectSync.ts";
 
 interface IProps {
     project: IProject,
@@ -25,6 +26,7 @@ const breakpoints = useBreakpoints()
 const KanbanBoard = defineAsyncComponent(() => import('@/Blocks/Kanban/KanbanBoard.vue'))
 const KanbanBoardMobile = defineAsyncComponent(() => import('@/Blocks/Kanban/KanbanBoardMobile.vue'))
 const {isOpen: isDeleteModal, target: targetDelete, confirm: deleteConfirm} = useDeleteConfirm<IProject>()
+useProjectSync()
 
 function deleteProject() {
     if (targetDelete.value) useKanbanProject().projectDelete(targetDelete.value)

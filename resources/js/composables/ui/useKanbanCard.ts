@@ -1,5 +1,5 @@
-import axios from "axios";
 import {route} from "ziggy-js";
+import {apiRequest} from "@/shared/api/apiRequest";
 import type {ITask} from "@/Types/models.ts";
 import {useKanbanStore} from "@/stores/kanban.store.ts";
 import {useDraggable} from "@vue-dnd-kit/core";
@@ -53,7 +53,7 @@ export function useKanbanCard() {
         const realId = await kanbanStore.awaitRealId(task.id)
         if (!realId) return
 
-        axios.delete(route('tasks.destroy', realId)).catch((error) => {
+        apiRequest.delete(route('tasks.destroy', realId)).catch((error) => {
             console.error(error)
             kanbanStore.addTask(task.category_id, task)
         })

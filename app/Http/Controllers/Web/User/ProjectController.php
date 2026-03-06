@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers\Web\User;
 
+use App\Events\Project\CreatedProject;
+use App\Events\Project\DeletedProject;
+use App\Events\Project\UpdatedProject;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Web\Project\DestroyProjectRequest;
 use App\Http\Requests\Web\Project\EditProjectRequest;
@@ -33,6 +36,8 @@ class ProjectController extends Controller
             $userProjects->moveBefore($newProjectWithPivot, $first);
         }
 
+        broadcast(new CreatedProject($user->id, $newProject->id, $newProject->title))->toOthers();
+
         return redirect()->intended(route('projects.show', $newProject->id));
     }
 
@@ -60,12 +65,20 @@ class ProjectController extends Controller
     {
         $project->update($request->validated());
 
+        $userId = auth()->id();
+        broadcast(new UpdatedProject($userId, $project->id, $project->title))->toOthers();
+
         return redirect()->intended(route('projects.show', $project->id));
     }
 
     public function destroy(DestroyProjectRequest $request, Project $project)
     {
+        $userId = auth()->id();
+        $projectId = $project->id;
+
         $project->delete();
+
+        broadcast(new DeletedProject($userId, $projectId))->toOthers();
 
         return response()->noContent();
     }

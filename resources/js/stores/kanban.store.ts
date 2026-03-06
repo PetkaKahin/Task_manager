@@ -29,15 +29,79 @@ export const useKanbanStore = defineStore('kanban', () => {
         category?.tasks.push(task)
     }
 
-    function deleteTask(task: ITask) {
-        const categoryIndex = getCategoryIndex(task.category_id)
-        const taskIndex = getTaskIndex(task.id, categoryIndex)
+    function updateTask(updatedTask: ITask) {
+        const oldCategoryIndex = getCategoryIndexByTaskId(updatedTask.id)
+        const newCategoryIndex = getCategoryIndex(updatedTask.category_id)
 
-        categories.value[categoryIndex]?.tasks.splice(taskIndex, 1)
+        if (oldCategoryIndex !== -1) {
+            const oldTaskIndex = getTaskIndex(updatedTask.id, oldCategoryIndex)
+            if (oldCategoryIndex === newCategoryIndex) {
+                // Та же категория — просто обновляем
+                categories.value[oldCategoryIndex]!.tasks.splice(oldTaskIndex, 1, updatedTask)
+                return
+            }
+            // Удаляем из старой категории
+            categories.value[oldCategoryIndex]!.tasks.splice(oldTaskIndex, 1)
+        }
+
+        // Добавляем в новую категорию
+        if (newCategoryIndex !== -1) {
+            categories.value[newCategoryIndex]!.tasks.push(updatedTask)
+        }
+    }
+
+    function updateCategory(updatedCategory: ICategory) {
+        const index = getCategoryIndex(updatedCategory.id)
+        if (index === -1) return
+        const tasks = categories.value[index]!.tasks
+        categories.value[index]! = { ...updatedCategory, tasks }
+    }
+
+    function reorderTasks(categoryId: number, taskIds: number[]) {
+        const categoryIndex = getCategoryIndex(categoryId)
+        if (categoryIndex === -1) return
+        const tasks = categories.value[categoryIndex]!.tasks
+        const taskMap = new Map(tasks.map(t => [t.id, t]))
+        const reordered: ITask[] = []
+        for (const id of taskIds) {
+            const task = taskMap.get(id)
+            if (task) {
+                reordered.push(task)
+                taskMap.delete(id)
+            }
+        }
+        for (const task of taskMap.values()) {
+            reordered.push(task)
+        }
+        tasks.splice(0, tasks.length, ...reordered)
+    }
+
+    function deleteTask(task: ITask) {
+        const categoryIndex = getCategoryIndexByTaskId(task.id)
+        if (categoryIndex === -1) return
+        const taskIndex = getTaskIndex(task.id, categoryIndex)
+        if (taskIndex === -1) return
+        categories.value[categoryIndex]!.tasks.splice(taskIndex, 1)
     }
 
     function addCategory(index: number, kanbanCategory: ICategory) {
         categories.value.splice(index, 0, kanbanCategory);
+    }
+
+    function reorderCategories(categoryIds: number[]) {
+        const catMap = new Map(categories.value.map(c => [c.id, c]))
+        const reordered: ICategory[] = []
+        for (const id of categoryIds) {
+            const cat = catMap.get(id)
+            if (cat) {
+                reordered.push(cat)
+                catMap.delete(id)
+            }
+        }
+        for (const cat of catMap.values()) {
+            reordered.push(cat)
+        }
+        categories.value.splice(0, categories.value.length, ...reordered)
     }
 
     function deleteCategory(category: ICategory) {
@@ -73,7 +137,11 @@ export const useKanbanStore = defineStore('kanban', () => {
         animationsEnabled,
         pendingEditTaskId,
         addTask,
+        updateTask,
         addCategory,
+        updateCategory,
+        reorderTasks,
+        reorderCategories,
         deleteTask,
         setCategory,
         deleteCategory,

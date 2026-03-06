@@ -9,6 +9,7 @@ import {useProjectStore} from "@/stores/project.store.ts";
 import type {IProject} from "@/Types/models.ts";
 import {computed} from "vue";
 import {useEdgeScrollStore} from "@/stores/edgeScroll.store.ts";
+import {useSidebar} from "@/composables/ui/useSidebar.ts";
 
 interface IProps {
     project: IProject
@@ -23,6 +24,7 @@ const emit = defineEmits<{
 }>()
 
 const {currentProject} = useProjectStore()
+const {close: closeSidebar} = useSidebar()
 const {getDraggableData} = useKanbanProject()
 const edgeScrollStore = useEdgeScrollStore()
 const {
@@ -52,6 +54,7 @@ function pointerDrug(e: PointerEvent) {
                 <Link
                     :href="route('projects.show', project.id)"
                     class="item__link"
+                    @click="closeSidebar"
                 >
                     <span class="item__title">{{ project.title }}</span>
                 </Link>
