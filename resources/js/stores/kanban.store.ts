@@ -14,7 +14,17 @@ export const useKanbanStore = defineStore('kanban', () => {
     const pendingRealIds = new Map<number, Promise<number | null>>()
 
     function registerPendingTask(tempId: number, promise: Promise<number | null>) {
-        pendingRealIds.set(tempId, promise)
+        const resolved = promise.then(realId => {
+            if (realId != null) {
+                for (const category of categories.value) {
+                    const task = category.tasks.find(t => t.id === tempId)
+                    if (task) { task.id = realId; break }
+                }
+            }
+            pendingRealIds.delete(tempId)
+            return realId
+        })
+        pendingRealIds.set(tempId, resolved)
     }
 
     async function awaitRealId(taskId: number): Promise<number | null> {
@@ -36,8 +46,8 @@ export const useKanbanStore = defineStore('kanban', () => {
         if (oldCategoryIndex !== -1) {
             const oldTaskIndex = getTaskIndex(updatedTask.id, oldCategoryIndex)
             if (oldCategoryIndex === newCategoryIndex) {
-                // Та же категория — просто обновляем
-                categories.value[oldCategoryIndex]!.tasks.splice(oldTaskIndex, 1, updatedTask)
+                // Та же категория — обновляем свойства на месте
+                Object.assign(categories.value[oldCategoryIndex]!.tasks[oldTaskIndex]!, updatedTask)
                 return
             }
             // Удаляем из старой категории

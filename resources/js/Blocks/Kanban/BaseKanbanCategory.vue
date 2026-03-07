@@ -41,7 +41,7 @@ let tempIdCounter = 0
 
 function addCard() {
     const tempId = --tempIdCounter
-    const tempTask: ITask = {id: tempId, category_id: props.category.id, content: null}
+    const tempTask: ITask = {id: tempId, category_id: props.category.id, content: null, _key: tempId}
 
     kanbanStore.animationsEnabled = false
     kanbanStore.addTask(props.category.id, tempTask)
@@ -77,7 +77,7 @@ function addCard() {
             <TransitionGroup :name="animationsEnabled ? 'cards' : ''" tag="div" class="kanban-category__cards">
                 <KanbanCard
                     v-for="(task, index) in category.tasks"
-                    :key="task.id"
+                    :key="task._key ?? task.id"
                     :task="task"
                     :source="category.tasks"
                     :index="index"

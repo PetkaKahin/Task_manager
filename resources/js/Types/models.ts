@@ -8,6 +8,7 @@ export interface ITask {
     id: number
     category_id: number
     content: Record<string, any> | null
+    _key?: number
 }
 
 export interface ICategory {
