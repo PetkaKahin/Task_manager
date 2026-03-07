@@ -2,6 +2,9 @@ import { Extension } from '@tiptap/core'
 import { Plugin, PluginKey, NodeSelection } from '@tiptap/pm/state'
 import { liftListItem } from '@tiptap/pm/schema-list'
 
+const DELETABLE_ATOM_TYPES = new Set(['horizontalRule'])
+const LIFTABLE_LIST_TYPES = new Set(['taskItem', 'listItem'])
+
 export const MobileNodeDelete = Extension.create({
     name: 'mobileNodeDelete',
 
@@ -19,36 +22,27 @@ export const MobileNodeDelete = Extension.create({
                             const { $from } = selection
 
                             if (selection instanceof NodeSelection || $from.pos === 0) return false
+                            if ($from.parentOffset !== 0) return false
 
-                            // Inline atom right before cursor (e.g. inline node)
-                            const nodeBefore = $from.nodeBefore
-                            if (nodeBefore && nodeBefore.isAtom) {
-                                event.preventDefault()
-                                view.dispatch(state.tr.delete($from.pos - nodeBefore.nodeSize, $from.pos))
-                                return true
+                            // Block-level atom before current block (e.g. <hr>)
+                            if ($from.depth > 0) {
+                                const beforePos = $from.before($from.depth)
+                                const $beforePos = state.doc.resolve(beforePos)
+                                const nodeBeforeBlock = $beforePos.nodeBefore
+                                if (nodeBeforeBlock && DELETABLE_ATOM_TYPES.has(nodeBeforeBlock.type.name)) {
+                                    event.preventDefault()
+                                    view.dispatch(state.tr.delete(beforePos - nodeBeforeBlock.nodeSize, beforePos))
+                                    return true
+                                }
                             }
 
-                            if ($from.parentOffset === 0) {
-                                // Block-level atom before current block (e.g. <hr>)
-                                if ($from.depth > 0) {
-                                    const beforePos = $from.before($from.depth)
-                                    const $beforePos = state.doc.resolve(beforePos)
-                                    const nodeBeforeBlock = $beforePos.nodeBefore
-                                    if (nodeBeforeBlock && nodeBeforeBlock.isAtom) {
-                                        event.preventDefault()
-                                        view.dispatch(state.tr.delete(beforePos - nodeBeforeBlock.nodeSize, beforePos))
-                                        return true
-                                    }
-                                }
-
-                                // TaskItem: lift to regular paragraph
-                                for (let d = $from.depth; d >= 1; d--) {
-                                    const node = $from.node(d)
-                                    if (node.type.name === 'taskItem') {
-                                        event.preventDefault()
-                                        liftListItem(node.type)(state, view.dispatch)
-                                        return true
-                                    }
+                            // TaskItem / ListItem: lift to regular paragraph
+                            for (let d = $from.depth; d >= 1; d--) {
+                                const node = $from.node(d)
+                                if (LIFTABLE_LIST_TYPES.has(node.type.name)) {
+                                    event.preventDefault()
+                                    liftListItem(node.type)(state, view.dispatch)
+                                    return true
                                 }
                             }
 
