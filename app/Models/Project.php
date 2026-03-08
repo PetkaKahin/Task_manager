@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Database\Factories\ProjectFactory;
@@ -10,16 +12,24 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
+ * @property int $id
+ * @property string $title
+ *
  * @method static ProjectFactory factory($count = null, $state = [])
+ *
+ * @use HasFactory<ProjectFactory>
  */
 class Project extends Model
 {
-    use HasFactory, SoftDeletes;
+    /** @use HasFactory<ProjectFactory> */
+    use HasFactory;
+    use SoftDeletes;
 
     protected $fillable = [
         'title',
     ];
 
+    /** @return BelongsToMany<User, $this> */
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class)
@@ -27,6 +37,7 @@ class Project extends Model
             ->withTimestamps();
     }
 
+    /** @return HasMany<Category, $this> */
     public function categories(): HasMany
     {
         return $this->hasMany(Category::class);
