@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Requests\Web\Task;
 
 use App\Rules\CategoryBelongsToUser;
@@ -9,16 +11,16 @@ class StoreTaskRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        // TODO подумать, нужны ли ограничения?
         return true;
     }
 
+    /** @return array<string, mixed> */
     public function rules(): array
     {
         return [
             'category_id' => [
                 'required',
-                new CategoryBelongsToUser,
+                new CategoryBelongsToUser(),
             ],
             'content' => [
                 'nullable',

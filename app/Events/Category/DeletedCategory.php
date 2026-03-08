@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Events\Category;
 
 use Illuminate\Broadcasting\InteractsWithSockets;
@@ -9,13 +11,18 @@ use Illuminate\Foundation\Events\Dispatchable;
 
 class DeletedCategory implements ShouldBroadcastNow
 {
-    use Dispatchable, InteractsWithSockets;
+    use Dispatchable;
+    use InteractsWithSockets;
 
     public function __construct(
-        private int $categoryId,
-        private int $projectId,
-    ) {}
+        private readonly int $categoryId,
+        private readonly int $projectId,
+    ) {
+    }
 
+    /**
+     * @return array<string, int>
+     */
     public function broadcastWith(): array
     {
         return [

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Events\Category;
 
 use Illuminate\Broadcasting\InteractsWithSockets;
@@ -9,15 +11,20 @@ use Illuminate\Foundation\Events\Dispatchable;
 
 class UpdatedCategory implements ShouldBroadcastNow
 {
-    use Dispatchable, InteractsWithSockets;
+    use Dispatchable;
+    use InteractsWithSockets;
 
     public function __construct(
         public readonly int $id,
         public readonly string $title,
         public readonly string $description,
-        private int $projectId,
-    ) {}
+        private readonly int $projectId,
+    ) {
+    }
 
+    /**
+     * @return array<array<string, int|string>>
+     */
     public function broadcastWith(): array
     {
         return [

@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Api;
 
-use App\Events\Task\ReorderedTask;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Task\ReorderTaskRequest;
 use App\Http\Requests\Api\Task\StoreTaskRequest;
@@ -14,50 +15,30 @@ use App\Services\TaskService;
 class TaskController extends Controller
 {
     public function __construct(
-        private TaskService $taskService
-    ){}
+        private readonly TaskService $taskService
+    ) {
+    }
 
-    public function store(StoreTaskRequest $request)
+    public function store(StoreTaskRequest $request): TaskResource
     {
         $task = Task::query()->create($request->validated());
 
         return new TaskResource($task);
     }
 
-    public function update(UpdateTaskRequest $request, Task $task)
+    public function update(UpdateTaskRequest $request, Task $task): TaskResource
     {
         $task->update($request->validated());
 
         return new TaskResource($task);
     }
 
-    public function reorder(ReorderTaskRequest $request, Task $task)
+    public function reorder(ReorderTaskRequest $request, Task $task): TaskResource
     {
         $task->loadMissing(['category.project']);
-        $category = $task->category;
-        $project = $category->project;
 
-        $newTask = $this->taskService->reorder($request, $project, $category, $task);
+        $task = $this->taskService->reorder($request, $task->category->project, $task->category, $task);
 
-        $targetCategory = $newTask->category;
-        $sortedIds = $targetCategory->tasks()->sorted()->pluck('id')->all();
-
-        broadcast(new ReorderedTask(
-            $project->id,
-            $targetCategory->id,
-            $sortedIds,
-        ))->toOthers();
-
-        // Если таска переехала в другую категорию — обновляем и старую
-        if ($targetCategory->id !== $category->id) {
-            $oldSortedIds = $category->tasks()->sorted()->pluck('id')->all();
-            broadcast(new ReorderedTask(
-                $project->id,
-                $category->id,
-                $oldSortedIds,
-            ))->toOthers();
-        }
-
-        return new TaskResource($newTask);
+        return new TaskResource($task);
     }
 }

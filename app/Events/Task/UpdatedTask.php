@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Events\Task;
 
 use App\Models\Task;
@@ -10,17 +12,18 @@ use Illuminate\Foundation\Events\Dispatchable;
 
 class UpdatedTask implements ShouldBroadcastNow
 {
-    use Dispatchable, InteractsWithSockets;
+    use Dispatchable;
+    use InteractsWithSockets;
 
-    public readonly Task $task;
-    private int $projectId;
-
-    public function __construct(Task $task, int $projectId)
-    {
-        $this->task = $task;
-        $this->projectId = $projectId;
+    public function __construct(
+        public readonly Task $task,
+        private readonly int $projectId
+    ) {
     }
 
+    /**
+     * @return array<string, array<string, int|null|array<mixed>>>
+     */
     public function broadcastWith(): array
     {
         return [
@@ -37,6 +40,9 @@ class UpdatedTask implements ShouldBroadcastNow
         return 'Task.UpdatedTask';
     }
 
+    /**
+     * @return PresenceChannel[]
+     */
     public function broadcastOn(): array
     {
         return [

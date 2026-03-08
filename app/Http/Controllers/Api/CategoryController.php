@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Api;
 
 use App\Events\Category\ReorderedCategory;
@@ -11,26 +13,28 @@ use App\Http\Requests\Api\Category\UpdateCategoryRequest;
 use App\Http\Resources\CategoryResource;
 use App\Models\Category;
 use App\Services\CategoryService;
+use Illuminate\Http\Response;
 
 class CategoryController extends Controller
 {
-    public function __construct(private CategoryService $categoryService)
-    {
+    public function __construct(
+        private readonly CategoryService $categoryService
+    ) {
     }
 
-    public function show(ShowCategoryRequest $request, Category $category)
+    public function show(ShowCategoryRequest $request, Category $category): CategoryResource
     {
         return new CategoryResource($category);
     }
 
-    public function update(UpdateCategoryRequest $request, Category $category)
+    public function update(UpdateCategoryRequest $request, Category $category): CategoryResource
     {
         $category->update($request->validated());
 
         return new CategoryResource($category);
     }
 
-    public function destroy(DestroyCategoryRequest $request, Category $category)
+    public function destroy(DestroyCategoryRequest $request, Category $category): Response
     {
         $category->delete();
 
@@ -38,13 +42,14 @@ class CategoryController extends Controller
     }
 
     // TODO добавить переодическую оптимизацию позиции
-    public function reorder(ReorderCategoryRequest $request, Category $category)
+    public function reorder(ReorderCategoryRequest $request, Category $category): CategoryResource
     {
         $category->loadMissing('project');
         $project = $category->project;
         $this->categoryService->reorder($request, $project, $category);
 
-        $sortedIds = $project->categories()->sorted()->pluck('id')->all();
+        /** @var array<int> $sortedIds */
+        $sortedIds = Category::query()->sorted()->where('project_id', $project->id)->pluck('id')->all();
         broadcast(new ReorderedCategory($project->id, $sortedIds))->toOthers();
 
         return new CategoryResource($category);

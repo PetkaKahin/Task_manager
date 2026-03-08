@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Events\Task;
 
 use Illuminate\Broadcasting\InteractsWithSockets;
@@ -9,17 +11,14 @@ use Illuminate\Foundation\Events\Dispatchable;
 
 class DeletedTask implements ShouldBroadcastNow
 {
-    use Dispatchable, InteractsWithSockets;
+    use Dispatchable;
+    use InteractsWithSockets;
 
-    public readonly int $taskId;
-    public readonly int $categoryId;
-    private int $projectId;
-
-    public function __construct(int $taskId, int $categoryId, int $projectId)
-    {
-        $this->taskId = $taskId;
-        $this->categoryId = $categoryId;
-        $this->projectId = $projectId;
+    public function __construct(
+        public readonly int $taskId,
+        public readonly int $categoryId,
+        private readonly int $projectId
+    ) {
     }
 
     public function broadcastAs(): string
@@ -27,6 +26,9 @@ class DeletedTask implements ShouldBroadcastNow
         return 'Task.DeletedTask';
     }
 
+    /**
+     * @return PresenceChannel[]
+     */
     public function broadcastOn(): array
     {
         return [

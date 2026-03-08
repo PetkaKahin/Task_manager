@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Observers;
 
 use App\Events\Task\CreatedTask;
@@ -12,6 +14,7 @@ class TaskObserver
     private function getProjectId(Task $task): int
     {
         $task->loadMissing('category');
+
         return $task->category->project_id;
     }
 

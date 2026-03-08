@@ -9,11 +9,15 @@ use App\Http\Controllers\Web\User\TaskController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    if (!Auth::check()) return redirect()->route('login');
+    if (! Auth::check()) {
+        return redirect()->route('login');
+    }
 
     $project = auth()->user()->projects()->first();
 
-    if ($project == null) return redirect()->route('projects.create');
+    if ($project == null) {
+        return redirect()->route('projects.create');
+    }
 
     return redirect()->route('projects.show', $project->id);
 })->name('home');

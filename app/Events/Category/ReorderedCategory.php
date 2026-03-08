@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Events\Category;
 
 use Illuminate\Broadcasting\InteractsWithSockets;
@@ -9,17 +11,22 @@ use Illuminate\Foundation\Events\Dispatchable;
 
 class ReorderedCategory implements ShouldBroadcastNow
 {
-    use Dispatchable, InteractsWithSockets;
+    use Dispatchable;
+    use InteractsWithSockets;
 
     /**
      * @param int $projectId
      * @param int[] $categoryIds Отсортированные ID категорий
      */
     public function __construct(
-        private int $projectId,
+        private readonly int $projectId,
         public readonly array $categoryIds,
-    ) {}
+    ) {
+    }
 
+    /**
+     * @return array<string, array<int>>
+     */
     public function broadcastWith(): array
     {
         return [
