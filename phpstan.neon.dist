@@ -1,0 +1,11 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    paths:
+        - app
+    stubFiles:
+        - stubs/BelongsToSortedMany.stub
+
+
+    level: max

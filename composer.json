@@ -18,14 +18,19 @@
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^3.6",
         "fakerphp/faker": "^1.23",
+        "friendsofphp/php-cs-fixer": "^3.94",
         "fruitcake/laravel-debugbar": "^4.0",
+        "larastan/larastan": "^3.9",
         "laravel-lang/lang": "^15.28",
         "laravel/pail": "^1.2.2",
         "laravel/pint": "^1.24",
         "laravel/sail": "^1.41",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.6",
-        "phpunit/phpunit": "^11.5.3"
+        "pestphp/pest": "^3.8",
+        "pestphp/pest-plugin-laravel": "^3.2",
+        "phpunit/phpunit": "^11.5.3",
+        "rector/rector": "^2.3"
     },
     "autoload": {
         "psr-4": {
@@ -74,7 +79,8 @@
         ],
         "pre-package-uninstall": [
             "Illuminate\\Foundation\\ComposerScripts::prePackageUninstall"
-        ]
+        ],
+        "format": "php-cs-fixer fix --allow-risky=yes"
     },
     "extra": {
         "laravel": {
