@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Web\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Web\Auth\RegisterRequest;
+use App\Models\Project;
 use App\Models\User;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -20,13 +22,19 @@ class RegisterController extends Controller
 
     public function store(RegisterRequest $request): RedirectResponse
     {
+        /** @var User $user */
         $user = User::factory()->unverified()->withFirstProject()->create($request->validated());
 
         Auth::login($user);
         $request->session()->regenerate();
 
-        $project = $user->projects()->orderBy('updated_at')->first();
+        /** @var Project|null $project */
+        $project = $user->projects()->orderBy('position')->first();
 
-        return redirect()->intended(route('projects.show', $project?->id));
+        if (!$project) {
+            abort(404);
+        }
+
+        return redirect()->intended(route('projects.show', $project->id));
     }
 }

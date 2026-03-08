@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Requests\Web\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
@@ -13,18 +15,35 @@ class LoginRequest extends FormRequest
         return true;
     }
 
+    /** @return array<string, mixed> */
     public function rules(): array
     {
         return [
-            'login'    => [
+            'login' => [
                 'required',
                 'string',
                 'max:255',
             ],
             'password' => [
                 'required',
-                'string'
+                'string',
             ],
         ];
+    }
+
+    public function authenticate(): void
+    {
+        $loginType = filter_var($this->login, FILTER_VALIDATE_EMAIL)
+            ? 'email'
+            : 'name';
+
+        if (! Auth::attempt([
+            $loginType => $this->login,
+            'password' => $this->password,
+        ])) {
+            throw ValidationException::withMessages([
+                'error' => __('auth.failed'),
+            ]);
+        }
     }
 }

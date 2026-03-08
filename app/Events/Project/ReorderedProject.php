@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Events\Project;
 
 use Illuminate\Broadcasting\InteractsWithSockets;
@@ -9,17 +11,22 @@ use Illuminate\Foundation\Events\Dispatchable;
 
 class ReorderedProject implements ShouldBroadcastNow
 {
-    use Dispatchable, InteractsWithSockets;
+    use Dispatchable;
+    use InteractsWithSockets;
 
     /**
      * @param int $userId
      * @param int[] $projectIds
      */
     public function __construct(
-        private int $userId,
+        private readonly int $userId,
         public readonly array $projectIds,
-    ) {}
+    ) {
+    }
 
+    /**
+     * @return array<string, array<int>>
+     */
     public function broadcastWith(): array
     {
         return [
@@ -32,6 +39,9 @@ class ReorderedProject implements ShouldBroadcastNow
         return 'Project.ReorderedProject';
     }
 
+    /**
+     * @return PrivateChannel[]
+     */
     public function broadcastOn(): array
     {
         return [

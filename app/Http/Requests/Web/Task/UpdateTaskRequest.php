@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Requests\Web\Task;
 
 use App\Rules\CategoryBelongsToUser;
@@ -9,9 +11,10 @@ class UpdateTaskRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()->can('update', $this->route('task'));
+        return $this->user()?->can('update', $this->route('task')) ?? false;
     }
 
+    /** @return array<string, mixed> */
     public function rules(): array
     {
         return [
@@ -22,7 +25,7 @@ class UpdateTaskRequest extends FormRequest
             'category_id' => [
                 'nullable',
                 'integer',
-                new CategoryBelongsToUser,
+                new CategoryBelongsToUser(),
             ],
         ];
     }

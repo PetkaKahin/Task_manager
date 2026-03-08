@@ -19,9 +19,9 @@ export default defineConfig({
         host: '0.0.0.0',
         cors: true,
         hmr: {
-            host: 'localhost',
+            host: '192.168.0.169',
         },
-        origin: 'http://localhost:5173',
+        origin: 'http://192.168.0.169:5173',
     },
     resolve: {
         alias: {

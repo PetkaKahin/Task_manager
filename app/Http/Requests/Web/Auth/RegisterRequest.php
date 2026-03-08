@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Requests\Web\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
@@ -12,16 +14,17 @@ class RegisterRequest extends FormRequest
         return true;
     }
 
+    /** @return array<string, mixed> */
     public function rules(): array
     {
         return [
-            'name'     => [
+            'name' => [
                 'required',
                 'string',
                 'max:255',
                 'unique:users,name',
             ],
-            'email'    => [
+            'email' => [
                 'required',
                 'string',
                 'email',
@@ -37,8 +40,8 @@ class RegisterRequest extends FormRequest
                     ->letters()
                     ->mixedCase()
                     ->numbers()
-                    ->symbols()
-            ]
+                    ->symbols(),
+            ],
         ];
     }
 }

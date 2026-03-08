@@ -1,0 +1,267 @@
+<?php
+
+declare(strict_types=1);
+
+use App\Events\Project\CreatedProject;
+use App\Events\Project\DeletedProject;
+use App\Events\Project\UpdatedProject;
+use App\Models\Project;
+use App\Models\User;
+use Illuminate\Support\Facades\Event;
+
+uses(Illuminate\Foundation\Testing\RefreshDatabase::class);
+
+// Хелпер: пользователь с проектом
+function webProjectSetup(): array
+{
+    $user    = User::factory()->create();
+    $project = Project::factory()->create();
+    $user->projects()->attach($project->id);
+
+    return [$user, $project];
+}
+
+// ─── create ──────────────────────────────────────────────────────────────────
+
+test('create page is accessible for authenticated user', function () {
+    [$user] = webProjectSetup();
+
+    $this->actingAs($user)
+        ->get(route('projects.create'))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page->component('User/Project/NewProject'));
+});
+
+test('create returns 401 for guest', function () {
+    $this->get(route('projects.create'))
+        ->assertRedirect(route('login'));
+});
+
+// ─── store ───────────────────────────────────────────────────────────────────
+
+test('owner can create a project', function () {
+    $user = User::factory()->create();
+
+    $this->actingAs($user)
+        ->post(route('projects.store'), ['title' => 'Новый проект'])
+        ->assertRedirect();
+
+    $this->assertDatabaseHas('projects', ['title' => 'Новый проект']);
+});
+
+test('store creates default categories for new project', function () {
+    $user = User::factory()->create();
+
+    $this->actingAs($user)
+        ->post(route('projects.store'), ['title' => 'Новый проект']);
+
+    $project = $user->projects()->first();
+    expect($project->categories()->count())->toBe(3);
+});
+
+test('store redirects to the new project', function () {
+    $user = User::factory()->create();
+
+    $this->actingAs($user)
+        ->post(route('projects.store'), ['title' => 'Новый проект'])
+        ->assertRedirect(route('projects.show', $user->projects()->first()->id));
+});
+
+test('store broadcasts CreatedProject event', function () {
+    $user = User::factory()->create();
+
+    Event::fake([CreatedProject::class]);
+
+    $this->actingAs($user)
+        ->post(route('projects.store'), ['title' => 'Новый проект']);
+
+    Event::assertDispatched(CreatedProject::class, function ($event) use ($user) {
+        $channels = array_map(fn ($ch) => $ch->name, $event->broadcastOn());
+
+        return in_array("private-User.{$user->id}", $channels);
+    });
+});
+
+test('store returns 401 for guest', function () {
+    $this->post(route('projects.store'), ['title' => 'Новый проект'])
+        ->assertRedirect(route('login'));
+});
+
+test('store returns 422 when title is missing', function () {
+    [$user] = webProjectSetup();
+
+    $this->actingAs($user)
+        ->post(route('projects.store'), [])
+        ->assertSessionHasErrors('title');
+});
+
+test('store returns 422 when title exceeds 255 characters', function () {
+    [$user] = webProjectSetup();
+
+    $this->actingAs($user)
+        ->post(route('projects.store'), ['title' => str_repeat('a', 256)])
+        ->assertSessionHasErrors('title');
+});
+
+// ─── show ─────────────────────────────────────────────────────────────────────
+
+test('owner can view project', function () {
+    [$user, $project] = webProjectSetup();
+
+    $this->actingAs($user)
+        ->get(route('projects.show', $project))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('User/Dashboard')
+            ->has('project')
+            ->has('categories')
+        );
+});
+
+test('show returns 401 for guest', function () {
+    [, $project] = webProjectSetup();
+
+    $this->get(route('projects.show', $project))
+        ->assertRedirect(route('login'));
+});
+
+test('show returns 403 for non-owner', function () {
+    [, $project] = webProjectSetup();
+    $other = User::factory()->create();
+
+    $this->actingAs($other)
+        ->get(route('projects.show', $project))
+        ->assertForbidden();
+});
+
+// ─── edit ────────────────────────────────────────────────────────────────────
+
+test('owner can access edit page', function () {
+    [$user, $project] = webProjectSetup();
+
+    $this->actingAs($user)
+        ->get(route('projects.edit', $project))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('User/Project/EditProject')
+            ->has('project')
+        );
+});
+
+test('edit returns 401 for guest', function () {
+    [, $project] = webProjectSetup();
+
+    $this->get(route('projects.edit', $project))
+        ->assertRedirect(route('login'));
+});
+
+test('edit returns 403 for non-owner', function () {
+    [, $project] = webProjectSetup();
+    $other = User::factory()->create();
+
+    $this->actingAs($other)
+        ->get(route('projects.edit', $project))
+        ->assertForbidden();
+});
+
+// ─── update ──────────────────────────────────────────────────────────────────
+
+test('owner can update project title', function () {
+    [$user, $project] = webProjectSetup();
+
+    $this->actingAs($user)
+        ->patch(route('projects.update', $project), ['title' => 'Обновлённый проект'])
+        ->assertRedirect(route('projects.show', $project->id));
+
+    expect($project->fresh()->title)->toBe('Обновлённый проект');
+});
+
+test('update broadcasts UpdatedProject event', function () {
+    [$user, $project] = webProjectSetup();
+
+    Event::fake([UpdatedProject::class]);
+
+    $this->actingAs($user)
+        ->patch(route('projects.update', $project), ['title' => 'Обновлённый проект']);
+
+    Event::assertDispatched(UpdatedProject::class, function ($event) use ($user) {
+        $channels = array_map(fn ($ch) => $ch->name, $event->broadcastOn());
+
+        return in_array("private-User.{$user->id}", $channels);
+    });
+});
+
+test('update returns 401 for guest', function () {
+    [, $project] = webProjectSetup();
+
+    $this->patch(route('projects.update', $project), ['title' => 'Hack'])
+        ->assertRedirect(route('login'));
+});
+
+test('update returns 403 for non-owner', function () {
+    [, $project] = webProjectSetup();
+    $other = User::factory()->create();
+
+    $this->actingAs($other)
+        ->patch(route('projects.update', $project), ['title' => 'Hack'])
+        ->assertForbidden();
+});
+
+test('update returns 422 when title is missing', function () {
+    [$user, $project] = webProjectSetup();
+
+    $this->actingAs($user)
+        ->patch(route('projects.update', $project), [])
+        ->assertSessionHasErrors('title');
+});
+
+test('update returns 422 when title exceeds 255 characters', function () {
+    [$user, $project] = webProjectSetup();
+
+    $this->actingAs($user)
+        ->patch(route('projects.update', $project), ['title' => str_repeat('a', 256)])
+        ->assertSessionHasErrors('title');
+});
+
+// ─── destroy ─────────────────────────────────────────────────────────────────
+
+test('owner can delete project', function () {
+    [$user, $project] = webProjectSetup();
+
+    $this->actingAs($user)
+        ->delete(route('projects.destroy', $project))
+        ->assertNoContent();
+
+    $this->assertSoftDeleted($project);
+});
+
+test('destroy broadcasts DeletedProject event', function () {
+    [$user, $project] = webProjectSetup();
+
+    Event::fake([DeletedProject::class]);
+
+    $this->actingAs($user)
+        ->delete(route('projects.destroy', $project));
+
+    Event::assertDispatched(DeletedProject::class, function ($event) use ($user) {
+        $channels = array_map(fn ($ch) => $ch->name, $event->broadcastOn());
+
+        return in_array("private-User.{$user->id}", $channels);
+    });
+});
+
+test('destroy returns 401 for guest', function () {
+    [, $project] = webProjectSetup();
+
+    $this->delete(route('projects.destroy', $project))
+        ->assertRedirect(route('login'));
+});
+
+test('destroy returns 403 for non-owner', function () {
+    [, $project] = webProjectSetup();
+    $other = User::factory()->create();
+
+    $this->actingAs($other)
+        ->delete(route('projects.destroy', $project))
+        ->assertForbidden();
+});

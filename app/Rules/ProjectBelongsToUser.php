@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Rules;
 
 use App\Models\Project;
@@ -14,14 +16,16 @@ class ProjectBelongsToUser implements ValidationRule
 {
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        if ($value === null) return;
+        if ($value === null) {
+            return;
+        }
 
         $belongs = Project::query()
             ->where('id', $value)
-            ->whereHas('users', fn($q) => $q->where('users.id', auth()->id()))
+            ->whereHas('users', fn ($q) => $q->where('users.id', auth()->id()))
             ->exists();
 
-        if (!$belongs) {
+        if (! $belongs) {
             $fail(trans('messages.project_not_found'));
         }
     }

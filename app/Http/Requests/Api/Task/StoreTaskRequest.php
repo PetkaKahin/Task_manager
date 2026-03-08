@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Requests\Api\Task;
 
 use App\Rules\CategoryBelongsToUser;
@@ -12,12 +14,13 @@ class StoreTaskRequest extends FormRequest
         return true;
     }
 
+    /** @return array<string, mixed> */
     public function rules(): array
     {
         return [
             'category_id' => [
                 'required',
-                new CategoryBelongsToUser,
+                new CategoryBelongsToUser(),
             ],
             'content' => [
                 'nullable',

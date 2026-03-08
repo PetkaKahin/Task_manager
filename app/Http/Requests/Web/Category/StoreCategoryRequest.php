@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Requests\Web\Category;
 
 use App\Rules\ProjectBelongsToUser;
@@ -9,10 +11,10 @@ class StoreCategoryRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        // TODO подумать, нужны ли ограничения?
         return true;
     }
 
+    /** @return array<string, mixed> */
     public function rules(): array
     {
         return [
@@ -23,8 +25,8 @@ class StoreCategoryRequest extends FormRequest
             ],
             'project_id' => [
                 'required',
-                new ProjectBelongsToUser,
-            ]
+                new ProjectBelongsToUser(),
+            ],
         ];
     }
 }

@@ -12,6 +12,7 @@ return new class extends Migration
             $table->unsignedBigInteger('project_id')->index();
             $table->unsignedBigInteger('user_id')->index();
             $table->string('role')->default('member');
+            $table->string('position')->nullable()->index();
             $table->timestamps();
         });
 

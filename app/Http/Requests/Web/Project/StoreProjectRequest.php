@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Requests\Web\Project;
 
 use Illuminate\Foundation\Http\FormRequest;
@@ -8,10 +10,10 @@ class StoreProjectRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        // TODO подумать, нужны ли ограничения?
         return true;
     }
 
+    /** @return array<string, mixed> */
     public function rules(): array
     {
         return [

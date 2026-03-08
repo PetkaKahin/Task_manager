@@ -2,124 +2,192 @@
 
 declare(strict_types=1);
 
-namespace Tests\Feature\Auth\Web;
-
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 
-class RegistrationTest extends TestCase
-{
-    use RefreshDatabase;
+uses(Illuminate\Foundation\Testing\RefreshDatabase::class);
 
-    /**
-     * Форма регистрации доступна.
-     */
-    public function test_registration_screen_can_be_rendered(): void
-    {
-        $response = $this->get('/register');
+test('registration page is accessible for guests', function () {
+    $this->get(route('register'))->assertOk();
+});
 
-        $response->assertStatus(200);
-    }
+test('authenticated user is redirected away from registration page', function () {
+    $user = User::factory()->create();
 
-    /**
-     * Новый пользователь может зарегистрироваться.
-     */
-    public function test_new_users_can_register(): void
-    {
-        $response = $this->post('/register', [
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-            'password' => 'SecureP@ss1',
-            'password_confirmation' => 'SecureP@ss1',
-        ]);
+    $this->actingAs($user)
+        ->get(route('register'))
+        ->assertRedirect();
+});
 
-        // Проверяем, что пользователь авторизован
-        $this->assertAuthenticated();
+test('user can register with valid data', function () {
+    $this->post(route('register'), [
+        'name'                  => 'TestUser',
+        'email'                 => 'test@example.com',
+        'password'              => 'Password1!',
+        'password_confirmation' => 'Password1!',
+    ])->assertRedirect();
 
-        // Проверяем редирект на dashboard
-        $response->assertRedirect(route('dashboard'));
-    }
+    $this->assertDatabaseHas('users', [
+        'name'  => 'TestUser',
+        'email' => 'test@example.com',
+    ]);
+});
 
-    /**
-     * Регистрация с невалидным email отклоняется.
-     */
-    public function test_registration_fails_with_invalid_email(): void
-    {
-        $response = $this->post('/register', [
-            'name' => 'Test User',
-            'email' => 'not-an-email',
-            'password' => 'SecureP@ss1',
-            'password_confirmation' => 'SecureP@ss1',
-        ]);
+test('user is authenticated after registration', function () {
+    $this->post(route('register'), [
+        'name'                  => 'TestUser',
+        'email'                 => 'test@example.com',
+        'password'              => 'Password1!',
+        'password_confirmation' => 'Password1!',
+    ]);
 
-        // Проверяем, что есть ошибка валидации для email
-        $response->assertSessionHasErrors('email');
+    $this->assertAuthenticated();
+});
 
-        // Пользователь НЕ авторизован
-        $this->assertGuest();
-    }
+test('user is redirected to first project after registration', function () {
+    $response = $this->post(route('register'), [
+        'name'                  => 'TestUser',
+        'email'                 => 'test@example.com',
+        'password'              => 'Password1!',
+        'password_confirmation' => 'Password1!',
+    ]);
 
-    /**
-     * Регистрация с занятым email отклоняется.
-     */
-    public function test_registration_fails_with_existing_email(): void
-    {
-        // Создаём существующего пользователя
-        User::factory()->create(['email' => 'existing@example.com']);
+    $user = User::where('email', 'test@example.com')->first();
+    $project = $user->projects()->orderBy('position')->first();
 
-        $response = $this->post('/register', [
-            'name' => 'Test User',
-            'email' => 'existing@example.com',
-            'password' => 'SecureP@ss1',
-            'password_confirmation' => 'SecureP@ss1',
-        ]);
+    $response->assertRedirect(route('projects.show', $project->id));
+});
 
-        $response->assertSessionHasErrors('email');
-        $this->assertGuest();
-    }
+test('user is created as unverified', function () {
+    $this->post(route('register'), [
+        'name'                  => 'TestUser',
+        'email'                 => 'test@example.com',
+        'password'              => 'Password1!',
+        'password_confirmation' => 'Password1!',
+    ]);
 
-    /**
-     * Регистрация со слабым паролем отклоняется.
-     */
-    public function test_registration_fails_with_weak_password(): void
-    {
-        $response = $this->post('/register', [
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-            'password' => '12345678',  // Нет букв, спецсимволов
-            'password_confirmation' => '12345678',
-        ]);
+    $this->assertDatabaseHas('users', [
+        'email'             => 'test@example.com',
+        'email_verified_at' => null,
+    ]);
+});
 
-        $response->assertSessionHasErrors('password');
-        $this->assertGuest();
-    }
+test('registration fails when name is missing', function () {
+    $this->post(route('register'), [
+        'email'                 => 'test@example.com',
+        'password'              => 'Password1!',
+        'password_confirmation' => 'Password1!',
+    ])->assertSessionHasErrors('name');
 
-    /**
-     * Регистрация с несовпадающими паролями отклоняется.
-     */
-    public function test_registration_fails_with_mismatched_passwords(): void
-    {
-        $response = $this->post('/register', [
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-            'password' => 'SecureP@ss1',
-            'password_confirmation' => 'DifferentP@ss1',
-        ]);
+    $this->assertGuest();
+});
 
-        $response->assertSessionHasErrors('password');
-        $this->assertGuest();
-    }
+test('registration fails when email is missing', function () {
+    $this->post(route('register'), [
+        'name'                  => 'TestUser',
+        'password'              => 'Password1!',
+        'password_confirmation' => 'Password1!',
+    ])->assertSessionHasErrors('email');
 
-    /**
-     * Авторизованный пользователь редиректится с формы регистрации.
-     */
-    public function test_authenticated_user_redirected_from_registration(): void
-    {
-        $user = User::factory()->create();
+    $this->assertGuest();
+});
 
-        $response = $this->actingAs($user)->get('/register');
+test('registration fails when email is invalid', function () {
+    $this->post(route('register'), [
+        'name'                  => 'TestUser',
+        'email'                 => 'not-an-email',
+        'password'              => 'Password1!',
+        'password_confirmation' => 'Password1!',
+    ])->assertSessionHasErrors('email');
 
-        $response->assertRedirect(route('dashboard'));
-    }
-}
+    $this->assertGuest();
+});
+
+test('registration fails when email is already taken', function () {
+    User::factory()->create(['email' => 'test@example.com']);
+
+    $this->post(route('register'), [
+        'name'                  => 'AnotherUser',
+        'email'                 => 'test@example.com',
+        'password'              => 'Password1!',
+        'password_confirmation' => 'Password1!',
+    ])->assertSessionHasErrors('email');
+
+    $this->assertGuest();
+});
+
+test('registration fails when name is already taken', function () {
+    User::factory()->create(['name' => 'TestUser']);
+
+    $this->post(route('register'), [
+        'name'                  => 'TestUser',
+        'email'                 => 'another@example.com',
+        'password'              => 'Password1!',
+        'password_confirmation' => 'Password1!',
+    ])->assertSessionHasErrors('name');
+
+    $this->assertGuest();
+});
+
+test('registration fails when password is missing', function () {
+    $this->post(route('register'), [
+        'name'  => 'TestUser',
+        'email' => 'test@example.com',
+    ])->assertSessionHasErrors('password');
+
+    $this->assertGuest();
+});
+
+test('registration fails when password confirmation does not match', function () {
+    $this->post(route('register'), [
+        'name'                  => 'TestUser',
+        'email'                 => 'test@example.com',
+        'password'              => 'Password1!',
+        'password_confirmation' => 'WrongPassword1!',
+    ])->assertSessionHasErrors('password');
+
+    $this->assertGuest();
+});
+
+test('registration fails when password is too short', function () {
+    $this->post(route('register'), [
+        'name'                  => 'TestUser',
+        'email'                 => 'test@example.com',
+        'password'              => 'Pw1!',
+        'password_confirmation' => 'Pw1!',
+    ])->assertSessionHasErrors('password');
+
+    $this->assertGuest();
+});
+
+test('registration fails when password has no uppercase letter', function () {
+    $this->post(route('register'), [
+        'name'                  => 'TestUser',
+        'email'                 => 'test@example.com',
+        'password'              => 'password1!',
+        'password_confirmation' => 'password1!',
+    ])->assertSessionHasErrors('password');
+
+    $this->assertGuest();
+});
+
+test('registration fails when password has no number', function () {
+    $this->post(route('register'), [
+        'name'                  => 'TestUser',
+        'email'                 => 'test@example.com',
+        'password'              => 'Password!',
+        'password_confirmation' => 'Password!',
+    ])->assertSessionHasErrors('password');
+
+    $this->assertGuest();
+});
+
+test('registration fails when password has no symbol', function () {
+    $this->post(route('register'), [
+        'name'                  => 'TestUser',
+        'email'                 => 'test@example.com',
+        'password'              => 'Password1',
+        'password_confirmation' => 'Password1',
+    ])->assertSessionHasErrors('password');
+
+    $this->assertGuest();
+});

@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Web\User;
 
-use App\Events\Project\CreatedProject;
 use App\Events\Project\DeletedProject;
 use App\Events\Project\UpdatedProject;
 use App\Http\Controllers\Controller;
@@ -11,69 +12,72 @@ use App\Http\Requests\Web\Project\EditProjectRequest;
 use App\Http\Requests\Web\Project\ShowProjectRequest;
 use App\Http\Requests\Web\Project\StoreProjectRequest;
 use App\Http\Requests\Web\Project\UpdateProjectRequest;
+use App\Builders\SortableBuilder;
+use App\Models\Category;
 use App\Models\Project;
+use App\Models\Task;
+use App\Models\User;
+use App\Services\ProjectService;
+use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class ProjectController extends Controller
 {
-    public function create()
+    public function __construct(
+        private readonly ProjectService $projectService
+    ) {
+    }
+    public function create(): Response
     {
         return Inertia::render('User/Project/NewProject');
     }
 
-    public function store(StoreProjectRequest $request)
+    public function store(StoreProjectRequest $request): RedirectResponse
     {
+        /** @var User $user */
         $user = auth()->user();
-        $newProject = Project::factory()->default($user, $request->title)->create();
-
-        $userProjects = $user->projects();
-        $newProjectWithPivot = $userProjects->findOrFail($newProject->id);
-        $first = $userProjects
-            ->where('projects.id', '!=', $newProject->id)
-            ->first();
-
-        if ($first) {
-            $userProjects->moveBefore($newProjectWithPivot, $first);
-        }
-
-        broadcast(new CreatedProject($user->id, $newProject->id, $newProject->title))->toOthers();
+        $newProject = $this->projectService->create($user, $request->string('title')->toString());
 
         return redirect()->intended(route('projects.show', $newProject->id));
     }
 
-    public function show(ShowProjectRequest $request, Project $project)
+    public function show(ShowProjectRequest $request, Project $project): Response
     {
-        // TODO сделать билдер для моделей использующих lexorank
-        $categories = $project->categories()->sorted()
-            ->with(['tasks' => fn ($query) => $query->sorted()])
+        $categories = Category::sorted()
+            ->where('project_id', $project->id)
+            ->with(['tasks' => function (mixed $query): void {
+                /** @var SortableBuilder<Task> $query */
+                $query->sorted();
+            }])
             ->get();
 
         return Inertia::render('User/Dashboard', [
-            'project'    => $project,
+            'project' => $project,
             'categories' => $categories,
         ]);
     }
 
-    public function edit(EditProjectRequest $request, Project $project)
+    public function edit(EditProjectRequest $request, Project $project): Response
     {
         return Inertia::render('User/Project/EditProject', [
             'project' => $project,
         ]);
     }
 
-    public function update(UpdateProjectRequest $request, Project $project)
+    public function update(UpdateProjectRequest $request, Project $project): RedirectResponse
     {
         $project->update($request->validated());
 
-        $userId = auth()->id();
+        $userId = (int) auth()->id();
         broadcast(new UpdatedProject($userId, $project->id, $project->title))->toOthers();
 
         return redirect()->intended(route('projects.show', $project->id));
     }
 
-    public function destroy(DestroyProjectRequest $request, Project $project)
+    public function destroy(DestroyProjectRequest $request, Project $project): \Illuminate\Http\Response
     {
-        $userId = auth()->id();
+        $userId = (int) auth()->id();
         $projectId = $project->id;
 
         $project->delete();

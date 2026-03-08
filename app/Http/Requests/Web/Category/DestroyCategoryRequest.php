@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Requests\Web\Category;
 
 use Illuminate\Foundation\Http\FormRequest;
@@ -8,9 +10,10 @@ class DestroyCategoryRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()->can('delete', $this->route('category'));
+        return $this->user()?->can('delete', $this->route('category')) ?? false;
     }
 
+    /** @return array<string, mixed> */
     public function rules(): array
     {
         return [];

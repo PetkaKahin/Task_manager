@@ -1,18 +1,46 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
+use App\Events\Project\CreatedProject;
+use App\Events\Project\ReorderedProject;
 use App\Http\Requests\Api\Project\ReorderProjectRequest;
 use App\Models\Project;
+use App\Models\User;
 
-class ProjectService {
+class ProjectService
+{
+    public function create(User $user, string $title): Project
+    {
+        /** @var Project $newProject */
+        $newProject = Project::factory()->default($user, $title)->create();
+
+        $userProjects = $user->projects();
+        /** @var Project $newProjectWithPivot */
+        $newProjectWithPivot = $userProjects->findOrFail($newProject->id);
+        $first = $userProjects
+            ->where('projects.id', '!=', $newProject->id)
+            ->first();
+
+        if ($first) {
+            $userProjects->moveBefore($newProjectWithPivot, $first);
+        }
+
+        broadcast(new CreatedProject($user->id, $newProject->id, $newProject->title))->toOthers();
+
+        return $newProject;
+    }
 
     /**
      * Вставляет Project после ReorderProjectRequest->move_after_id
      */
     public function reorder(ReorderProjectRequest $request, Project $project): void
     {
+        /** @var User $user */
         $user = $request->user();
+        /** @var Project $projectWithPivot */
         $projectWithPivot = $user->projects()->findOrFail($project->id);
 
         if ($request->move_after_id === null) {
@@ -24,8 +52,13 @@ class ProjectService {
                 $user->projects()->moveBefore($projectWithPivot, $first);
             }
         } else {
-            $afterProject = $user->projects()->findOrFail($request->move_after_id);
+            /** @var Project $afterProject */
+            $afterProject = $user->projects()->findOrFail((int) $request->move_after_id);
             $user->projects()->moveAfter($projectWithPivot, $afterProject);
         }
+
+        /** @var array<int> $sortedIds */
+        $sortedIds = $user->projects()->pluck('projects.id')->all();
+        broadcast(new ReorderedProject($user->id, $sortedIds))->toOthers();
     }
 }

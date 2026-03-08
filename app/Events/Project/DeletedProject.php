@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Events\Project;
 
 use Illuminate\Broadcasting\InteractsWithSockets;
@@ -9,13 +11,18 @@ use Illuminate\Foundation\Events\Dispatchable;
 
 class DeletedProject implements ShouldBroadcastNow
 {
-    use Dispatchable, InteractsWithSockets;
+    use Dispatchable;
+    use InteractsWithSockets;
 
     public function __construct(
         private int $userId,
         private int $projectId,
-    ) {}
+    ) {
+    }
 
+    /**
+     * @return array<string, int>
+     */
     public function broadcastWith(): array
     {
         return [
@@ -28,6 +35,9 @@ class DeletedProject implements ShouldBroadcastNow
         return 'Project.DeletedProject';
     }
 
+    /**
+     * @return PrivateChannel[]
+     */
     public function broadcastOn(): array
     {
         return [

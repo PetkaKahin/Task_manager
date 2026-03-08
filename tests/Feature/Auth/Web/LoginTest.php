@@ -2,111 +2,98 @@
 
 declare(strict_types=1);
 
-namespace Tests\Feature\Auth\Web;
-
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 
-class LoginTest extends TestCase
-{
-    use RefreshDatabase;
+uses(Illuminate\Foundation\Testing\RefreshDatabase::class);
 
-    /**
-     * Форма входа доступна.
-     */
-    public function test_login_screen_can_be_rendered(): void
-    {
-        $response = $this->get('/login');
+test('login page is accessible for guests', function () {
+    $this->get(route('login'))->assertOk();
+});
 
-        $response->assertStatus(200);
-    }
+test('authenticated user is redirected away from login page', function () {
+    $user = User::factory()->create();
 
-    /**
-     * Пользователь может войти с правильным name.
-     */
-    public function test_users_can_name_authenticate(): void
-    {
-        $user = User::factory()->create();
+    $this->actingAs($user)
+        ->get(route('login'))
+        ->assertRedirect();
+});
 
-        $response = $this->post('/login', [
-            'login' => $user->name,
-            'password' => 'password',
-        ]);
+test('user can login with email', function () {
+    $user = User::factory()->withFirstProject()->create();
 
-        $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard'));
-    }
+    $this->post(route('login'), [
+        'login'    => $user->email,
+        'password' => 'password',
+    ])->assertRedirect();
 
-    /**
-     * Пользователь может войти с правильным email.
-     */
-    public function test_users_can_email_authenticate(): void
-    {
-        $user = User::factory()->create();
+    $this->assertAuthenticatedAs($user);
+});
 
-        $response = $this->post('/login', [
-            'login' => $user->email,
-            'password' => 'password',
-        ]);
+test('user can login with name', function () {
+    $user = User::factory()->withFirstProject()->create();
 
-        $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard'));
-    }
+    $this->post(route('login'), [
+        'login'    => $user->name,
+        'password' => 'password',
+    ])->assertRedirect();
 
-    /**
-     * Вход с неверным паролем отклоняется.
-     */
-    public function test_users_cannot_authenticate_with_invalid_password(): void
-    {
-        $user = User::factory()->create();
+    $this->assertAuthenticatedAs($user);
+});
 
-        $response = $this->post('/login', [
-            'login' => $user->email,
-            'password' => 'wrong-password',
-        ]);
+test('user is redirected to first project sorted by position after login', function () {
+    $user = User::factory()->withFirstProject()->create();
 
-        $this->assertGuest();
-        $response->assertSessionHasErrors();
-    }
+    $firstProject = $user->projects()->orderBy('project_user.position')->first();
 
-    /**
-     * Вход с несуществующим email отклоняется.
-     */
-    public function test_users_cannot_authenticate_with_nonexistent_email(): void
-    {
-        $response = $this->post('/login', [
-            'login' => 'nonexistent@example.com',
-            'password' => 'password',
-        ]);
+    $this->post(route('login'), [
+        'login'    => $user->email,
+        'password' => 'password',
+    ])->assertRedirect(route('projects.show', $firstProject->id));
+});
 
-        $this->assertGuest();
-        $response->assertSessionHasErrors();
-    }
+test('login fails with wrong password', function () {
+    $user = User::factory()->create();
 
-    /**
-     * Вход с несуществующим name отклоняется.
-     */
-    public function test_users_cannot_authenticate_with_nonexistent_name(): void
-    {
-        $response = $this->post('/login', [
-            'login' => 'noName',
-            'password' => 'password',
-        ]);
+    $this->post(route('login'), [
+        'login'    => $user->email,
+        'password' => 'wrong-password',
+    ])->assertSessionHasErrors('error');
 
-        $this->assertGuest();
-        $response->assertSessionHasErrors();
-    }
+    $this->assertGuest();
+});
 
-    /**
-     * Авторизованный пользователь редиректится с формы входа.
-     */
-    public function test_authenticated_user_redirected_from_login(): void
-    {
-        $user = User::factory()->create();
+test('login fails with non-existent email', function () {
+    $this->post(route('login'), [
+        'login'    => 'nobody@example.com',
+        'password' => 'password',
+    ])->assertSessionHasErrors('error');
 
-        $response = $this->actingAs($user)->get('/login');
+    $this->assertGuest();
+});
 
-        $response->assertRedirect(route('dashboard'));
-    }
-}
+test('login fails with non-existent name', function () {
+    $this->post(route('login'), [
+        'login'    => 'nobody',
+        'password' => 'password',
+    ])->assertSessionHasErrors('error');
+
+    $this->assertGuest();
+});
+
+test('login fails when login field is missing', function () {
+    $this->post(route('login'), [
+        'password' => 'password',
+    ])->assertSessionHasErrors('login');
+
+    $this->assertGuest();
+});
+
+test('login fails when password is missing', function () {
+    $user = User::factory()->create();
+
+    $this->post(route('login'), [
+        'login' => $user->email,
+    ])->assertSessionHasErrors('password');
+
+    $this->assertGuest();
+});

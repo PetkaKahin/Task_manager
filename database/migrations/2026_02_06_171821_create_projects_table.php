@@ -9,15 +9,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('projects', function (Blueprint $table) {
-            $driver = DB::getDriverName();
-
             $table->id();
             $table->string('title');
-            if ($driver === 'mysql' || $driver === 'mariadb') {
-                $table->string('position')->charset('utf8mb4')->collation('utf8mb4_bin')->index();
-            } else {
-                $table->string('position')->index();
-            }
             $table->timestamps();
             $table->softDeletes()->index();
         });

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Events\Task;
 
 use Illuminate\Broadcasting\InteractsWithSockets;
@@ -9,7 +11,8 @@ use Illuminate\Foundation\Events\Dispatchable;
 
 class ReorderedTask implements ShouldBroadcastNow
 {
-    use Dispatchable, InteractsWithSockets;
+    use Dispatchable;
+    use InteractsWithSockets;
 
     /**
      * @param int $projectId
@@ -17,11 +20,15 @@ class ReorderedTask implements ShouldBroadcastNow
      * @param int[] $taskIds Отсортированные ID тасок в категории
      */
     public function __construct(
-        private int $projectId,
+        private readonly int $projectId,
         public readonly int $categoryId,
         public readonly array $taskIds,
-    ) {}
+    ) {
+    }
 
+    /**
+     * @return array<string, int|array<int>>
+     */
     public function broadcastWith(): array
     {
         return [
@@ -35,6 +42,9 @@ class ReorderedTask implements ShouldBroadcastNow
         return 'Task.ReorderedTask';
     }
 
+    /**
+     * @return PresenceChannel[]
+     */
     public function broadcastOn(): array
     {
         return [
