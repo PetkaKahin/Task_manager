@@ -11,6 +11,10 @@ export const useProjectStore = defineStore('project', () => {
         if (index == -1) return
 
         projects.value.splice(index, 1)
+
+        if (currentProject.value?.id === project.id) {
+            currentProject.value = undefined
+        }
     }
 
     function setCurrentProject(newProject: IProject) {

@@ -1,4 +1,4 @@
-import { watch, onUnmounted, type Ref } from 'vue'
+import { watch, type Ref } from 'vue'
 import echo from '@/echo'
 import type { PresenceChannel } from 'laravel-echo'
 
@@ -7,24 +7,29 @@ interface EventListener<T = any> {
     handler: (data: T) => void
 }
 
+const activeChannels = new Map<string, PresenceChannel>()
+
 export function usePresenceChannel(
     channelName: Ref<string | null>,
     listeners: EventListener[] = [],
 ) {
-    let channel: PresenceChannel | null = null
     let currentName: string | null = null
 
     function leave() {
         if (currentName) {
+            activeChannels.delete(currentName)
             echo.leave(currentName)
-            channel = null
             currentName = null
         }
     }
 
     function join(name: string) {
-        channel = echo.join(name)
         currentName = name
+
+        if (activeChannels.has(name)) return
+
+        const channel = echo.join(name)
+        activeChannels.set(name, channel)
 
         for (const { event, handler } of listeners) {
             channel.listen(event, handler)
@@ -32,11 +37,14 @@ export function usePresenceChannel(
     }
 
     watch(channelName, (newName, oldName) => {
+        if (newName === oldName) return
         if (oldName) leave()
         if (newName) join(newName)
     }, { immediate: true })
 
-    onUnmounted(leave)
-
     return { leave }
+}
+
+export function _resetPresenceChannels() {
+    activeChannels.clear()
 }
