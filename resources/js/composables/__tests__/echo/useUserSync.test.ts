@@ -165,6 +165,14 @@ describe('useUserSync', () => {
             expect(projectStore.projects.map(p => p.id)).toEqual([99, 10, 20])
         })
 
+        it('.Project.CreatedProject не дублирует уже существующий проект', () => {
+            channelMock.trigger('.Project.CreatedProject', {
+                project: makeProject({ id: 10, title: 'Duplicate' }),
+            })
+
+            expect(projectStore.projects.map(p => p.id)).toEqual([10, 20])
+        })
+
         it('.Project.UpdatedProject обновляет данные проекта', () => {
             channelMock.trigger('.Project.UpdatedProject', {
                 project: makeProject({ id: 10, title: 'Updated' }),
