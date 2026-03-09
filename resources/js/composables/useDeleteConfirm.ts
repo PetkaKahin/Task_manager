@@ -11,7 +11,7 @@ export function useDeleteConfirm<T>() {
 
     watch(isOpen, (value) => {
         if (!value) target.value = null
-    })
+    }, { flush: 'sync' })
 
     return { isOpen, target, confirm }
 }

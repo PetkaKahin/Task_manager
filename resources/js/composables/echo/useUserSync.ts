@@ -1,5 +1,6 @@
 import { computed } from 'vue'
-import { usePage } from '@inertiajs/vue3'
+import { router, usePage } from '@inertiajs/vue3'
+import { route } from 'ziggy-js'
 import { useProjectStore } from '@/stores/project.store'
 import { usePrivateChannel } from '@/composables/echo/usePrivateChannel'
 import type { IProject } from '@/Types/models'
@@ -17,7 +18,7 @@ export function useUserSync() {
         {
             event: '.Project.CreatedProject',
             handler: (data: { project: IProject }) => {
-                projectStore.addProject(projectStore.projects.length, data.project)
+                projectStore.addProject(0, data.project)
             },
         },
         {
@@ -29,9 +30,15 @@ export function useUserSync() {
         {
             event: '.Project.DeletedProject',
             handler: (data: { projectId: number }) => {
-                const index = projectStore.findIndexProject(data.projectId)
-                if (index === -1) return
-                projectStore.projects.splice(index, 1)
+                const project = projectStore.projects.find(p => p.id === data.projectId)
+                if (!project) return
+                projectStore.deleteProject(project)
+                const firstProject = projectStore.projects[0]
+                if (firstProject) {
+                    router.visit(route('projects.show', firstProject.id))
+                } else {
+                    router.visit(route('home'))
+                }
             },
         },
         {

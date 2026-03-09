@@ -19,9 +19,9 @@ export default defineConfig({
         host: '0.0.0.0',
         cors: true,
         hmr: {
-            host: '192.168.0.169',
+            host: 'localhost',
         },
-        origin: 'http://192.168.0.169:5173',
+        origin: 'http://localhost:5173',
     },
     resolve: {
         alias: {
@@ -38,5 +38,9 @@ export default defineConfig({
                 loadPaths: [resolve(__dirname, 'resources/scss')],
             },
         },
+    },
+    test: {
+        environment: 'happy-dom',
+        globals: true,
     },
 });

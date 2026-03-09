@@ -86,6 +86,19 @@ export const useKanbanStore = defineStore('kanban', () => {
         tasks.splice(0, tasks.length, ...reordered)
     }
 
+    function moveTask(task: ITask, targetCategoryId: number, targetIndex: number) {
+        const oldCategoryIndex = getCategoryIndexByTaskId(task.id)
+        if (oldCategoryIndex !== -1) {
+            const oldTaskIndex = getTaskIndex(task.id, oldCategoryIndex)
+            categories.value[oldCategoryIndex]!.tasks.splice(oldTaskIndex, 1)
+        }
+
+        const newCategoryIndex = getCategoryIndex(targetCategoryId)
+        if (newCategoryIndex !== -1) {
+            categories.value[newCategoryIndex]!.tasks.splice(targetIndex, 0, task)
+        }
+    }
+
     function deleteTask(task: ITask) {
         const categoryIndex = getCategoryIndexByTaskId(task.id)
         if (categoryIndex === -1) return
@@ -148,6 +161,7 @@ export const useKanbanStore = defineStore('kanban', () => {
         pendingEditTaskId,
         addTask,
         updateTask,
+        moveTask,
         addCategory,
         updateCategory,
         reorderTasks,

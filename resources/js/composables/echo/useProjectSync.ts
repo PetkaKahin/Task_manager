@@ -53,9 +53,9 @@ export function useProjectSync() {
         {
             event: '.Category.DeletedCategory',
             handler: (data: { categoryId: number }) => {
-                const index = kanbanStore.getCategoryIndex(data.categoryId)
-                if (index === -1) return
-                kanbanStore.categories.splice(index, 1)
+                const category = kanbanStore.categories.find(c => c.id === data.categoryId)
+                if (!category) return
+                kanbanStore.deleteCategory(category)
             },
         },
         {
