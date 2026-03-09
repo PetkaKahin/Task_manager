@@ -95,6 +95,19 @@ test('store broadcasts CreatedProject with correct channels and payload', functi
     });
 });
 
+test('store places new project at the top of the list', function () {
+    $user = User::factory()->create();
+
+    // Создаём 3 проекта последовательно
+    $this->actingAs($user)->post(route('projects.store'), ['title' => 'First']);
+    $this->actingAs($user)->post(route('projects.store'), ['title' => 'Second']);
+    $this->actingAs($user)->post(route('projects.store'), ['title' => 'Third']);
+
+    // API должен вернуть последний созданный первым
+    $ordered = $user->projects()->pluck('title')->all();
+    expect($ordered)->toBe(['Third', 'Second', 'First']);
+});
+
 test('store returns 401 for guest', function () {
     $this->post(route('projects.store'), ['title' => 'Новый проект'])
         ->assertRedirect(route('login'));
