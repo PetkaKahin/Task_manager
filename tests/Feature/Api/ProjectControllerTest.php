@@ -49,6 +49,24 @@ test('index returns 401 for guest', function () {
         ->assertUnauthorized();
 });
 
+test('index returns projects in newest-first order after sequential creation', function () {
+    $user = User::factory()->create();
+
+    // Создаём 3 проекта через store (как реальный пользователь)
+    $this->actingAs($user)->post(route('projects.store'), ['title' => 'First']);
+    $this->actingAs($user)->post(route('projects.store'), ['title' => 'Second']);
+    $this->actingAs($user)->post(route('projects.store'), ['title' => 'Third']);
+
+    // API index должен вернуть newest-first
+    $response = $this->actingAs($user)
+        ->getJson(route('api.projects.index'))
+        ->assertOk()
+        ->assertJsonCount(3);
+
+    $titles = collect($response->json())->pluck('title')->all();
+    expect($titles)->toBe(['Third', 'Second', 'First']);
+});
+
 // ─── reorder ─────────────────────────────────────────────────────────────────
 
 test('owner can move project to first position', function () {
