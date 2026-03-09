@@ -2,7 +2,7 @@ import {DnDOperations, useDraggable, useDroppable} from "@vue-dnd-kit/core";
 import {computed, type ComputedRef} from "vue";
 import {useKanban, cardDragState} from "@/composables/ui/useKanban.ts";
 import type {ICategory, ITask} from "@/Types/models.ts";
-import axios from "axios";
+import {apiRequest} from "@/shared/api/apiRequest";
 import {route} from "ziggy-js";
 import {useKanbanStore} from "@/stores/kanban.store.ts";
 
@@ -58,7 +58,7 @@ export function useKanbanCategory() {
     function categoryDelete(category: ICategory) {
         const index = kanbanStore.getCategoryIndex(category.id)
         kanbanStore.deleteCategory(category)
-        axios.delete(route('categories.destroy', category.id))
+        apiRequest.delete(route('categories.destroy', category.id))
             .catch((error) => {
                 console.error(error)
                 kanbanStore.addCategory(index, category)

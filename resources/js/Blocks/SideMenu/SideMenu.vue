@@ -5,7 +5,7 @@ import BaseDivider from "@/UI/Dividers/BaseDivider.vue";
 import {useSidebar} from "@/composables/ui/useSidebar.ts";
 import {Link} from "@inertiajs/vue3";
 import {useProjectStore} from "@/stores/project.store.ts";
-import {watch} from "vue";
+import {watch, onUnmounted} from "vue";
 import {useBackdrop} from "@/composables/ui/useBackdrop.ts";
 import ProjectsList from "@/Blocks/SideMenu/ProjectsList.vue";
 import {useUserSync} from "@/composables/echo/useUserSync.ts";
@@ -17,6 +17,10 @@ const {component: componentBackdrop, open: openBackdrop, close: closeBackdrop} =
 watch(isOpen, (value) => {
     if (value) openBackdrop()
     else closeBackdrop()
+}, { immediate: true })
+
+onUnmounted(() => {
+    closeBackdrop()
 })
 </script>
 
