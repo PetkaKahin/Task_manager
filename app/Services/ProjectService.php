@@ -28,7 +28,9 @@ class ProjectService
             $userProjects->moveBefore($newProjectWithPivot, $first);
         }
 
-        broadcast(new CreatedProject($user->id, $newProject->id, $newProject->title))->toOthers();
+        /** @var array<int> $userIds */
+        $userIds = $newProject->users()->pluck('users.id')->all();
+        broadcast(new CreatedProject($userIds, $newProject->id, $newProject->title))->toOthers();
 
         return $newProject;
     }

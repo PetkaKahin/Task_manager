@@ -67,7 +67,7 @@ test('store redirects to the new project', function () {
         ->assertRedirect(route('projects.show', $user->projects()->first()->id));
 });
 
-test('store broadcasts CreatedProject event', function () {
+test('store broadcasts CreatedProject with correct channels and payload', function () {
     $user = User::factory()->create();
 
     Event::fake([CreatedProject::class]);
@@ -77,8 +77,21 @@ test('store broadcasts CreatedProject event', function () {
 
     Event::assertDispatched(CreatedProject::class, function ($event) use ($user) {
         $channels = array_map(fn ($ch) => $ch->name, $event->broadcastOn());
+        $payload = $event->broadcastWith();
 
-        return in_array("private-User.{$user->id}", $channels);
+        // Канал только создателя (при создании проект принадлежит одному юзеру)
+        expect($channels)->toHaveCount(1)
+            ->toContain("private-User.{$user->id}");
+
+        // Payload содержит данные проекта
+        expect($payload)->toHaveKey('project')
+            ->and($payload['project'])->toHaveKeys(['id', 'title'])
+            ->and($payload['project']['title'])->toBe('Новый проект');
+
+        // Имя события
+        expect($event->broadcastAs())->toBe('Project.CreatedProject');
+
+        return true;
     });
 });
 
@@ -176,18 +189,32 @@ test('owner can update project title', function () {
     expect($project->fresh()->title)->toBe('Обновлённый проект');
 });
 
-test('update broadcasts UpdatedProject event', function () {
+test('update broadcasts UpdatedProject to all project members with correct payload', function () {
     [$user, $project] = webProjectSetup();
+    $member = User::factory()->create();
+    $member->projects()->attach($project->id);
 
     Event::fake([UpdatedProject::class]);
 
     $this->actingAs($user)
         ->patch(route('projects.update', $project), ['title' => 'Обновлённый проект']);
 
-    Event::assertDispatched(UpdatedProject::class, function ($event) use ($user) {
+    Event::assertDispatched(UpdatedProject::class, function ($event) use ($user, $member, $project) {
         $channels = array_map(fn ($ch) => $ch->name, $event->broadcastOn());
+        $payload = $event->broadcastWith();
 
-        return in_array("private-User.{$user->id}", $channels);
+        // Оба участника получают уведомление
+        expect($channels)->toHaveCount(2)
+            ->toContain("private-User.{$user->id}")
+            ->toContain("private-User.{$member->id}");
+
+        // Payload содержит обновлённые данные
+        expect($payload['project']['id'])->toBe($project->id)
+            ->and($payload['project']['title'])->toBe('Обновлённый проект');
+
+        expect($event->broadcastAs())->toBe('Project.UpdatedProject');
+
+        return true;
     });
 });
 
@@ -235,18 +262,54 @@ test('owner can delete project', function () {
     $this->assertSoftDeleted($project);
 });
 
-test('destroy broadcasts DeletedProject event', function () {
+test('destroy broadcasts DeletedProject to all project members with correct payload', function () {
     [$user, $project] = webProjectSetup();
+    $member = User::factory()->create();
+    $member->projects()->attach($project->id);
 
     Event::fake([DeletedProject::class]);
 
     $this->actingAs($user)
         ->delete(route('projects.destroy', $project));
 
-    Event::assertDispatched(DeletedProject::class, function ($event) use ($user) {
+    Event::assertDispatched(DeletedProject::class, function ($event) use ($user, $member, $project) {
+        $channels = array_map(fn ($ch) => $ch->name, $event->broadcastOn());
+        $payload = $event->broadcastWith();
+
+        // Оба участника получают уведомление
+        expect($channels)->toHaveCount(2)
+            ->toContain("private-User.{$user->id}")
+            ->toContain("private-User.{$member->id}");
+
+        // Payload содержит id удалённого проекта
+        expect($payload['projectId'])->toBe($project->id);
+
+        expect($event->broadcastAs())->toBe('Project.DeletedProject');
+
+        return true;
+    });
+});
+
+test('destroy fetches project members before soft-delete', function () {
+    [$user, $project] = webProjectSetup();
+    $member = User::factory()->create();
+    $member->projects()->attach($project->id);
+
+    Event::fake([DeletedProject::class]);
+
+    $this->actingAs($user)
+        ->delete(route('projects.destroy', $project));
+
+    // Проект soft-deleted
+    $this->assertSoftDeleted($project);
+
+    // Но бродкаст всё равно ушёл обоим участникам
+    Event::assertDispatched(DeletedProject::class, function ($event) use ($user, $member) {
         $channels = array_map(fn ($ch) => $ch->name, $event->broadcastOn());
 
-        return in_array("private-User.{$user->id}", $channels);
+        return count($channels) === 2
+            && in_array("private-User.{$user->id}", $channels)
+            && in_array("private-User.{$member->id}", $channels);
     });
 });
 

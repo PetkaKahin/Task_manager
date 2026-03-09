@@ -14,8 +14,11 @@ class DeletedProject implements ShouldBroadcastNow
     use Dispatchable;
     use InteractsWithSockets;
 
+    /**
+     * @param int[] $userIds
+     */
     public function __construct(
-        private int $userId,
+        private array $userIds,
         private int $projectId,
     ) {
     }
@@ -40,8 +43,9 @@ class DeletedProject implements ShouldBroadcastNow
      */
     public function broadcastOn(): array
     {
-        return [
-            new PrivateChannel("User.{$this->userId}"),
-        ];
+        return array_map(
+            fn (int $id) => new PrivateChannel("User.{$id}"),
+            $this->userIds,
+        );
     }
 }

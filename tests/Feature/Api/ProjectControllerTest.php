@@ -81,19 +81,22 @@ test('owner can move project after another', function () {
     expect($sorted)->toBe([$second->id, $third->id, $first->id]);
 });
 
-test('reorder broadcasts ReorderedProject event', function () {
+test('reorder broadcasts ReorderedProject only to acting user', function () {
     Event::fake();
 
     [$user, $projects] = userWithProjects(2);
+    $otherUser = User::factory()->create();
     $last = $projects->last();
+    $otherUser->projects()->attach($last->id);
 
     $this->actingAs($user)
         ->patchJson(route('api.projects.reorder', $last), ['move_after_id' => null]);
 
-    Event::assertDispatched(ReorderedProject::class, function ($event) use ($user) {
+    Event::assertDispatched(ReorderedProject::class, function ($event) use ($user, $otherUser) {
         $channels = array_map(fn($ch) => $ch->name, $event->broadcastOn());
 
-        return in_array("private-User.{$user->id}", $channels);
+        return in_array("private-User.{$user->id}", $channels)
+            && ! in_array("private-User.{$otherUser->id}", $channels);
     });
 });
 

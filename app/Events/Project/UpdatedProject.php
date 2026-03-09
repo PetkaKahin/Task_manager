@@ -14,8 +14,11 @@ class UpdatedProject implements ShouldBroadcastNow
     use Dispatchable;
     use InteractsWithSockets;
 
+    /**
+     * @param int[] $userIds
+     */
     public function __construct(
-        private readonly int $userId,
+        private readonly array $userIds,
         public readonly int $id,
         public readonly string $title,
     ) {
@@ -44,8 +47,9 @@ class UpdatedProject implements ShouldBroadcastNow
      */
     public function broadcastOn(): array
     {
-        return [
-            new PrivateChannel("User.{$this->userId}"),
-        ];
+        return array_map(
+            fn (int $id) => new PrivateChannel("User.{$id}"),
+            $this->userIds,
+        );
     }
 }
