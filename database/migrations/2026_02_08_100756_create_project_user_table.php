@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -9,10 +10,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('project_user', function (Blueprint $table) {
+            $driver = DB::getDriverName();
+
             $table->unsignedBigInteger('project_id')->index();
             $table->unsignedBigInteger('user_id')->index();
             $table->string('role')->default('member');
-            $table->string('position')->nullable()->index();
+            if ($driver === 'mysql' || $driver === 'mariadb') {
+                $table->string('position')->charset('utf8mb4')->collation('utf8mb4_bin')->nullable()->index();
+            } else {
+                $table->string('position')->nullable()->index();
+            }
             $table->timestamps();
         });
 
