@@ -18,6 +18,7 @@ export function useUserSync() {
         {
             event: '.Project.CreatedProject',
             handler: (data: { project: IProject }) => {
+                if (projectStore.findIndexProject(data.project.id) !== -1) return
                 projectStore.addProject(0, data.project)
             },
         },

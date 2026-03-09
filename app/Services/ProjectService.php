@@ -17,15 +17,14 @@ class ProjectService
         /** @var Project $newProject */
         $newProject = Project::factory()->default($user, $title)->create();
 
-        $userProjects = $user->projects();
         /** @var Project $newProjectWithPivot */
-        $newProjectWithPivot = $userProjects->findOrFail($newProject->id);
-        $first = $userProjects
+        $newProjectWithPivot = $user->projects()->findOrFail($newProject->id);
+        $first = $user->projects()
             ->where('projects.id', '!=', $newProject->id)
             ->first();
 
         if ($first) {
-            $userProjects->moveBefore($newProjectWithPivot, $first);
+            $user->projects()->moveBefore($newProjectWithPivot, $first);
         }
 
         /** @var array<int> $userIds */
