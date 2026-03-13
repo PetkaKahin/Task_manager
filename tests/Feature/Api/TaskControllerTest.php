@@ -48,8 +48,8 @@ test('owner can create a task', function () {
     $this->actingAs($user)
         ->postJson(route('api.tasks.store'), ['category_id' => $category->id])
         ->assertCreated()
-        ->assertJsonStructure(['id', 'category_id', 'content'])
-        ->assertJson(['category_id' => $category->id, 'content' => null]);
+        ->assertJsonStructure(['data' => ['id', 'category_id', 'content']])
+        ->assertJson(['data' => ['category_id' => $category->id, 'content' => null]]);
 });
 
 test('owner can create a task with content', function () {
@@ -60,7 +60,7 @@ test('owner can create a task with content', function () {
     $this->actingAs($user)
         ->postJson(route('api.tasks.store'), ['category_id' => $category->id, 'content' => $content])
         ->assertCreated()
-        ->assertJson(['content' => $content]);
+        ->assertJson(['data' => ['content' => $content]]);
 });
 
 test('store persists task to database', function () {
@@ -123,7 +123,7 @@ test('owner can update task content', function () {
     $this->actingAs($user)
         ->patchJson(route('api.tasks.update', $task), ['content' => $content])
         ->assertOk()
-        ->assertJson(['id' => $task->id, 'content' => $content]);
+        ->assertJson(['data' => ['id' => $task->id, 'content' => $content]]);
 
     expect($task->fresh()->content)->toBe($content);
 });
@@ -134,7 +134,7 @@ test('owner can clear task content', function () {
     $this->actingAs($user)
         ->patchJson(route('api.tasks.update', $task), ['content' => null])
         ->assertOk()
-        ->assertJson(['content' => null]);
+        ->assertJson(['data' => ['content' => null]]);
 });
 
 test('owner can move task to another category via update', function () {
@@ -144,7 +144,7 @@ test('owner can move task to another category via update', function () {
     $this->actingAs($user)
         ->patchJson(route('api.tasks.update', $task), ['category_id' => $otherCategory->id])
         ->assertOk()
-        ->assertJson(['category_id' => $otherCategory->id]);
+        ->assertJson(['data' => ['category_id' => $otherCategory->id]]);
 
     expect($task->fresh()->category_id)->toBe($otherCategory->id);
 });
@@ -229,7 +229,7 @@ test('owner can move task to first position in another category', function () {
             'category_id'   => $otherCategory->id,
         ])
         ->assertOk()
-        ->assertJson(['category_id' => $otherCategory->id]);
+        ->assertJson(['data' => ['category_id' => $otherCategory->id]]);
 
     expect($task->fresh()->category_id)->toBe($otherCategory->id);
 });
@@ -246,7 +246,7 @@ test('owner can move task after another in a different category', function () {
             'category_id'   => $otherCategory->id,
         ])
         ->assertOk()
-        ->assertJson(['category_id' => $otherCategory->id]);
+        ->assertJson(['data' => ['category_id' => $otherCategory->id]]);
 
     $sorted = Task::sorted()->where('category_id', $otherCategory->id)->pluck('id')->all();
     expect($sorted)->toBe([$anchor->id, $task->id]);

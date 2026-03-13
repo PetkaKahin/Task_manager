@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Events\Category;
 
+use App\Models\Category;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
@@ -15,18 +16,18 @@ class DeletedCategory implements ShouldBroadcastNow
     use InteractsWithSockets;
 
     public function __construct(
-        private readonly int $categoryId,
-        private readonly int $projectId,
+        private readonly Category $category,
     ) {
     }
 
     /**
-     * @return array<string, int>
+     * @return array<string, int|string|null>
      */
     public function broadcastWith(): array
     {
         return [
-            'categoryId' => $this->categoryId,
+            'category_id' => $this->category->id,
+            'initiator_id' => auth()->id(), // фронтенд сам достанет данные, если надо
         ];
     }
 
@@ -38,7 +39,7 @@ class DeletedCategory implements ShouldBroadcastNow
     public function broadcastOn(): array
     {
         return [
-            new PresenceChannel("Project.{$this->projectId}"),
+            new PresenceChannel("Project.{$this->category->project_id}"),
         ];
     }
 }

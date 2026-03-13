@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Events\Project;
 
+use App\Models\Project;
+use App\Models\User;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
@@ -15,21 +17,22 @@ class DeletedProject implements ShouldBroadcastNow
     use InteractsWithSockets;
 
     /**
-     * @param int[] $userIds
+     * @param Project $project
      */
     public function __construct(
-        private array $userIds,
-        private int $projectId,
+        private readonly Project $project,
     ) {
+        $this->project->loadMissing('users');
     }
 
     /**
-     * @return array<string, int>
+     * @return array<string, mixed>
      */
     public function broadcastWith(): array
     {
         return [
-            'projectId' => $this->projectId,
+            'project_id' => $this->project->id,
+            'initiator_id' => auth()->id(), // фронтенд сам достанет данные, если надо
         ];
     }
 
@@ -41,11 +44,11 @@ class DeletedProject implements ShouldBroadcastNow
     /**
      * @return PrivateChannel[]
      */
+    // TODO не проще ли работать с одним каналом PresenceChannel('project.{id}')?
     public function broadcastOn(): array
     {
-        return array_map(
-            fn (int $id) => new PrivateChannel("User.{$id}"),
-            $this->userIds,
-        );
+        return collect($this->project->users)
+            ->map(fn (User $user) => new PrivateChannel("User.{$user->id}"))
+            ->all();
     }
 }

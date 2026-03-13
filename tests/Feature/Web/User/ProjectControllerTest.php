@@ -295,7 +295,7 @@ test('destroy broadcasts DeletedProject to all project members with correct payl
             ->toContain("private-User.{$member->id}");
 
         // Payload содержит id удалённого проекта
-        expect($payload['projectId'])->toBe($project->id);
+        expect($payload['project_id'])->toBe($project->id);
 
         expect($event->broadcastAs())->toBe('Project.DeletedProject');
 

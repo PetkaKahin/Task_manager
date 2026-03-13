@@ -69,22 +69,16 @@ class ProjectController extends Controller
     {
         $project->update($request->validated());
 
-        /** @var array<int> $userIds */
-        $userIds = $project->users()->pluck('users.id')->all();
-        broadcast(new UpdatedProject($userIds, $project->id, $project->title))->toOthers();
+        broadcast(new UpdatedProject($project))->toOthers();
 
         return redirect()->intended(route('projects.show', $project->id));
     }
 
     public function destroy(DestroyProjectRequest $request, Project $project): \Illuminate\Http\Response
     {
-        /** @var array<int> $userIds */
-        $userIds = $project->users()->pluck('users.id')->all();
-        $projectId = $project->id;
-
         $project->delete();
 
-        broadcast(new DeletedProject($userIds, $projectId))->toOthers();
+        broadcast(new DeletedProject($project))->toOthers();
 
         return response()->noContent();
     }

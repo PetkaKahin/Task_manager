@@ -11,29 +11,24 @@ use App\Models\Task;
 
 class TaskObserver
 {
-    private function getProjectId(Task $task): int
-    {
-        $task->loadMissing('category');
-
-        return $task->category->project_id;
-    }
-
     public function created(Task $task): void
     {
-        broadcast(new CreatedTask($task, $this->getProjectId($task)))->toOthers();
+        broadcast(new CreatedTask(
+            task: $task,
+        ))->toOthers();
     }
 
     public function updated(Task $task): void
     {
-        broadcast(new UpdatedTask($task, $this->getProjectId($task)))->toOthers();
+        broadcast(new UpdatedTask(
+            task: $task,
+        ))->toOthers();
     }
 
     public function deleted(Task $task): void
     {
         broadcast(new DeletedTask(
-            $task->id,
-            $task->category_id,
-            $this->getProjectId($task),
+            task: $task,
         ))->toOthers();
     }
 }

@@ -58,23 +58,16 @@ class TaskService
 
     private function broadcastReorder(Project $project, Category $oldCategory, Category $targetCategory): void
     {
-        /** @var array<int> $sortedIds */
-        $sortedIds = Task::sorted()->where('category_id', $targetCategory->id)->pluck('id')->all();
+        // TODO 2 бродкаста как-то не оптимизированно, подумать как сделать нормально
 
         broadcast(new ReorderedTask(
-            $project->id,
-            $targetCategory->id,
-            $sortedIds,
+            category: $targetCategory
         ))->toOthers();
 
         // Если таска переехала в другую категорию — обновляем и старую
         if ($targetCategory->id !== $oldCategory->id) {
-            /** @var array<int> $oldSortedIds */
-            $oldSortedIds = Task::sorted()->where('category_id', $oldCategory->id)->pluck('id')->all();
             broadcast(new ReorderedTask(
-                $project->id,
-                $oldCategory->id,
-                $oldSortedIds,
+                $oldCategory,
             ))->toOthers();
         }
     }

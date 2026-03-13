@@ -45,12 +45,7 @@ test('created observer does not throw type errors', function () {
 test('CreatedCategory event has correct channel for project', function () {
     $category = makeCategoryForObserver();
 
-    $event    = new CreatedCategory(
-        $category->id,
-        $category->title,
-        $category->description ?? '',
-        $category->project_id,
-    );
+    $event    = new CreatedCategory($category);
     $channels = array_map(fn ($ch) => $ch->name, $event->broadcastOn());
 
     expect($channels)->toContain("presence-Project.{$category->project_id}");
@@ -59,18 +54,12 @@ test('CreatedCategory event has correct channel for project', function () {
 test('CreatedCategory event payload contains correct category data', function () {
     $category = makeCategoryForObserver();
 
-    $event   = new CreatedCategory(
-        $category->id,
-        $category->title,
-        $category->description ?? '',
-        $category->project_id,
-    );
+    $event   = new CreatedCategory($category);
     $payload = $event->broadcastWith()['category'];
 
     expect($payload['id'])->toBe($category->id)
         ->and($payload['project_id'])->toBe($category->project_id)
-        ->and($payload['title'])->toBe($category->title)
-        ->and($payload['tasks'])->toBe([]);
+        ->and($payload['title'])->toBe($category->title);
 });
 
 // ─── updated ─────────────────────────────────────────────────────────────────
@@ -86,12 +75,7 @@ test('updated observer does not throw type errors', function () {
 test('UpdatedCategory event has correct channel for project', function () {
     $category = makeCategoryForObserver();
 
-    $event    = new UpdatedCategory(
-        $category->id,
-        $category->title,
-        $category->description ?? '',
-        $category->project_id,
-    );
+    $event    = new UpdatedCategory($category);
     $channels = array_map(fn ($ch) => $ch->name, $event->broadcastOn());
 
     expect($channels)->toContain("presence-Project.{$category->project_id}");
@@ -100,12 +84,7 @@ test('UpdatedCategory event has correct channel for project', function () {
 test('UpdatedCategory event payload contains correct category data', function () {
     $category = makeCategoryForObserver();
 
-    $event   = new UpdatedCategory(
-        $category->id,
-        $category->title,
-        $category->description ?? '',
-        $category->project_id,
-    );
+    $event   = new UpdatedCategory($category);
     $payload = $event->broadcastWith()['category'];
 
     expect($payload['id'])->toBe($category->id)
@@ -126,7 +105,7 @@ test('deleted observer does not throw type errors', function () {
 test('DeletedCategory event has correct channel for project', function () {
     $category = makeCategoryForObserver();
 
-    $event    = new DeletedCategory($category->id, $category->project_id);
+    $event    = new DeletedCategory($category);
     $channels = array_map(fn ($ch) => $ch->name, $event->broadcastOn());
 
     expect($channels)->toContain("presence-Project.{$category->project_id}");
@@ -135,7 +114,7 @@ test('DeletedCategory event has correct channel for project', function () {
 test('DeletedCategory event payload contains correct category id', function () {
     $category = makeCategoryForObserver();
 
-    $event = new DeletedCategory($category->id, $category->project_id);
+    $event = new DeletedCategory($category);
 
-    expect($event->broadcastWith()['categoryId'])->toBe($category->id);
+    expect($event->broadcastWith()['category_id'])->toBe($category->id);
 });

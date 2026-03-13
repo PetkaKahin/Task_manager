@@ -48,9 +48,7 @@ class CategoryController extends Controller
         $project = $category->project;
         $this->categoryService->reorder($request, $project, $category);
 
-        /** @var array<int> $sortedIds */
-        $sortedIds = Category::query()->sorted()->where('project_id', $project->id)->pluck('id')->all();
-        broadcast(new ReorderedCategory($project->id, $sortedIds))->toOthers();
+        broadcast(new ReorderedCategory($project))->toOthers();
 
         return new CategoryResource($category);
     }

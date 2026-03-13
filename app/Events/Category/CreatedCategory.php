@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Events\Category;
 
+use App\Http\Resources\CategoryResource;
+use App\Models\Category;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
@@ -15,26 +17,18 @@ class CreatedCategory implements ShouldBroadcastNow
     use InteractsWithSockets;
 
     public function __construct(
-        public readonly int $id,
-        public readonly string $title,
-        public readonly string $description,
-        private readonly int $projectId,
+        private readonly Category $category,
     ) {
     }
 
     /**
-     * @return array<string, string|int|array<string, mixed>>
+     * @return array<string, mixed>
      */
     public function broadcastWith(): array
     {
         return [
-            'category' => [
-                'id' => $this->id,
-                'project_id' => $this->projectId,
-                'title' => $this->title,
-                'description' => $this->description,
-                'tasks' => [],
-            ],
+            'category' => CategoryResource::make($this->category)->resolve(),
+            'initiator_id' => auth()->id(), // фронтенд сам достанет данные, если надо
         ];
     }
 
@@ -46,7 +40,7 @@ class CreatedCategory implements ShouldBroadcastNow
     public function broadcastOn(): array
     {
         return [
-            new PresenceChannel("Project.{$this->projectId}"),
+            new PresenceChannel("Project.{$this->category->project_id}"),
         ];
     }
 }
