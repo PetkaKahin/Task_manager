@@ -30,8 +30,8 @@ export function useUserSync() {
         },
         {
             event: '.Project.DeletedProject',
-            handler: (data: { projectId: number }) => {
-                const project = projectStore.projects.find(p => p.id === data.projectId)
+            handler: (data: { project_id: number }) => {
+                const project = projectStore.projects.find(p => p.id === data.project_id)
                 if (!project) return
                 projectStore.deleteProject(project)
                 const firstProject = projectStore.projects[0]
@@ -44,8 +44,8 @@ export function useUserSync() {
         },
         {
             event: '.Project.ReorderedProject',
-            handler: (data: { projectIds: number[] }) => {
-                projectStore.reorderProjects(data.projectIds)
+            handler: (data: { project_ids: number[] }) => {
+                projectStore.reorderProjects(data.project_ids)
             },
         },
     ])

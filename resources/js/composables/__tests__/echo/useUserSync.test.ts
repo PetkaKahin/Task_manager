@@ -192,13 +192,13 @@ describe('useUserSync', () => {
         })
 
         it('.Project.DeletedProject удаляет проект из списка', () => {
-            channelMock.trigger('.Project.DeletedProject', { projectId: 10 })
+            channelMock.trigger('.Project.DeletedProject', { project_id: 10 })
 
             expect(projectStore.projects.map(p => p.id)).toEqual([20])
         })
 
         it('.Project.DeletedProject игнорирует несуществующий проект', () => {
-            channelMock.trigger('.Project.DeletedProject', { projectId: 999 })
+            channelMock.trigger('.Project.DeletedProject', { project_id: 999 })
 
             expect(projectStore.projects).toHaveLength(2)
         })
@@ -206,14 +206,14 @@ describe('useUserSync', () => {
         it('.Project.DeletedProject сбрасывает currentProject при удалении активного проекта', () => {
             projectStore.setCurrentProject(makeProject({ id: 10 }))
 
-            channelMock.trigger('.Project.DeletedProject', { projectId: 10 })
+            channelMock.trigger('.Project.DeletedProject', { project_id: 10 })
 
             expect(projectStore.currentProject).toBeUndefined()
         })
 
         it('.Project.DeletedProject перенаправляет на первый оставшийся проект', () => {
             routeMock.mockImplementation((_name: string, id?: number) => `/${id}`)
-            channelMock.trigger('.Project.DeletedProject', { projectId: 10 })
+            channelMock.trigger('.Project.DeletedProject', { project_id: 10 })
 
             expect(routerMock.visit).toHaveBeenCalledWith('/20')
         })
@@ -222,13 +222,13 @@ describe('useUserSync', () => {
             projectStore.projects = [makeProject({ id: 10 })]
             routeMock.mockImplementation((name: string) => `/${name}`)
 
-            channelMock.trigger('.Project.DeletedProject', { projectId: 10 })
+            channelMock.trigger('.Project.DeletedProject', { project_id: 10 })
 
             expect(routerMock.visit).toHaveBeenCalledWith('/home')
         })
 
         it('.Project.ReorderedProject переставляет проекты', () => {
-            channelMock.trigger('.Project.ReorderedProject', { projectIds: [20, 10] })
+            channelMock.trigger('.Project.ReorderedProject', { project_ids: [20, 10] })
 
             expect(projectStore.projects.map(p => p.id)).toEqual([20, 10])
         })

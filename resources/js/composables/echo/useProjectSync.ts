@@ -28,14 +28,14 @@ export function useProjectSync() {
         },
         {
             event: '.Task.DeletedTask',
-            handler: (data: { taskId: number; categoryId: number }) => {
-                kanbanStore.deleteTask({ id: data.taskId, category_id: data.categoryId } as ITask)
+            handler: (data: { task_id: number }) => {
+                kanbanStore.deleteTask({ id: data.task_id } as ITask)
             },
         },
         {
             event: '.Task.ReorderedTask',
-            handler: (data: { categoryId: number; taskIds: number[] }) => {
-                kanbanStore.reorderTasks(data.categoryId, data.taskIds)
+            handler: (data: { category_id: number; task_ids: number[] }) => {
+                kanbanStore.reorderTasks(data.category_id, data.task_ids)
             },
         },
         {
@@ -52,16 +52,16 @@ export function useProjectSync() {
         },
         {
             event: '.Category.DeletedCategory',
-            handler: (data: { categoryId: number }) => {
-                const category = kanbanStore.categories.find(c => c.id === data.categoryId)
+            handler: (data: { category_id: number }) => {
+                const category = kanbanStore.categories.find(c => c.id === data.category_id)
                 if (!category) return
                 kanbanStore.deleteCategory(category)
             },
         },
         {
             event: '.Category.ReorderedCategory',
-            handler: (data: { categoryIds: number[] }) => {
-                kanbanStore.reorderCategories(data.categoryIds)
+            handler: (data: { category_ids: number[] }) => {
+                kanbanStore.reorderCategories(data.category_ids)
             },
         },
     ])
