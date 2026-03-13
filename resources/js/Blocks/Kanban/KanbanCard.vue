@@ -76,6 +76,7 @@ const editor = useEditor({
     ],
     editable: true,
     editorProps: {
+        attributes: !isDesktop.value ? {inputmode: 'none'} : {},
         handleKeyDown: (_, event) => {
             if (!isDesktop.value && !isEditing.value) {
                 const allowed = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Home', 'End']
