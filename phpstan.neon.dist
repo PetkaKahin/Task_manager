@@ -6,6 +6,4 @@ parameters:
         - app
     stubFiles:
         - stubs/BelongsToSortedMany.stub
-
-
     level: max
