@@ -1,11 +1,14 @@
 <?php
 
+use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\ProjectController;
 use App\Http\Controllers\Api\TaskController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware('auth:web')->group(function () {
+Route::post('login', [AuthController::class, 'login']);
+
+Route::middleware('auth:sanctum')->group(function () {
     Route::get('categories/{category}', [CategoryController::class, 'show'])
         ->name('api.categories.show');
     Route::patch('categories/{category}', [CategoryController::class, 'update'])
