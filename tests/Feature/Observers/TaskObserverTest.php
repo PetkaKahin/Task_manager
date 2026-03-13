@@ -52,7 +52,7 @@ test('CreatedTask event has correct channel for project', function () {
     $task    = makeTaskForObserver();
     $project = $task->category->project;
 
-    $event    = new CreatedTask($task, $project->id);
+    $event    = new CreatedTask($task);
     $channels = array_map(fn ($ch) => $ch->name, $event->broadcastOn());
 
     expect($channels)->toContain("presence-Project.{$project->id}");
@@ -60,9 +60,8 @@ test('CreatedTask event has correct channel for project', function () {
 
 test('CreatedTask event payload contains correct task data', function () {
     $task    = makeTaskForObserver();
-    $project = $task->category->project;
 
-    $event   = new CreatedTask($task, $project->id);
+    $event   = new CreatedTask($task);
     $payload = $event->broadcastWith()['task'];
 
     expect($payload['id'])->toBe($task->id)
@@ -83,7 +82,7 @@ test('UpdatedTask event has correct channel for project', function () {
     $task    = makeTaskForObserver();
     $project = $task->category->project;
 
-    $event    = new UpdatedTask($task, $project->id);
+    $event    = new UpdatedTask($task);
     $channels = array_map(fn ($ch) => $ch->name, $event->broadcastOn());
 
     expect($channels)->toContain("presence-Project.{$project->id}");
@@ -104,18 +103,16 @@ test('DeletedTask event has correct channel for project', function () {
     $task    = makeTaskForObserver();
     $project = $task->category->project;
 
-    $event    = new DeletedTask($task->id, $task->category_id, $project->id);
+    $event    = new DeletedTask($task);
     $channels = array_map(fn ($ch) => $ch->name, $event->broadcastOn());
 
     expect($channels)->toContain("presence-Project.{$project->id}");
 });
 
-test('DeletedTask event payload has correct task and category ids', function () {
-    $task    = makeTaskForObserver();
-    $project = $task->category->project;
+test('DeletedTask event payload has correct task id', function () {
+    $task = makeTaskForObserver();
 
-    $event = new DeletedTask($task->id, $task->category_id, $project->id);
+    $event = new DeletedTask($task);
 
-    expect($event->taskId)->toBe($task->id)
-        ->and($event->categoryId)->toBe($task->category_id);
+    expect($event->broadcastWith()['task_id'])->toBe($task->id);
 });

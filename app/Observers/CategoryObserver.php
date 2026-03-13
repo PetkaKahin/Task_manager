@@ -14,28 +14,21 @@ class CategoryObserver
     public function created(Category $category): void
     {
         broadcast(new CreatedCategory(
-            $category->id,
-            $category->title,
-            $category->description ?? '',
-            $category->project_id,
+            category: $category,
         ))->toOthers();
     }
 
     public function updated(Category $category): void
     {
         broadcast(new UpdatedCategory(
-            $category->id,
-            $category->title,
-            $category->description ?? '',
-            $category->project_id,
+            category: $category,
         ))->toOthers();
     }
 
     public function deleted(Category $category): void
     {
         broadcast(new DeletedCategory(
-            $category->id,
-            $category->project_id,
+            category: $category,
         ))->toOthers();
     }
 }

@@ -19,8 +19,6 @@ use Illuminate\Support\Carbon;
  */
 class CategoryResource extends JsonResource
 {
-    public static $wrap = null;
-
     /** @return array<string, mixed> */
     public function toArray(Request $request): array
     {
@@ -28,6 +26,7 @@ class CategoryResource extends JsonResource
             'id' => $this->id,
             'title' => $this->title,
             'project_id' => $this->project_id,
+            // Загрузил tasks — они в ответе. Не загрузил — ключа tasks нет вообще
             'tasks' => TaskResource::collection($this->whenLoaded('tasks')),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

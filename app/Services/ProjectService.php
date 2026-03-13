@@ -27,9 +27,7 @@ class ProjectService
             $user->projects()->moveBefore($newProjectWithPivot, $first);
         }
 
-        /** @var array<int> $userIds */
-        $userIds = $newProject->users()->pluck('users.id')->all();
-        broadcast(new CreatedProject($userIds, $newProject->id, $newProject->title))->toOthers();
+        broadcast(new CreatedProject($newProject))->toOthers();
 
         return $newProject;
     }
@@ -58,8 +56,6 @@ class ProjectService
             $user->projects()->moveAfter($projectWithPivot, $afterProject);
         }
 
-        /** @var array<int> $sortedIds */
-        $sortedIds = $user->projects()->pluck('projects.id')->all();
-        broadcast(new ReorderedProject($user->id, $sortedIds))->toOthers();
+        broadcast(new ReorderedProject())->toOthers();
     }
 }

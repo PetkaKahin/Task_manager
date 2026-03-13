@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Events\Project;
 
+use App\Http\Resources\ProjectResource;
+use App\Models\Project;
+use App\Models\User;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
@@ -15,25 +18,22 @@ class CreatedProject implements ShouldBroadcastNow
     use InteractsWithSockets;
 
     /**
-     * @param int[] $userIds
+     * @param Project $project
      */
     public function __construct(
-        private readonly array $userIds,
-        public readonly int $id,
-        public readonly string $title,
+        private readonly Project $project,
     ) {
+        $this->project->loadMissing('users');
     }
 
     /**
-     * @return array<string, array<string, int|string>>
+     * @return array<string, mixed>
      */
     public function broadcastWith(): array
     {
         return [
-            'project' => [
-                'id' => $this->id,
-                'title' => $this->title,
-            ],
+            'project' => ProjectResource::make($this->project)->resolve(),
+            'initiator_id' => auth()->id(), // фронтенд сам достанет данные, если надо
         ];
     }
 
@@ -45,11 +45,11 @@ class CreatedProject implements ShouldBroadcastNow
     /**
      * @return PrivateChannel[]
      */
+    // TODO не проще ли работать с одним каналом PresenceChannel('project.{id}')?
     public function broadcastOn(): array
     {
-        return array_map(
-            fn (int $id) => new PrivateChannel("User.{$id}"),
-            $this->userIds,
-        );
+        return collect($this->project->users)
+            ->map(fn (User $user) => new PrivateChannel("User.{$user->id}"))
+            ->all();
     }
 }

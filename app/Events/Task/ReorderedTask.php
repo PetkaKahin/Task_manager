@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Events\Task;
 
+use App\Models\Category;
+use App\Models\Task;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
@@ -15,25 +17,23 @@ class ReorderedTask implements ShouldBroadcastNow
     use InteractsWithSockets;
 
     /**
-     * @param int $projectId
-     * @param int $categoryId
-     * @param int[] $taskIds Отсортированные ID тасок в категории
+     * @param Category $category
      */
     public function __construct(
-        private readonly int $projectId,
-        public readonly int $categoryId,
-        public readonly array $taskIds,
+        private readonly Category $category,
     ) {
+        $this->category->loadMissing('tasks');
     }
 
     /**
-     * @return array<string, int|array<int>>
+     * @return array<string, mixed>
      */
     public function broadcastWith(): array
     {
         return [
-            'categoryId' => $this->categoryId,
-            'taskIds' => $this->taskIds,
+            'category_id' => $this->category->id,
+            'task_ids' => $this->getSortedTaskIds(),
+            'initiator_id' => auth()->id(), // фронтенд сам достанет данные, если надо
         ];
     }
 
@@ -48,7 +48,16 @@ class ReorderedTask implements ShouldBroadcastNow
     public function broadcastOn(): array
     {
         return [
-            new PresenceChannel("Project.{$this->projectId}"),
+            new PresenceChannel("Project.{$this->category->project_id}"),
         ];
+    }
+
+    /**
+     * @return array<int>
+     */
+    private function getSortedTaskIds(): array
+    {
+        /** @var array<int> */
+        return Task::sorted()->where('category_id', $this->category->id)->pluck('id')->all();
     }
 }

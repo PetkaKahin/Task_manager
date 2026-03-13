@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Events\Task;
 
+use App\Http\Resources\TaskResource;
 use App\Models\Task;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -16,22 +17,19 @@ class CreatedTask implements ShouldBroadcastNow
     use InteractsWithSockets;
 
     public function __construct(
-        public readonly Task $task,
-        private readonly int $projectId
+        private readonly Task $task,
     ) {
+        $this->task->loadMissing('category');
     }
 
     /**
-     * @return array<string, array<string, array<mixed>|int|null>>
+     * @return array<string, mixed>
      */
     public function broadcastWith(): array
     {
         return [
-            'task' => [
-                'id' => $this->task->id,
-                'content' => $this->task->content,
-                'category_id' => (int) $this->task->category_id,
-            ],
+            'task' => TaskResource::make($this->task)->resolve(),
+            'initiator_id' => auth()->id(), // фронтенд сам достанет данные, если надо
         ];
     }
 
@@ -46,7 +44,7 @@ class CreatedTask implements ShouldBroadcastNow
     public function broadcastOn(): array
     {
         return [
-            new PresenceChannel("Project.{$this->projectId}"),
+            new PresenceChannel("Project.{$this->task->category->project_id}"),
         ];
     }
 }

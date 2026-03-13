@@ -27,11 +27,11 @@ test('owner can show category', function () {
     $this->actingAs($user)
         ->getJson(route('api.categories.show', $category))
         ->assertOk()
-        ->assertJson([
+        ->assertJson(['data' => [
             'id'         => $category->id,
             'title'      => $category->title,
             'project_id' => $project->id,
-        ]);
+        ]]);
 });
 
 test('show returns 403 for non-owner', function () {
@@ -58,7 +58,7 @@ test('owner can update category title', function () {
     $this->actingAs($user)
         ->patchJson(route('api.categories.update', $category), ['title' => 'Новое название'])
         ->assertOk()
-        ->assertJson(['title' => 'Новое название']);
+        ->assertJson(['data' => ['title' => 'Новое название']]);
 
     expect($category->fresh()->title)->toBe('Новое название');
 });

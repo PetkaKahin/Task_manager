@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Events\Project;
 
+use App\Models\User;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
@@ -15,22 +16,13 @@ class ReorderedProject implements ShouldBroadcastNow
     use InteractsWithSockets;
 
     /**
-     * @param int $userId
-     * @param int[] $projectIds
-     */
-    public function __construct(
-        private readonly int $userId,
-        public readonly array $projectIds,
-    ) {
-    }
-
-    /**
-     * @return array<string, array<int>>
+     * @return array<string, mixed>
      */
     public function broadcastWith(): array
     {
         return [
-            'projectIds' => $this->projectIds,
+            'project_ids' => $this->getSortedProjectIds(),
+            'initiator_id' => auth()->id(), // фронтенд сам достанет данные, если надо
         ];
     }
 
@@ -45,7 +37,19 @@ class ReorderedProject implements ShouldBroadcastNow
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel("User.{$this->userId}"),
+            new PrivateChannel("User." . auth()->id()),
         ];
+    }
+
+    /**
+     * @return int[]
+     */
+    public function getSortedProjectIds(): array
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        /** @var int[] */
+        return $user->projects()->pluck('projects.id')->all();
     }
 }
