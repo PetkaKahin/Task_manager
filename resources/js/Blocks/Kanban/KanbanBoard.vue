@@ -55,6 +55,7 @@ const {startDrag: startScrollDrag} = useEdgeScroll(elementRef, {
     align-items: flex-start;
     height: 100%;
     min-width: max-content;
+    margin-right: 200px;
 }
 </style>
 
