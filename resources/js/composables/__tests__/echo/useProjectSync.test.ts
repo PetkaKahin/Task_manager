@@ -151,7 +151,7 @@ describe('useProjectSync', () => {
                 makeCategory({ id: 10, tasks: [makeTask({ id: 1, category_id: 10 })] }),
             ]
 
-            channelMock.trigger('.Task.DeletedTask', { taskId: 1, categoryId: 10 })
+            channelMock.trigger('.Task.DeletedTask', { task_id: 1 })
 
             expect(kanbanStore.categories[0]!.tasks).toHaveLength(0)
         })
@@ -168,7 +168,7 @@ describe('useProjectSync', () => {
                 }),
             ]
 
-            channelMock.trigger('.Task.ReorderedTask', { categoryId: 10, taskIds: [3, 1, 2] })
+            channelMock.trigger('.Task.ReorderedTask', { category_id: 10, task_ids: [3, 1, 2] })
 
             expect(kanbanStore.categories[0]!.tasks.map(t => t.id)).toEqual([3, 1, 2])
         })
@@ -212,19 +212,19 @@ describe('useProjectSync', () => {
         })
 
         it('.Category.DeletedCategory удаляет категорию', () => {
-            channelMock.trigger('.Category.DeletedCategory', { categoryId: 10 })
+            channelMock.trigger('.Category.DeletedCategory', { category_id: 10 })
 
             expect(kanbanStore.categories.map(c => c.id)).toEqual([20])
         })
 
         it('.Category.DeletedCategory игнорирует несуществующую категорию', () => {
-            channelMock.trigger('.Category.DeletedCategory', { categoryId: 999 })
+            channelMock.trigger('.Category.DeletedCategory', { category_id: 999 })
 
             expect(kanbanStore.categories).toHaveLength(2)
         })
 
         it('.Category.ReorderedCategory переставляет категории', () => {
-            channelMock.trigger('.Category.ReorderedCategory', { categoryIds: [20, 10] })
+            channelMock.trigger('.Category.ReorderedCategory', { category_ids: [20, 10] })
 
             expect(kanbanStore.categories.map(c => c.id)).toEqual([20, 10])
         })
