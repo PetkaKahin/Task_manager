@@ -39,6 +39,28 @@ services:
     command: php artisan reverb:start --host=0.0.0.0 --port=8080
     restart: unless-stopped
 
+  queue:
+    container_name: ${COMPOSE_PROJECT_NAME}-queue
+    build:
+      args:
+        USER_ID: ${UID}
+        GROUP_ID: ${GID}
+      context: .
+      dockerfile: ./docker/dockerfiles/php/Dockerfile
+    volumes:
+      - ./:${APP_PATH}
+      - ./docker/config/php/php.ini:/usr/local/etc/php/conf.d/php.ini
+    networks:
+      - app-network
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    working_dir: ${APP_PATH}
+    command: php artisan queue:work --sleep=3 --tries=3 --max-time=3600
+    restart: unless-stopped
+
   nginx:
     container_name: ${COMPOSE_PROJECT_NAME}-nginx
     build:
@@ -73,6 +95,21 @@ services:
       timeout: 5s
       retries: 5
 
+  redis:
+    container_name: ${COMPOSE_PROJECT_NAME}-redis
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - app-network
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   npm:
     build:
       context: .
@@ -94,3 +131,4 @@ networks:
 
 volumes:
   db-data:
+  redis-data:
