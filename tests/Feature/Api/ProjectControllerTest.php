@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Events\Project\ReorderedProject;
 use App\Models\Project;
 use App\Models\User;
+use App\Repositories\ProjectRepository;
 use Illuminate\Support\Facades\Event;
 
 uses(Illuminate\Foundation\Testing\RefreshDatabase::class);
@@ -19,7 +20,7 @@ function userWithProjects(int $count = 2): array
         $user->projects()->attach($project->id);
     }
 
-    return [$user, $user->projects()->get()];
+    return [$user, app(ProjectRepository::class)->getByUser($user)];
 }
 
 // ─── index ───────────────────────────────────────────────────────────────────
@@ -79,7 +80,7 @@ test('owner can move project to first position', function () {
         ->patchJson(route('api.projects.reorder', $last), ['move_after_id' => null])
         ->assertOk();
 
-    $first = $user->projects()->first();
+    $first = app(ProjectRepository::class)->getByUser($user)->first();
     expect($first->id)->toBe($last->id);
 });
 
@@ -95,7 +96,7 @@ test('owner can move project after another', function () {
         ->patchJson(route('api.projects.reorder', $first), ['move_after_id' => $third->id])
         ->assertOk();
 
-    $sorted = $user->projects()->pluck('projects.id')->all();
+    $sorted = app(ProjectRepository::class)->getByUser($user)->pluck('id')->all();
     expect($sorted)->toBe([$second->id, $third->id, $first->id]);
 });
 

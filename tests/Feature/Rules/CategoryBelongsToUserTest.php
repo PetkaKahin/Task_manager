@@ -16,7 +16,7 @@ function failMessage(): string
 
 function runRule(mixed $value): ?string
 {
-    $rule   = new CategoryBelongsToUser();
+    $rule   = app(CategoryBelongsToUser::class);
     $failed = null;
 
     $rule->validate('category_id', $value, function (string $msg) use (&$failed) {

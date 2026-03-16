@@ -5,6 +5,8 @@ declare(strict_types=1);
 use App\Events\Category\ReorderedCategory;
 use App\Models\Category;
 use App\Models\User;
+use App\Repositories\CategoryRepository;
+use App\Repositories\ProjectRepository;
 use Illuminate\Support\Facades\Event;
 
 uses(Illuminate\Foundation\Testing\RefreshDatabase::class);
@@ -13,8 +15,8 @@ uses(Illuminate\Foundation\Testing\RefreshDatabase::class);
 function userWithCategory(): array
 {
     $user     = User::factory()->withFirstProject()->create();
-    $project  = $user->projects()->first();
-    $category = $project->categories()->sorted()->first();
+    $project  = app(ProjectRepository::class)->getByUser($user)->first();
+    $category = app(CategoryRepository::class)->getByProject($project)->first();
 
     return [$user, $project, $category];
 }
@@ -131,14 +133,14 @@ test('owner can move category to first position', function () {
     Event::fake();
 
     [$user, $project, ] = userWithCategory();
-    $categories = $project->categories()->sorted()->get();
+    $categories = app(CategoryRepository::class)->getByProject($project);
     $last       = $categories->last();
 
     $this->actingAs($user)
         ->patchJson(route('api.categories.reorder', $last), ['move_after_id' => null])
         ->assertOk();
 
-    $first = $project->categories()->sorted()->first();
+    $first = app(CategoryRepository::class)->getByProject($project)->first();
     expect($first->id)->toBe($last->id);
 });
 
@@ -146,7 +148,7 @@ test('owner can move category after another', function () {
     Event::fake();
 
     [$user, $project, ] = userWithCategory();
-    $categories = $project->categories()->sorted()->get();
+    $categories = app(CategoryRepository::class)->getByProject($project);
     $first      = $categories->first();
     $second     = $categories->get(1);
     $third      = $categories->last();
@@ -155,7 +157,7 @@ test('owner can move category after another', function () {
         ->patchJson(route('api.categories.reorder', $first), ['move_after_id' => $third->id])
         ->assertOk();
 
-    $sorted = $project->categories()->sorted()->pluck('id')->all();
+    $sorted = app(CategoryRepository::class)->getByProject($project)->pluck('id')->all();
     expect($sorted)->toBe([$second->id, $third->id, $first->id]);
 });
 
@@ -163,7 +165,7 @@ test('reorder broadcasts ReorderedCategory event', function () {
     Event::fake();
 
     [$user, $project, ] = userWithCategory();
-    $categories = $project->categories()->sorted()->get();
+    $categories = app(CategoryRepository::class)->getByProject($project);
     $last       = $categories->last();
 
     $this->actingAs($user)

@@ -22,7 +22,6 @@ class ReorderedTask implements ShouldBroadcastNow
     public function __construct(
         private readonly Category $category,
     ) {
-        $this->category->loadMissing('tasks');
     }
 
     /**
