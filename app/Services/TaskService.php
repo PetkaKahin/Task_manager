@@ -9,16 +9,29 @@ use App\Http\Requests\Api\Task\ReorderTaskRequest;
 use App\Models\Category;
 use App\Models\Project;
 use App\Models\Task;
+use App\Repositories\CategoryRepository;
+use App\Repositories\TaskRepository;
 
 class TaskService
 {
+    public function __construct(
+        private readonly TaskRepository $taskRepository,
+        private readonly CategoryRepository $categoryRepository,
+    ) {}
+
     /**
      * Вставляет Task после ReorderTaskRequest->move_after_id и возвращает его <br>
      * Сам обращается к БД за нужными данными
      */
     public function reorder(ReorderTaskRequest $request, Project $project, Category $category, Task $task): Task
     {
+        $oldCategoryId = $category->id;
         $targetCategory = $this->moveTask($request, $project, $category, $task);
+
+        // update() already cleared cache when category changed
+        if ($targetCategory->id === $oldCategoryId) {
+            $this->taskRepository->clearProjectCache($project->id);
+        }
 
         $this->broadcastReorder($project, $category, $targetCategory);
 
@@ -29,27 +42,24 @@ class TaskService
     {
         // Определяем целевую категорию
         $targetCategory = $request->filled('category_id')
-            ? $project->categories()->findOrFail((int) $request->category_id)
+            ? $this->categoryRepository->findByProjectOrFail($project, (int) $request->category_id)
             : $category;
 
         // Если категория меняется — обновляем связь
         if ($targetCategory->id !== $category->id) {
-            $task->update(['category_id' => $targetCategory->id]);
+            $this->taskRepository->update($task, ['category_id' => $targetCategory->id], $project->id);
         }
 
         // Перемещаем
         if ($request->move_after_id === null) {
-            $first = Task::sorted()
-                ->where('category_id', $targetCategory->id)
-                ->where('id', '!=', $task->id)
-                ->first();
+            $first = $this->taskRepository->getFirstByCategory($targetCategory, $task->id);
 
             if ($first) {
                 $task->moveBefore($first);
             }
         } else {
             $task->moveAfter(
-                $targetCategory->tasks()->findOrFail((int) $request->move_after_id)
+                $this->taskRepository->findByCategoryOrFail($targetCategory, (int) $request->move_after_id)
             );
         }
 

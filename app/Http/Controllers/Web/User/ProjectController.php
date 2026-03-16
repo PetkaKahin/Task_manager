@@ -12,11 +12,10 @@ use App\Http\Requests\Web\Project\EditProjectRequest;
 use App\Http\Requests\Web\Project\ShowProjectRequest;
 use App\Http\Requests\Web\Project\StoreProjectRequest;
 use App\Http\Requests\Web\Project\UpdateProjectRequest;
-use App\Builders\SortableBuilder;
-use App\Models\Category;
 use App\Models\Project;
-use App\Models\Task;
 use App\Models\User;
+use App\Repositories\CategoryRepository;
+use App\Repositories\ProjectRepository;
 use App\Services\ProjectService;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
@@ -25,7 +24,9 @@ use Inertia\Response;
 class ProjectController extends Controller
 {
     public function __construct(
-        private readonly ProjectService $projectService
+        private readonly ProjectService $projectService,
+        private readonly ProjectRepository $projectRepository,
+        private readonly CategoryRepository $categoryRepository,
     ) {
     }
     public function create(): Response
@@ -44,13 +45,7 @@ class ProjectController extends Controller
 
     public function show(ShowProjectRequest $request, Project $project): Response
     {
-        $categories = Category::sorted()
-            ->where('project_id', $project->id)
-            ->with(['tasks' => function (mixed $query): void {
-                /** @var SortableBuilder<Task> $query */
-                $query->sorted();
-            }])
-            ->get();
+        $categories = $this->categoryRepository->getByProject($project);
 
         return Inertia::render('User/Dashboard', [
             'project' => $project,
@@ -67,7 +62,7 @@ class ProjectController extends Controller
 
     public function update(UpdateProjectRequest $request, Project $project): RedirectResponse
     {
-        $project->update($request->validated());
+        $this->projectRepository->update($project, $request->validated());
 
         broadcast(new UpdatedProject($project))->toOthers();
 
@@ -76,7 +71,7 @@ class ProjectController extends Controller
 
     public function destroy(DestroyProjectRequest $request, Project $project): \Illuminate\Http\Response
     {
-        $project->delete();
+        $this->projectRepository->delete($project);
 
         broadcast(new DeletedProject($project))->toOthers();
 

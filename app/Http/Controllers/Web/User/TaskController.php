@@ -10,12 +10,17 @@ use App\Http\Requests\Web\Task\EditTaskRequest;
 use App\Http\Requests\Web\Task\StoreTaskRequest;
 use App\Http\Requests\Web\Task\UpdateTaskRequest;
 use App\Models\Task;
+use App\Repositories\TaskRepository;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class TaskController extends Controller
 {
+    public function __construct(
+        private readonly TaskRepository $taskRepository,
+    ) {}
+
     public function create(): Response
     {
         return Inertia::render('User/Task/NewTask');
@@ -23,7 +28,7 @@ class TaskController extends Controller
 
     public function store(StoreTaskRequest $request): RedirectResponse
     {
-        $task = Task::query()->create($request->validated());
+        $task = $this->taskRepository->create($request->validated());
 
         return redirect()->intended(route(
             'projects.show',
@@ -40,7 +45,7 @@ class TaskController extends Controller
 
     public function update(UpdateTaskRequest $request, Task $task): RedirectResponse
     {
-        $task->update($request->validated());
+        $this->taskRepository->update($task, $request->validated());
         $projectId = $task->category()->value('project_id');
 
         return redirect()->intended(route('projects.show', $projectId));
@@ -48,7 +53,7 @@ class TaskController extends Controller
 
     public function destroy(DestroyTaskRequest $request, Task $task): \Illuminate\Http\Response
     {
-        $task->delete();
+        $this->taskRepository->delete($task);
 
         return response()->noContent();
     }

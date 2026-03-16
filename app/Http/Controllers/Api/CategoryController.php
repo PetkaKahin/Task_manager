@@ -12,13 +12,15 @@ use App\Http\Requests\Api\Category\ShowCategoryRequest;
 use App\Http\Requests\Api\Category\UpdateCategoryRequest;
 use App\Http\Resources\CategoryResource;
 use App\Models\Category;
+use App\Repositories\CategoryRepository;
 use App\Services\CategoryService;
 use Illuminate\Http\Response;
 
 class CategoryController extends Controller
 {
     public function __construct(
-        private readonly CategoryService $categoryService
+        private readonly CategoryService $categoryService,
+        private readonly CategoryRepository $categoryRepository,
     ) {
     }
 
@@ -29,14 +31,14 @@ class CategoryController extends Controller
 
     public function update(UpdateCategoryRequest $request, Category $category): CategoryResource
     {
-        $category->update($request->validated());
+        $this->categoryRepository->update($category, $request->validated());
 
         return new CategoryResource($category);
     }
 
     public function destroy(DestroyCategoryRequest $request, Category $category): Response
     {
-        $category->delete();
+        $this->categoryRepository->delete($category);
 
         return response()->noContent();
     }
