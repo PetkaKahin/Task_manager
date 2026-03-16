@@ -6,9 +6,14 @@ namespace App\Policies;
 
 use App\Models\Project;
 use App\Models\User;
+use App\Repositories\ProjectRepository;
 
 class ProjectPolicy
 {
+    public function __construct(
+        private readonly ProjectRepository $projectRepository,
+    ) {}
+
     public function show(User $user, Project $project): bool
     {
         return $this->isProjectOwner($user, $project);
@@ -31,8 +36,8 @@ class ProjectPolicy
 
     protected function isProjectOwner(User $user, Project $project): bool
     {
-        return $user->projects()
-            ->where('projects.id', $project->id)
-            ->exists();
+        return $this->projectRepository
+            ->getByUser($user)
+            ->contains('id', $project->id);
     }
 }

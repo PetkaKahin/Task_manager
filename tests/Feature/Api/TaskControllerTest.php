@@ -9,6 +9,7 @@ use App\Models\Category;
 use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
+use App\Repositories\TaskRepository;
 use Illuminate\Support\Facades\Event;
 
 uses(Illuminate\Foundation\Testing\RefreshDatabase::class);
@@ -37,7 +38,7 @@ function userWithTasks(int $count = 3): array
         Task::factory()->create(['category_id' => $category->id, 'position' => null]);
     }
 
-    return [$user, $project, $category, Task::sorted()->where('category_id', $category->id)->get()];
+    return [$user, $project, $category, app(TaskRepository::class)->getByCategory($category)];
 }
 
 // ─── store ───────────────────────────────────────────────────────────────────
@@ -200,7 +201,7 @@ test('owner can move task to first position', function () {
         ->patchJson(route('api.tasks.reorder', $last), ['move_after_id' => null])
         ->assertOk();
 
-    $first = Task::sorted()->where('category_id', $category->id)->first();
+    $first = app(TaskRepository::class)->getByCategory($category)->first();
     expect($first->id)->toBe($last->id);
 });
 
@@ -214,7 +215,7 @@ test('owner can move task after another', function () {
         ->patchJson(route('api.tasks.reorder', $first), ['move_after_id' => $third->id])
         ->assertOk();
 
-    $sorted = Task::sorted()->where('category_id', $category->id)->pluck('id')->all();
+    $sorted = app(TaskRepository::class)->getByCategory($category)->pluck('id')->all();
     expect($sorted)->toBe([$second->id, $third->id, $first->id]);
 });
 
@@ -248,7 +249,7 @@ test('owner can move task after another in a different category', function () {
         ->assertOk()
         ->assertJson(['data' => ['category_id' => $otherCategory->id]]);
 
-    $sorted = Task::sorted()->where('category_id', $otherCategory->id)->pluck('id')->all();
+    $sorted = app(TaskRepository::class)->getByCategory($otherCategory)->pluck('id')->all();
     expect($sorted)->toBe([$anchor->id, $task->id]);
 });
 

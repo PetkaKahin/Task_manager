@@ -9,23 +9,17 @@ use App\Events\Project\ReorderedProject;
 use App\Http\Requests\Api\Project\ReorderProjectRequest;
 use App\Models\Project;
 use App\Models\User;
+use App\Repositories\ProjectRepository;
 
 class ProjectService
 {
+    public function __construct(
+        private readonly ProjectRepository $projectRepository
+    ) {}
+
     public function create(User $user, string $title): Project
     {
-        /** @var Project $newProject */
-        $newProject = Project::factory()->default($user, $title)->create();
-
-        /** @var Project $newProjectWithPivot */
-        $newProjectWithPivot = $user->projects()->findOrFail($newProject->id);
-        $first = $user->projects()
-            ->where('projects.id', '!=', $newProject->id)
-            ->first();
-
-        if ($first) {
-            $user->projects()->moveBefore($newProjectWithPivot, $first);
-        }
+        $newProject = $this->projectRepository->createWithFactory($user, $title);
 
         broadcast(new CreatedProject($newProject))->toOthers();
 
@@ -39,22 +33,20 @@ class ProjectService
     {
         /** @var User $user */
         $user = $request->user();
-        /** @var Project $projectWithPivot */
-        $projectWithPivot = $user->projects()->findOrFail($project->id);
+        $projectWithPivot = $this->projectRepository->findByUserOrFail($user, $project->id);
 
         if ($request->move_after_id === null) {
-            $first = $user->projects()
-                ->where('projects.id', '!=', $project->id)
-                ->first();
+            $first = $this->projectRepository->getFirstByUser($user, $project->id);
 
             if ($first) {
                 $user->projects()->moveBefore($projectWithPivot, $first);
             }
         } else {
-            /** @var Project $afterProject */
-            $afterProject = $user->projects()->findOrFail((int) $request->move_after_id);
+            $afterProject = $this->projectRepository->findByUserOrFail($user, (int) $request->move_after_id);
             $user->projects()->moveAfter($projectWithPivot, $afterProject);
         }
+
+        $this->projectRepository->clearUserCache($user);
 
         broadcast(new ReorderedProject())->toOthers();
     }

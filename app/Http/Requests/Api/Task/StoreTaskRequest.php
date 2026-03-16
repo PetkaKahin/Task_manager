@@ -20,7 +20,7 @@ class StoreTaskRequest extends FormRequest
         return [
             'category_id' => [
                 'required',
-                new CategoryBelongsToUser(),
+                app(CategoryBelongsToUser::class),
             ],
             'content' => [
                 'nullable',

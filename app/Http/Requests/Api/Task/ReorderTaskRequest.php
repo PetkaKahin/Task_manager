@@ -31,7 +31,7 @@ class ReorderTaskRequest extends FormRequest
             'category_id' => [
                 'nullable',
                 'integer',
-                new CategoryBelongsToUser(),
+                app(CategoryBelongsToUser::class),
             ],
         ];
     }

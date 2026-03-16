@@ -9,13 +9,15 @@ use App\Http\Requests\Api\Project\ReorderProjectRequest;
 use App\Http\Resources\ProjectResource;
 use App\Models\Project;
 use App\Models\User;
+use App\Repositories\ProjectRepository;
 use App\Services\ProjectService;
 use Illuminate\Http\Request;
 
 class ProjectController extends Controller
 {
     public function __construct(
-        private readonly ProjectService $projectService
+        private readonly ProjectService $projectService,
+        private readonly ProjectRepository $projectRepository
     ) {
     }
 
@@ -26,10 +28,11 @@ class ProjectController extends Controller
     {
         /** @var User $user */
         $user = $request->user();
-        $projects = $user->projects()->get();
 
         /** @var array<int, array<string, mixed>> */
-        return ProjectResource::collection($projects)->resolve();
+        return ProjectResource::collection(
+            $this->projectRepository->getByUser($user)
+        )->resolve();
     }
 
     public function reorder(ReorderProjectRequest $request, Project $project): ProjectResource

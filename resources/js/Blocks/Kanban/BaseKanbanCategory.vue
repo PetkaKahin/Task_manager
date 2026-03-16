@@ -49,7 +49,7 @@ function addCard() {
 
     const {execute} = storeTask({category_id: props.category.id, content: null})
     kanbanStore.registerPendingTask(tempId, execute().then(response => {
-        return response?.data?.id ?? null
+        return response?.data?.data?.id ?? null
     }))
 }
 </script>
